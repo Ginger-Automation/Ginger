@@ -1118,6 +1118,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.Description = gingerExecConfig.Runset.Description;
             }
+            if (!String.IsNullOrEmpty(gingerExecConfig.Runset.RunDescription))
+            {
+                runSetConfig.RunDescription = gingerExecConfig.Runset.RunDescription;
+            }
             if (!string.IsNullOrEmpty(gingerExecConfig.SourceApplication))
             {
                 runSetConfig.SourceApplication = gingerExecConfig.SourceApplication;

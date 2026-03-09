@@ -124,11 +124,23 @@ namespace Ginger.UserControlsLib.UCListView
 
         bool mFolderViewActive = false;
         ITreeViewItem mFolderTreeRoot;
+        Func<ITreeViewItem> mFolderTreeRootFactory;
         CancellationTokenSource? mTreeSearchCts;
 
         public void SetFolderTreeRoot(ITreeViewItem root)
         {
             mFolderTreeRoot = root;
+            if (xFolderTreeView != null)
+            {
+                xFolderTreeView.ClearTreeItems();
+                xFolderTreeView.AddItem(mFolderTreeRoot);
+            }
+        }
+
+        public void SetFolderTreeRootFactory(Func<ITreeViewItem> factory)
+        {
+            mFolderTreeRootFactory = factory;
+            mFolderTreeRoot = factory();
             if (xFolderTreeView != null)
             {
                 xFolderTreeView.ClearTreeItems();
@@ -401,9 +413,69 @@ namespace Ginger.UserControlsLib.UCListView
                     NotifyCollectionChangedAction.Move)
                 {
                     OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
+
+                    // Refresh folder tree view when items are added/removed/modified
+                    if (mFolderTreeRoot != null && xFolderTreeView != null)
+                    {
+                        RefreshFolderTreeView();
+                    }
                 }
                 UpdateTitleListCount();
             });
+        }
+
+        private void RefreshFolderTreeView()
+        {
+            try
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (xFolderTreeView != null && xFolderTreeView.Tree != null && xFolderTreeView.Tree.Items.Count > 0)
+                    {
+                        // Create a fresh tree root to avoid cached children
+                        if (mFolderTreeRootFactory != null)
+                        {
+                            mFolderTreeRoot = mFolderTreeRootFactory();
+                        }
+
+                        if (mFolderTreeRoot != null)
+                        {
+                            xFolderTreeView.ClearTreeItems();
+                            xFolderTreeView.AddItem(mFolderTreeRoot);
+                        }
+                        // Refresh all expanded nodes in the tree
+                        RefreshExpandedTreeNodes(xFolderTreeView.Tree.Items[0] as TreeViewItem);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to refresh folder tree view", ex);
+            }
+        }
+
+        private void RefreshExpandedTreeNodes(TreeViewItem treeNode)
+        {
+            if (treeNode == null)
+            {
+                return;
+            }
+
+            if (treeNode.IsExpanded && treeNode.Items.Count > 0)
+            {
+                var firstChild = treeNode.Items[0] as TreeViewItem;
+                if (firstChild != null)
+                {
+                    xFolderTreeView.RefreshTreeViewItemChildrens(treeNode);
+                }
+
+                // Recursively refreshing child nodes
+                var childItems = treeNode.Items.Cast<TreeViewItem>().ToList();
+                foreach (var childNode in childItems)
+                {
+                    RefreshExpandedTreeNodes(childNode);
+                }
+            }
         }
 
         private void UpdateTitleListCount()
@@ -1315,6 +1387,19 @@ namespace Ginger.UserControlsLib.UCListView
                 // ensure folders + items are presented for current tab root
                 xFolderTreeView.EnableDragDrop = true;
                 xFolderTreeView.TreeChildFolderOnly = false;
+
+                // Refresh the tree to show latest items from repository
+                // Create a fresh tree root to avoid cached children
+                if (mFolderTreeRootFactory != null)
+                {
+                    mFolderTreeRoot = mFolderTreeRootFactory();
+                }
+
+                if (mFolderTreeRoot != null)
+                {
+                    xFolderTreeView.ClearTreeItems();
+                    xFolderTreeView.AddItem(mFolderTreeRoot);
+                }
             }
             else
             {

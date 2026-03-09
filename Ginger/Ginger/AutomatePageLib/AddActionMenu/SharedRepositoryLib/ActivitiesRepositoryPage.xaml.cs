@@ -134,7 +134,7 @@ namespace Ginger.Repository
                 xActivitiesRepositoryListView.DataSourceList = mActivitiesFolder.GetFolderItems();
             }
 
-            xActivitiesRepositoryListView.SetFolderTreeRoot(new SharedActivitiesFolderTreeItem(mActivitiesFolder));
+            xActivitiesRepositoryListView.SetFolderTreeRootFactory(() => new SharedActivitiesFolderTreeItem(mActivitiesFolder));
             xActivitiesRepositoryListView.IsToggleButtonVisible = true;
         }
 

@@ -279,8 +279,11 @@ namespace Amdocs.Ginger.Repository
                     {
                         repoFolder = folder;
                     }
-                    else if (new Uri(folder.FolderFullPath + "\\").IsBaseOf(inputURI))
+                    else if (folder.FolderRelativePath != "~\\" && new Uri(folder.FolderFullPath + "\\").IsBaseOf(inputURI))
                     {
+                        /* FolderRelativePath of all the folders will be relative to solution directory
+                         * So we need to escape such folders whose relative directory path is similar to "~\"
+                         */
                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
                         repoFolder = folder.GetSubFolderByRelativePath(relPath, true);
                     }
