@@ -744,7 +744,7 @@ namespace Ginger.Run.RunSetActions
                                     {
                                         fieldsNamesHTMLTableCells.Append("<td style='background-color:#302e45;color:#fff;padding:12px;font-weight:700;font-size:13px;border-bottom:2px solid #dee2e6;'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border-bottom:1px solid #ffffff; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border-bottom:1px solid #ffffff; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-word;min-width:200px;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
                                 }
                                 if (selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs)
                                 {
