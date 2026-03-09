@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             public Guid SessionID { get { return mGingerSocketClient2.SessionID; } }
 
-            public bool IsReady { get { return mGingerSocketClient2.IsConnected; } }
+            public bool IsReady { get { return mGingerSocketClient2?.IsConnected ?? false; } }
 
             public void Connect()
             {

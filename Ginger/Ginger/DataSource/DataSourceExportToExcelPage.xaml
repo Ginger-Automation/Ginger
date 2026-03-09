@@ -43,7 +43,7 @@
                 <Ginger:ucGrid x:Name="xColumnListGrid" MaxHeight="250" AutomationProperties.AutomationId="ColumnListGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" Width="500" HorizontalAlignment="Left" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
 
                 <CheckBox x:Name="xExportWhereChkBox" Content="Filter Record Based On Where Clause :" Click="xExportWhereChkBox_Click" Margin="0,20,0,5" FontWeight="Medium"/>
-                
+
 
                 <Grid Name ="WhereGrid" Background="{StaticResource $BackgroundColor_White}">
                     <Grid.Resources>
@@ -51,8 +51,12 @@
                             <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
                         </DataTemplate>
                     </Grid.Resources>
-                    <Grid.ColumnDefinitions/>
-                    <Grid.RowDefinitions/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <Ginger:ucGrid Grid.Row="0" x:Name="xGrdExportCondition"  Height="190" Title="Where Condition(s)" Visibility="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
                 </Grid>
             </StackPanel>

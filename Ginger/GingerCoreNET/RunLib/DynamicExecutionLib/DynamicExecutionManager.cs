@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -564,7 +564,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Name = runsetExecutor.RunSetConfig.Name,
                 ID = runsetExecutor.RunSetConfig.Guid,
                 Description = runsetExecutor.RunSetConfig.Description,
-
+                RunDescription = runsetExecutor.RunSetConfig.RunDescription,
                 EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name,
                 EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid,
 

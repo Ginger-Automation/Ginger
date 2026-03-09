@@ -37,13 +37,13 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Copy Ginger repo
 # ------------------------------------------------------------------------------------------------------
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v5
   
 # ------------------------------------------------------------------------------------------------------
 #  Download Windows Installer Artifact
 # ------------------------------------------------------------------------------------------------------      
           - name: Download Windows Installer Artifact
-            uses: actions/download-artifact@v4
+            uses: actions/download-artifact@v7
             with:
                 name: WindowsInstaller  
 
@@ -51,7 +51,7 @@ jobs:
 # Download GingerRuntime_Linux Artifact
 # ------------------------------------------------------------------------------------------------------
           -   name: Restore GingerRuntime_Linux
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: ./GingerRuntime_Linux-root.tar.gz
                   key: cache-GingerRuntime_Linux-${{ github.run_number }}
@@ -62,7 +62,7 @@ jobs:
 # Download GingerRuntime_MacOS Artifact
 # ------------------------------------------------------------------------------------------------------
           - name: Restore GingerRuntime_MacOS
-            uses: actions/cache@v4
+            uses: actions/cache@v5
             with:
               path: ./GingerRuntime_MacOS-root.tar.gz
               key: cache-GingerRuntime_MacOS-${{ github.run_number }}

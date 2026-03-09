@@ -51,7 +51,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        config-file: ./.github/workflows/codeql-config.yml
+        config-file: ./.github/workflows/Config/codeql-config.yml
 
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 8.0.100

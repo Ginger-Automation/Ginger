@@ -11,7 +11,7 @@ jobs:
         runs-on: macOS-latest
         steps:
             -   name: Restore static site content
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: ./**
                     key: cache-site-macos-${{ github.run_number }}
@@ -24,16 +24,16 @@ jobs:
                 
             -   name: Make Ginger macOS Runtime file executable 
                 run: | 
-                    find ./Ginger/GingerRuntime/bin/Release/net8.0/osx-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
+                    find ./Ginger/GingerRuntime/bin/Release/net10.0/osx-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
     
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
-                    path: './Ginger/GingerRuntime/bin/Release/net8.0/osx-x64'
+                    path: './Ginger/GingerRuntime/bin/Release/net10.0/osx-x64'
                     format: tar
                     gzip: true
                     output: ./Runtime/GingerRuntime_MacOS.tar.gz
 
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
                     path: './Runtime'
                     format: tar
@@ -42,7 +42,7 @@ jobs:
 
             -   name: Cache GingerRuntime_MacOS
                 id: cache
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: 
                         ./GingerRuntime_MacOS-root.tar.gz
@@ -58,7 +58,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Restore static site content
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                 path: ./**
                 key: cache-site-linux-${{ github.run_number }}
@@ -72,11 +72,11 @@ jobs:
             - name: Make Ginger Runtime file executable 
               run: | 
                   ls -altr
-                  find ./Ginger/GingerRuntime/bin/Release/net8.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
+                  find ./Ginger/GingerRuntime/bin/Release/net10.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
    
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
-                  path: './Ginger/GingerRuntime/bin/Release/net8.0/linux-x64'
+                  path: './Ginger/GingerRuntime/bin/Release/net10.0/linux-x64'
                   format: tar
                   gzip: true
                   output: ./Runtime/GingerRuntime_Linux.tar.gz
@@ -91,7 +91,7 @@ jobs:
                   dos2unix -b ./Runtime/gingerInstall.sh
                   
 
-            -   uses: sibiraj-s/action-archiver@v1
+            -   uses: sibiraj-s/action-archiver@v1.2.0
                 with:
                   path: './Runtime'
                   format: tar
@@ -100,7 +100,7 @@ jobs:
 
             -   name: Cache GingerRuntime_Linux
                 id: cache
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: 
                         ./GingerRuntime_Linux-root.tar.gz
@@ -116,7 +116,7 @@ jobs:
         runs-on: windows-latest     
         steps:
             -   name: Restore static site content
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: ./**
                     key: cache-site-windows-${{ github.run_number }}
@@ -124,13 +124,13 @@ jobs:
                         true       
 
             -   name: 'delete Help\Library'
-                run: rmdir /s /q Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Help\Library
+                run: rmdir /s /q Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\Help\Library
                 shell: cmd
                 
             -   name: 'add help Library'
                 shell: cmd
                 run: |
-                    cd Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Help
+                    cd Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\Help
                     git clone https://github.com/Ginger-Automation/Ginger-Web-Help.git
                     move Ginger-Web-Help\docs .
                     rename docs Library
@@ -206,7 +206,7 @@ jobs:
             - name: Create Signed Directory for dll 
               if: ${{ github.event.inputs.SSLCert != 'No' }}
               run: |
-                 mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist
+                 mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\dist
               shell: cmd
               
             -   name: Signing using Signtool dll
@@ -216,6 +216,7 @@ jobs:
                 #recursive: true
                  #if {% ${{ folder }}='Ginger'%}
                 run: | 
+                 dir "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\"
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.ExecuterService.Contracts.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.ExecuterService.Contracts.dll
@@ -314,7 +315,7 @@ jobs:
                  #cert-password: ${{ secrets.PEM_PASS }}
                     
             -   name: Upload Windows Installer
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v6
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers

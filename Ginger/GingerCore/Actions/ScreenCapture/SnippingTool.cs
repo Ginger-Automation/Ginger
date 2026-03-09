@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright © 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace ScreenSnipApplication
 {
@@ -55,10 +56,12 @@ namespace ScreenSnipApplication
             this.DoubleBuffered = true;
             this.FilePath = argsFilePath;
         }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Image Image { get; set; }
 
         public Rectangle rcSelect = new Rectangle();
         public Point pntStart;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string FilePath { get; set; }
 
         protected override void OnMouseDown(MouseEventArgs e)
