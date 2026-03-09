@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright ù 2014-2025 European Support Limited
+Copyright ? 2014-2025 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Ginger.Activities;
 
 namespace Ginger.Drivers.DriversConfigsEditPages
@@ -501,6 +502,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string appUdid = GetStringValue(obj, "appUdid");
             string fileName = GetStringValue(obj, "fileName");
             string instrumentationStatus = GetStringValue(obj, "instrumentationStatus");
+            string iconBase64 = GetStringValue(obj, "icon");
             bool instrumented = obj.TryGetValue("instrumented", out JToken instToken) && instToken.Value<bool>();
 
             if (string.IsNullOrWhiteSpace(id) && string.IsNullOrWhiteSpace(name))
@@ -521,7 +523,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 AppUdid = appUdid,
                 FileName = fileName,
                 Instrumented = instrumented,
-                InstrumentationStatus = instrumentationStatus
+                InstrumentationStatus = instrumentationStatus,
+                IconBase64 = iconBase64
             };
         }
 
@@ -1420,7 +1423,26 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public string FileName { get; init; }
             public bool Instrumented { get; init; }
             public string InstrumentationStatus { get; init; }
+            public string IconBase64 { get; init; }
             public bool IsCurrent { get; set; }
+
+            private ImageSource mIconSource;
+            private bool mIconResolved;
+
+            public ImageSource IconSource
+            {
+                get
+                {
+                    if (!mIconResolved)
+                    {
+                        mIconResolved = true;
+                        mIconSource = ConvertBase64ToImage(IconBase64);
+                    }
+                    return mIconSource;
+                }
+            }
+
+            public bool HasIcon => IconSource != null;
 
             public string DisplayName => string.IsNullOrWhiteSpace(Name) ? (string.IsNullOrWhiteSpace(Identifier) ? "Unnamed App" : Identifier) : Name;
 
@@ -1443,6 +1465,32 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 : Brushes.MediumSeaGreen;
 
             public Brush InstrumentationBrush => Instrumented ? Brushes.ForestGreen : Brushes.SlateGray;
+
+            private static ImageSource ConvertBase64ToImage(string base64)
+            {
+                if (string.IsNullOrWhiteSpace(base64))
+                {
+                    return null;
+                }
+
+                try
+                {
+                    byte[] bytes = Convert.FromBase64String(base64);
+                    using var ms = new System.IO.MemoryStream(bytes);
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.StreamSource = ms;
+                    bitmap.DecodePixelWidth = 56;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
         }
     }
 }
