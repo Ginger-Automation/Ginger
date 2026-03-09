@@ -196,6 +196,9 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         }
 
+            // Return Ginger expected string: "col1,col2 where condition"
+            return $"{columnList} where {whereClause}";
+        }
         public ObservableList<GingerCore.DataSource.ActDSConditon> GetConditons(ObservableList<WhereConditionItem> conditonStringList, System.Data.DataTable mDataTable)
         {
             var dsConditionList = new ObservableList<GingerCore.DataSource.ActDSConditon>();
