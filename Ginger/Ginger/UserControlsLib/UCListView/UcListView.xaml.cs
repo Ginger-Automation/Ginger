@@ -1221,14 +1221,6 @@ namespace Ginger.UserControlsLib.UCListView
                 return;
             }
 
-                var text = xSearchTextBox.Text ?? string.Empty;
-                mTreeSearchCts?.Cancel();
-                mTreeSearchCts?.Dispose();
-                mTreeSearchCts = new CancellationTokenSource();
-                xFolderTreeView.FilterItemsByText(xFolderTreeView.TreeItemsCollection, text, mTreeSearchCts.Token);
-                return;
-            }
-
             if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
