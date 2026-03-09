@@ -130,7 +130,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
 
 
-        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList,ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
+        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
         {
             // Build column list (NO SQL, just col1,col2,col3)
             string columnList = string.Join(",",
@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             // Build WHERE clause (Ginger format)
             for (int i = 0; i < whereConditionList.Count; i++)
             {
-                
+
                 var item = whereConditionList[i];
 
 
@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
                 string predicate = "";
                 switch (item.Opertor)
-                { 
+                {
                     case "Equals":
                         predicate = $"{item.TableColumn} = \"{item.RowValue}\"";
                         break;
@@ -196,9 +196,6 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         }
 
-            // Return Ginger expected string: "col1,col2 where condition"
-            return $"{columnList} where {whereClause}";
-        }
         public ObservableList<GingerCore.DataSource.ActDSConditon> GetConditons(ObservableList<WhereConditionItem> conditonStringList, System.Data.DataTable mDataTable)
         {
             var dsConditionList = new ObservableList<GingerCore.DataSource.ActDSConditon>();
