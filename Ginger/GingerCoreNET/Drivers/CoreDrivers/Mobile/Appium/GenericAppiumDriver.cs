@@ -1184,7 +1184,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         else
                         {
@@ -1199,7 +1199,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         else
                         {
@@ -1222,7 +1222,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         else
                         {
@@ -1237,7 +1237,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         else
                         {
@@ -1332,7 +1332,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
@@ -1348,7 +1348,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
 
                         break;
@@ -1383,7 +1383,7 @@ namespace Amdocs.Ginger.CoreNET
                             }
                             else if(DevicePlatformType == eDevicePlatformType.AndroidTv)
                             {
-                                act.Error = "Operation not supported for Android TV.";
+                                NotSupportedErrorForAndroidTv(act);
                             }
                         break;
                     }
@@ -1395,7 +1395,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if(DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
@@ -1422,7 +1422,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
@@ -1478,7 +1478,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
@@ -1510,7 +1510,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
@@ -1543,7 +1543,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else if(DevicePlatformType == eDevicePlatformType.AndroidTv)
                         {
-                            act.Error = "Operation not supported for Android TV.";
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
  
@@ -1663,6 +1663,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        private static void NotSupportedErrorForAndroidTv(ActMobileDevice act)
+        {
+            act.Error = "Operation not supported for Android TV.";
         }
 
         private bool ValidateAndroidOnlyOperation(ActMobileDevice act, string operationName)
@@ -6556,7 +6561,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
         }
         public void ToggleData() //not working, no SIM to the device
         {
-            if (Driver is AndroidDriver)
+            if (DevicePlatformType == eDevicePlatformType.Android)
             {
                 ConnectionType currentConnection = ((AndroidDriver)Driver).ConnectionType;
 
@@ -6569,14 +6574,18 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     ((AndroidDriver)Driver).ConnectionType = ConnectionType.DataOnly; //enable
                 }
             }
-            else if (Driver is IOSDriver)
+            else if (DevicePlatformType == eDevicePlatformType.iOS)
             {
 
                 throw new NotSupportedException("Toggling data services is not directly supported on iOS");
             }
-            else
+            else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
             {
                 throw new InvalidOperationException("Unsupported Action for Android TV");
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported driver type");
             }
         }
 
