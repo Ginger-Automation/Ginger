@@ -23,6 +23,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GingerCore.Actions
 {
@@ -207,17 +208,13 @@ namespace GingerCore.Actions
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ClearSpecialChar)
             {
-                string specChar = ValueExpression.Calculate(this.Value);
-                if (string.IsNullOrEmpty(specChar))
+                var variable = (VariableString)Var;
+
+                if (!string.IsNullOrEmpty(variable.Value))
                 {
-                    specChar = @"{}(),\""";
-                }
-                if (!string.IsNullOrEmpty(((VariableString)Var).Value))
-                {
-                    foreach (char c in specChar)
-                    {
-                        ((VariableString)Var).Value = ((VariableString)Var).Value.Replace(c.ToString(), "");
-                    }
+                
+                    variable.Value = Regex.Replace(variable.Value, @"[^A-Za-z0-9\s]", string.Empty);
+                    
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
