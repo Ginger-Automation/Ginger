@@ -159,7 +159,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = targetZipPath, UseShellExecute = true });
         }
 
-        private void GetNodeFilesButton_Click(object sender, RoutedEventArgs e)
+        private async void GetNodeFilesButton_Click(object sender, RoutedEventArgs e)
         {
             //Getting the Ginger execution path
             string? assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -192,7 +192,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             {
                 BrowserType = WebBrowserType.Chrome
             };
-            string chromeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
+            string chromeSourceFile = await seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);
 
             if (!System.IO.File.Exists(chromeDestFile))
@@ -208,7 +208,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             }
             seleniumDriver.BrowserType = WebBrowserType.FireFox;
-            string fireFoxSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
+            string fireFoxSourceFile = await seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
             string fireFoxDestFile = System.IO.Path.Combine(targetPath, fireFoxDriverFile);
 
             if (!System.IO.File.Exists(fireFoxDestFile))
@@ -224,7 +224,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
             }
             seleniumDriver.BrowserType = WebBrowserType.InternetExplorer;
-            string IESourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE);
+            string IESourceFile = await seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE);
             string IEDestFile = System.IO.Path.Combine(targetPath, IEDriverFile);
 
             if (!System.IO.File.Exists(IEDestFile))
@@ -239,7 +239,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
             }
             seleniumDriver.BrowserType = WebBrowserType.Edge;
-            string edgeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
+            string edgeSourceFile = await seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
             string edgeDestFile = System.IO.Path.Combine(targetPath, EdgeDriverFile);
 
             if (!System.IO.File.Exists(edgeDestFile))
