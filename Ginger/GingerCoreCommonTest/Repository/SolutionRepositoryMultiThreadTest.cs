@@ -154,6 +154,9 @@ namespace GingerCoreCommonTest.Repository
 
             ObservableList<MyRepositoryItem> allMRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
             t1Count = allMRIs.Count;
+
+            //Assert
+            Assert.AreEqual(106, t1Count);
         }
 
         // run two threads which does GetAllitems

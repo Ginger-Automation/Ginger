@@ -19,6 +19,7 @@ limitations under the License.
 using GingerCore.Drivers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace GingerCoreNETUnitTest.SeleniumDriverTest
 {
@@ -34,25 +35,25 @@ namespace GingerCoreNETUnitTest.SeleniumDriverTest
         }
 
         [TestMethod]
-        public void GetchromeDriverPath()
+        public async Task GetchromeDriverPath()
         {
-            string DriverPath = driver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
+            string DriverPath = await driver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
             bool v = File.Exists(DriverPath);
             Assert.AreEqual(true, v);
         }
 
         [TestMethod]
-        public void GetFirfoxDriverPath()
+        public async Task GetFirfoxDriverPath()
         {
-            string DriverPath = driver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
+            string DriverPath = await driver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
             bool v = File.Exists(DriverPath);
             Assert.AreEqual(true, v);
         }
 
         [TestMethod]
-        public void GetEdgexDriverPath()
+        public async Task GetEdgexDriverPath()
         {
-            string DriverPath = driver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
+            string DriverPath = await driver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
             bool v = File.Exists(DriverPath);
             Assert.AreEqual(true, v);
         }
