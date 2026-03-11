@@ -1182,6 +1182,10 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             PerformMenuButtonPress();
                         }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
+                        }
                         else
                         {
                             act.Error = "Operation not supported for this mobile OS or application type.";
@@ -1192,6 +1196,10 @@ namespace Amdocs.Ginger.CoreNET
                         if (AppType == eAppType.NativeHybride && DevicePlatformType == eDevicePlatformType.Android)
                         {
                             PerformOpenCamera();
+                        }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         else
                         {
@@ -1212,6 +1220,10 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             PerformKeyPress(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.MobilePressKey)));
                         }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
+                        }
                         else
                         {
                             act.Error = "Operation not supported for this mobile OS or application type.";
@@ -1222,6 +1234,10 @@ namespace Amdocs.Ginger.CoreNET
                         if (DevicePlatformType == eDevicePlatformType.Android)
                         {
                             PerformLongKeyPress(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.MobilePressKey)));
+                        }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         else
                         {
@@ -1303,53 +1319,84 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
-                        string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
-                        string photoSimulationResponse = SimulatePhotoOrBarcode(photoString, "camera");
-                        if (!string.IsNullOrEmpty(photoSimulationResponse) && photoSimulationResponse != "success")
+                        if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
                         {
-                            act.Error = photoSimulationResponse;
+                            {
+                                string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                                string photoSimulationResponse = SimulatePhotoOrBarcode(photoString, "camera");
+                                if (!string.IsNullOrEmpty(photoSimulationResponse) && photoSimulationResponse != "success")
+                                {
+                                    act.Error = photoSimulationResponse;
+                                }
+                            }
+                        }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
-                        string barcodeString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
-                        string barcodeSimulationResponse = SimulatePhotoOrBarcode(barcodeString, "barcode");
-                        if (!string.IsNullOrEmpty(barcodeSimulationResponse) && barcodeSimulationResponse != "success")
+                        if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
                         {
-                            act.Error = barcodeSimulationResponse;
+                            string barcodeString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                            string barcodeSimulationResponse = SimulatePhotoOrBarcode(barcodeString, "barcode");
+                            if (!string.IsNullOrEmpty(barcodeSimulationResponse) && barcodeSimulationResponse != "success")
+                            {
+                                act.Error = barcodeSimulationResponse;
+                            }
                         }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
+                        }
+
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                     {
-                        string biometricsAnswer = string.Empty;
-                        switch (act.AuthResultSimulation)
-                        {
-                            case ActMobileDevice.eAuthResultSimulation.Success:
+                            if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
                             {
-                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
-                                break;
+                                string biometricsAnswer = string.Empty;
+                                switch (act.AuthResultSimulation)
+                                {
+                                    case ActMobileDevice.eAuthResultSimulation.Success:
+                                        {
+                                            biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
+                                            break;
+                                        }
+                                    case ActMobileDevice.eAuthResultSimulation.Failure:
+                                        {
+                                            biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
+                                            break;
+                                        }
+                                    case ActMobileDevice.eAuthResultSimulation.Cancel:
+                                        {
+                                            biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
+                                            break;
+                                        }
+                                }
+                                if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                                {
+                                    act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
+                                }
                             }
-                            case ActMobileDevice.eAuthResultSimulation.Failure:
+                            else if(DevicePlatformType == eDevicePlatformType.AndroidTv)
                             {
-                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
-                                break;
+                                NotSupportedErrorForAndroidTv(act);
                             }
-                            case ActMobileDevice.eAuthResultSimulation.Cancel:
-                            {
-                                biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
-                                break;
-                            }
-                        }
-                        if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
-                        {
-                            act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
-                        }
                         break;
                     }
 
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
-                        CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
+                        {
+                            CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        }
+                        else if(DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetAvailableContexts:
@@ -1365,10 +1412,17 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.OpenDeeplink:
-                        appPackage = GetAppPackage(act);
-                        if (!string.IsNullOrEmpty(appPackage))
+                        if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
                         {
-                            OpenDeeplink(act.ActionInput.ValueForDriver, appPackage, GetAppPackageNameByOs());
+                            appPackage = GetAppPackage(act);
+                            if (!string.IsNullOrEmpty(appPackage))
+                            {
+                                OpenDeeplink(act.ActionInput.ValueForDriver, appPackage, GetAppPackageNameByOs());
+                            }
+                        }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
@@ -1405,24 +1459,31 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.RotateSimulation:
-                        switch (act.RotateDeviceState)
+                        if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
                         {
-                            case ActMobileDevice.eRotateDeviceState.Landscape:
+                            switch (act.RotateDeviceState)
                             {
-                                SwitchToLandscape();
-                                break;
+                                case ActMobileDevice.eRotateDeviceState.Landscape:
+                                    {
+                                        SwitchToLandscape();
+                                        break;
+                                    }
+                                case ActMobileDevice.eRotateDeviceState.Portrait:
+                                    {
+                                        SwitchToPortrait();
+                                        break;
+                                    }
                             }
-                            case ActMobileDevice.eRotateDeviceState.Portrait:
-                            {
-                                SwitchToPortrait();
-                                break;
-                            }
+                            NotifyDeviceRotation();
                         }
-                        NotifyDeviceRotation();
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.RunScript:
-                        RunScriptOnDevice(act.ActionInput.ValueForDriver);
+                            RunScriptOnDevice(act.ActionInput.ValueForDriver);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.StartRecordingScreen:
@@ -1440,13 +1501,22 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PushFileToDevice:
-                        if (ValidateAndroidOnlyOperation(act, "Push file to device"))
+                        if (DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
                         {
-                            PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                            if (ValidateAndroidOnlyOperation(act, "Push file to device"))
+                            {
+                                PushFileToDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
+                            }
+                        }
+                        else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PullFileFromDevice:
+                        if(DevicePlatformType == eDevicePlatformType.Android || DevicePlatformType == eDevicePlatformType.iOS)
+
                         if (ValidateAndroidOnlyOperation(act, "Pull file to device"))
                         {
                             PullFileFromDevice(act.FilePathInput.ValueForDriver, act.FolderPathInput.ValueForDriver);
@@ -1462,14 +1532,21 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceLogs:
-                        if (ValidateAndroidOnlyOperation(act, "Get Device Logs"))
+                        if (DevicePlatformType == eDevicePlatformType.Android)
                         {
-                            string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
-                            act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
-                            Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                            if (ValidateAndroidOnlyOperation(act, "Get Device Logs"))
+                            {
+                                string deviceLogsPath = GetDeviceLogs(act.FolderPathInput.ValueForDriver);
+                                act.AddOrUpdateReturnParamActual("DeviceLogFilePath", deviceLogsPath);
+                                Act.AddArtifactToAction(Path.GetFileName(deviceLogsPath), act, deviceLogsPath);
+                            }
+                        }
+                        else if(DevicePlatformType == eDevicePlatformType.AndroidTv)
+                        {
+                            NotSupportedErrorForAndroidTv(act);
                         }
                         break;
-
+ 
                     case ActMobileDevice.eMobileDeviceAction.GetSpecificPerformanceData:
                         appPackage = GetAppPackage(act);
                         if (!string.IsNullOrEmpty(appPackage))
@@ -1586,6 +1663,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        private static void NotSupportedErrorForAndroidTv(ActMobileDevice act)
+        {
+            act.Error = "Operation not supported for Android TV.";
         }
 
         private bool ValidateAndroidOnlyOperation(ActMobileDevice act, string operationName)
@@ -6479,7 +6561,7 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
         }
         public void ToggleData() //not working, no SIM to the device
         {
-            if (Driver is AndroidDriver)
+            if (DevicePlatformType == eDevicePlatformType.Android)
             {
                 ConnectionType currentConnection = ((AndroidDriver)Driver).ConnectionType;
 
@@ -6492,10 +6574,14 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     ((AndroidDriver)Driver).ConnectionType = ConnectionType.DataOnly; //enable
                 }
             }
-            else if (Driver is IOSDriver)
+            else if (DevicePlatformType == eDevicePlatformType.iOS)
             {
 
                 throw new NotSupportedException("Toggling data services is not directly supported on iOS");
+            }
+            else if (DevicePlatformType == eDevicePlatformType.AndroidTv)
+            {
+                throw new InvalidOperationException("Unsupported Action for Android TV");
             }
             else
             {
