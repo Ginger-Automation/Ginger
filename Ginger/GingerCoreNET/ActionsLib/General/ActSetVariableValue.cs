@@ -212,8 +212,7 @@ namespace GingerCore.Actions
 
                 if (!string.IsNullOrEmpty(variable.Value))
                 {
-                    // Remove any character that is NOT a Unicode letter, NOT a Unicode digit, and not whitespace.
-                    // Example: "Wlcome@#\"$%Amdocs123" -> "WlcomeAmdocs123"
+                
                     variable.Value = Regex.Replace(variable.Value, @"[^A-Za-z0-9\s]", string.Empty);
                     
                 }
