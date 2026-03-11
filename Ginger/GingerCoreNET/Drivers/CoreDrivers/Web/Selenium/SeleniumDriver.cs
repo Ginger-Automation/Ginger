@@ -1160,7 +1160,7 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("error starting process", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver(mBrowserType);
+                    UpdateDriver(mBrowserType).ConfigureAwait(true);
                     StartDriver();
                 }
             }
