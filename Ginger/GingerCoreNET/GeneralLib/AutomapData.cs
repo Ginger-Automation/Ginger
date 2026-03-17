@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using AutoMapper;
 using GingerCore.Variables;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections;

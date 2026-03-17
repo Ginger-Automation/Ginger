@@ -23,7 +23,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;

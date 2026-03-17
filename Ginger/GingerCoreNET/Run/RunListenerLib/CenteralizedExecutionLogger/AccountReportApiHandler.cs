@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using RestSharp;

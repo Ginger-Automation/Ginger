@@ -24,7 +24,6 @@ using Ginger.Actions.ActionConversion;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore.GeneralLib;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Generic;
 using System.Linq;

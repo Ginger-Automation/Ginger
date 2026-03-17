@@ -21,7 +21,6 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using System;

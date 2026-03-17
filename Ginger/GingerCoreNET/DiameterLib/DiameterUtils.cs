@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.IO;
 using DocumentFormat.OpenXml;
 using GingerCoreNET.GeneralLib;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
