@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -235,7 +236,7 @@ namespace GingerCore.Actions.Java
 
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); },new LoggerFactory());
             ActUIElement convertedActUIElement = mapperConfiguration.CreateMapper().Map<Act, ActUIElement>(this);
 
             return MapActJavaToActUIFields(convertedActUIElement);

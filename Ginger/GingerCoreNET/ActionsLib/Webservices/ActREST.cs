@@ -21,6 +21,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -856,7 +857,7 @@ namespace GingerCore.Actions.REST
 
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIRest>(); });
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIRest>(); }, new LoggerFactory());
             ActWebAPIRest convertedActWebAPIRest = mapConfigUIElement.CreateMapper().Map<Act, ActWebAPIRest>(this);
 
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Convert.ToString(this.DoNotFailActionOnBadRespose));

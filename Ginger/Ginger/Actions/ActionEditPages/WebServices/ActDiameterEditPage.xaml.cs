@@ -24,6 +24,7 @@ using Ginger.Actions.ActionConversion;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore.GeneralLib;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -254,7 +255,7 @@ namespace Ginger.Actions.WebServices
         }
         private void UpdateAVP(DiameterAVP avpToUpdate, DiameterAvpDictionaryItem sourceAvp)
         {
-            var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
+            var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>(), new LoggerFactory());
             var mapper = mapperConfig.CreateMapper();
 
             mapper.Map(sourceAvp, avpToUpdate);

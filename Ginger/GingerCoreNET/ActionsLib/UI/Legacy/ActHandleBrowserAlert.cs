@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -129,7 +130,7 @@ namespace GingerCore.Actions
         }
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
+            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); }, new LoggerFactory());
             ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
 
             Type currentType = GetActionTypeByElementActionName(GenElementAction);

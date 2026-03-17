@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -141,7 +142,7 @@ namespace GingerCore.Actions
 
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); }, new LoggerFactory());
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
             newAct.ElementType = eElementType.Unknown;
 

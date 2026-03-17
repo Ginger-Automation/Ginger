@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -110,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 .ForMember(dest => dest.Key, src => src.MapFrom(x => x.Key))
                 .ForMember(dest => dest.Value, src => src.MapFrom(x => x.Value));
 
-            });
+            },new LoggerFactory());
 
             IMapper iMapper = config.CreateMapper();
 

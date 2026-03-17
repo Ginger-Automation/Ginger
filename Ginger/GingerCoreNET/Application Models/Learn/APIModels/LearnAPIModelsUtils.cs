@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -24,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
     {
         public static ApplicationAPIModel CreateAPIModelObject(ApplicationAPIModel sourceAPIModel)
         {
-            AutoMapper.MapperConfiguration automapAPIModel = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<ApplicationAPIModel, ApplicationAPIModel>(); });
+            AutoMapper.MapperConfiguration automapAPIModel = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<ApplicationAPIModel, ApplicationAPIModel>(); }, new LoggerFactory());
             ApplicationAPIModel DuplicateAPIModel = automapAPIModel.CreateMapper().Map<ApplicationAPIModel, ApplicationAPIModel>(sourceAPIModel);
 
             return DuplicateAPIModel;

@@ -27,6 +27,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -156,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// <returns></returns>
         private ActWebAPIModel GetNewAPIModelAction(ApplicationAPIModel applicationModel, Act act, Dictionary<System.Tuple<string, string>, List<string>> optionalValuesPulledFromConvertedAction)
         {
-            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIModel>(); });
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIModel>(); }, new LoggerFactory());
             ActWebAPIModel newActModel = mapConfigUIElement.CreateMapper().Map<Act, ActWebAPIModel>(act);
             newActModel.APImodelGUID = applicationModel.Guid;
             newActModel.Active = true;

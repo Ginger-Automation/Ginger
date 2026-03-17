@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,7 +89,7 @@ namespace GingerCore.Actions
 
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPISoap>(); });
+            AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPISoap>(); }, new LoggerFactory());
             ActWebAPISoap convertedActWebAPISoap = mapperConfiguration.CreateMapper().Map<Act, ActWebAPISoap>(this);
 
             convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.EndPointURL, this.URL.Value);
