@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 
@@ -161,7 +162,7 @@ namespace GingerCore.Actions
         {
             AutoMapper.MapperConfiguration mapConfig;
 
-            mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); }, new LoggerFactory());
+            mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); }, NullLoggerFactory.Instance);
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
             newAct.ElementType = eElementType.Window;
             newAct.ElementAction = ActUIElement.eElementAction.Switch;

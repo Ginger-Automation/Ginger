@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -517,7 +518,7 @@ namespace GingerCore.Actions
 
         public Act GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActSikuli>(); }, new LoggerFactory());
+            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActSikuli>(); }, NullLoggerFactory.Instance);
             ActSikuli newActSikuli = mapConfigBrowserElementt.CreateMapper().Map<Act, ActSikuli>(this);
             return newActSikuli;
         }
