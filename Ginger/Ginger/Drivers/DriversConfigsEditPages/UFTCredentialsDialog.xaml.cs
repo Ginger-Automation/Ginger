@@ -79,7 +79,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         public bool? DialogResult { get; private set; }
 
-        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<string, Task<string>> uftmBasicCallFunc, string initialDeviceName = null, string initialDeviceUuid = null, string initialAppId = null)
+        private string mInitialPlatform;
+
+        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<string, Task<string>> uftmBasicCallFunc, string initialDeviceName = null, string initialDeviceUuid = null, string initialAppId = null, string initialPlatform = null)
         {
             InitializeComponent();
 
@@ -92,6 +94,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             mPreferredDeviceName = initialDeviceName;
             mPreferredDeviceUuid = initialDeviceUuid;
             mPreferredAppId = initialAppId;
+            mInitialPlatform = initialPlatform;
 
             InitCredentialsEditors();
             InitPhonesList();
@@ -510,6 +513,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 return null;
             }
 
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                return null;
+            }
+
             return new UftAppViewModel
             {
                 Id = id,
@@ -534,7 +542,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             var osList = new List<string> { "All" };
             osList.AddRange(osTypes);
             xAppOsTypeCombo.ItemsSource = osList;
-            xAppOsTypeCombo.SelectedIndex = 0;
+
+            int preselectedIndex = 0;
+            if (!string.IsNullOrWhiteSpace(mInitialPlatform))
+            {
+                string mapped = mInitialPlatform.Trim().ToLowerInvariant().Contains("ios") ? "IOS" : "ANDROID";
+                string match = osList.FirstOrDefault(o => string.Equals(o, mapped, StringComparison.OrdinalIgnoreCase));
+                if (match != null)
+                {
+                    preselectedIndex = osList.IndexOf(match);
+                }
+            }
+            xAppOsTypeCombo.SelectedIndex = preselectedIndex;
         }
 
         private void AppFilters_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -544,6 +563,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void ApplyAppFilters()
         {
+            bool hasPlatformPreference = !string.IsNullOrWhiteSpace(mInitialPlatform);
+            foreach (var app in mApps)
+            {
+                app.IsGrayedOut = hasPlatformPreference && !PlatformMatchesInitial(app.Type);
+            }
+
             var filtered = mApps.AsEnumerable();
 
             if (xAppOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
@@ -552,6 +577,19 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             xAppsListBox.ItemsSource = filtered.ToList();
+        }
+
+        private bool PlatformMatchesInitial(string platform)
+        {
+            if (string.IsNullOrWhiteSpace(mInitialPlatform) || string.IsNullOrWhiteSpace(platform))
+            {
+                return false;
+            }
+
+            bool initialIsIos = mInitialPlatform.IndexOf("ios", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool platformIsIos = platform.IndexOf("ios", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            return initialIsIos == platformIsIos;
         }
 
         private void AppsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -939,7 +977,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             var osList = new List<string> { "All" };
             osList.AddRange(osTypes);
             xOsTypeCombo.ItemsSource = osList;
-            xOsTypeCombo.SelectedIndex = 0;
+
+            int preselectedIndex = 0;
+            if (!string.IsNullOrWhiteSpace(mInitialPlatform))
+            {
+                string match = osList.FirstOrDefault(o => o.IndexOf(mInitialPlatform, StringComparison.OrdinalIgnoreCase) >= 0
+                    || mInitialPlatform.IndexOf(o, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (match != null)
+                {
+                    preselectedIndex = osList.IndexOf(match);
+                }
+            }
+            xOsTypeCombo.SelectedIndex = preselectedIndex;
             // Workspaces
             var ws = mWorkspaces.OrderBy(x => x).ToList();
             var wsList = new List<string> { "All" };
@@ -973,6 +1022,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void ApplyFilters()
         {
+            bool hasPlatformPreference = !string.IsNullOrWhiteSpace(mInitialPlatform);
+            foreach (var phone in mPhones)
+            {
+                phone.IsGrayedOut = hasPlatformPreference && !PlatformMatchesInitial(phone.Platform);
+            }
+
             var filtered = mPhones.AsEnumerable();
 
             if (xOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
@@ -1135,6 +1190,24 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mSelectedPhone != null && mSelectedApp != null)
+            {
+                string phonePlatform = mSelectedPhone.Platform?.Trim().ToLowerInvariant() ?? string.Empty;
+                string appType = mSelectedApp.Type?.Trim().ToLowerInvariant() ?? string.Empty;
+
+                bool phoneIsIos = phonePlatform.Contains("ios");
+                bool appIsIos = appType.Contains("ios");
+
+                if (phoneIsIos != appIsIos)
+                {
+                    string deviceOs = phoneIsIos ? "iOS" : "Android";
+                    string appOs = appIsIos ? "iOS" : "Android";
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage,
+                        $"The selected device is {deviceOs} but the selected app is {appOs}. Please select a device and app with the same platform.");
+                    return;
+                }
+            }
+
             DialogResult = true;
             mDialogWindow?.Close();
         }
@@ -1241,6 +1314,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public bool? HealthError { get; init; }
             public string HealthMessage { get; init; }
             public bool IsCurrent { get; set; }
+            public bool IsGrayedOut { get; set; }
+            public double CardOpacity => IsGrayedOut ? 0.4 : 1.0;
 
             public string DisplayName
             {
@@ -1425,6 +1500,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public string InstrumentationStatus { get; init; }
             public string IconBase64 { get; init; }
             public bool IsCurrent { get; set; }
+            public bool IsGrayedOut { get; set; }
+            public double CardOpacity => IsGrayedOut ? 0.4 : 1.0;
 
             private ImageSource mIconSource;
             private bool mIconResolved;

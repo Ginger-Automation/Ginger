@@ -829,7 +829,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             DriverConfigParam serverParam = mAppiumServer;
             string currentAppId = FindExistingCapability("appium:bundleId")?.Value ?? FindExistingCapability("appium:appPackage")?.Value;
-            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid, currentAppId);
+            string currentPlatform = mDevicePlatformType?.Value;
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid, currentAppId, currentPlatform);
 
             Window owner = Window.GetWindow(this);
 
