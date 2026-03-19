@@ -231,7 +231,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
-            Assert.AreEqual(initialValue, v1.Value);
+            Assert.AreEqual(newValue, EncryptionHandler.IsStringEncrypted(v1.Value) ? EncryptionHandler.DecryptwithKey(v1.Value) : v1.Value);
         }
 
 
