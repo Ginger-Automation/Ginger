@@ -231,9 +231,88 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
-            Assert.AreEqual(newValue, EncryptionHandler.IsStringEncrypted(v1.Value) ? EncryptionHandler.DecryptwithKey(v1.Value) : v1.Value);
+            // Set Variable Action did not support Password String variables earlier (variable not listed / value not set at runtime).
+            // Support was added: Set Value encrypts and stores the new password. The test was updated accordingly—
+            // we assert the stored value is no longer the plain initial value, then decrypt and compare to the configured new value.
+            Assert.AreNotEqual(initialValue, v1.Value);
+            Assert.AreEqual(newValue, EncryptionHandler.DecryptwithKey(v1.Value));
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestVariable_PasswordStringSetValue_BusinessFlowLevel()
+        {
+            // Same product fix as activity-level: Password String is now supported by Set Variable Action at BF scope.
+            // Test verifies hierarchy resolution on the Business Flow and encrypted persistence; modified from pre-support behavior.
+
+            string initialValue = "123";
+            string variableName = "PwdBFLevelTest";
+            string newValue = "abc";
+            ResetBusinessFlow();
+
+            VariablePasswordString v1 = new VariablePasswordString() { Name = variableName, Password = initialValue };
+            mBF.AddVariable(v1);
+
+            Activity activity1 = new Activity() { Active = true };
+            mBF.Activities.Add(activity1);
+
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Value = newValue, Active = true };
+            activity1.Acts.Add(actSetVariableValue);
+
+            try
+            {
+                mGR.Executor.RunRunner();
+
+                Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+                Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+                // Password variables store the runtime value encrypted (VariablePasswordString.SetValue).
+                Assert.AreNotEqual(initialValue, v1.Value);
+                Assert.AreEqual(newValue, EncryptionHandler.DecryptwithKey(v1.Value));
+            }
+            finally
+            {
+                mBF.Variables.Remove(v1);
+            }
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestVariable_PasswordStringSetValue_GlobalLevel()
+        {
+            // Global (solution) Password String variables are now supported by Set Variable Action when SolutionVariables is wired.
+            // Test added/updated to cover global scope alongside activity and BF; asserts encrypted storage then decrypt.
+
+            string initialValue = "123";
+            string variableName = "PwdGlobalLevelTest";
+            string newValue = "abc";
+            ResetBusinessFlow();
+
+            BusinessFlow.SolutionVariables = WorkSpace.Instance.Solution.Variables;
+
+            VariablePasswordString v1 = new VariablePasswordString() { Name = variableName, Password = initialValue };
+            solution.Variables.Add(v1);
+
+            Activity activity1 = new Activity() { Active = true };
+            mBF.Activities.Add(activity1);
+
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Value = newValue, Active = true };
+            activity1.Acts.Add(actSetVariableValue);
+
+            try
+            {
+                mGR.Executor.RunRunner();
+
+                Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+                Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+                // Password variables store the runtime value encrypted (VariablePasswordString.SetValue).
+                Assert.AreNotEqual(initialValue, v1.Value);
+                Assert.AreEqual(newValue, EncryptionHandler.DecryptwithKey(v1.Value));
+            }
+            finally
+            {
+                solution.Variables.Remove(v1);
+            }
+        }
 
         [TestMethod]
         [Timeout(60000)]
