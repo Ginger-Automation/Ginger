@@ -35,11 +35,26 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariablePasswordStringPage"; } }
 
+        /// <summary>
+        /// Stores the initial/reset value. Set on first Password set (e.g. design time or load) and in SetInitialValue. ResetValue() restores to this.
+        /// </summary>
+        private string mInitialPassword;
+
         private string mPassword;
         [IsSerializedForLocalRepository]
         public string Password
         {
-            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password)); OnPropertyChanged("Formula"); }
+            set
+            {
+                mPassword = value;
+                Value = value;
+                if (mInitialPassword == null)
+                {
+                    mInitialPassword = value;
+                }
+                OnPropertyChanged(nameof(this.Password));
+                OnPropertyChanged("Formula");
+            }
             get
             {
                 if (!string.IsNullOrEmpty(mPassword))
@@ -61,7 +76,14 @@ namespace GingerCore.Variables
 
         public override void ResetValue()
         {
-            Value = Password;
+            if (mInitialPassword != null)
+            {
+                Password = mInitialPassword;
+            }
+            else
+            {
+                Value = Password;
+            }
         }
 
         public override bool GenerateAutoValue(ref string errorMsg)
@@ -111,14 +133,11 @@ namespace GingerCore.Variables
 
         public override void SetInitialValue(string InitialValue)
         {
-            if (!EncryptionHandler.IsStringEncrypted(InitialValue))
-            {
-                Password = EncryptionHandler.EncryptwithKey(InitialValue);
-            }
-            else
-            {
-                Password = InitialValue;
-            }
+            string valueToStore = !EncryptionHandler.IsStringEncrypted(InitialValue)
+                ? EncryptionHandler.EncryptwithKey(InitialValue)
+                : InitialValue;
+            mInitialPassword = valueToStore;
+            Password = valueToStore;
         }
 
         public override string GetInitialValue()
