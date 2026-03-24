@@ -7,7 +7,11 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="ActXMLTagValidationPage" >
-
+    <Page.Resources>
+        <DataTemplate x:Key="PathVEButton">
+            <Button Content="..." Click="InputGridVEButton_Click" Tag="Param" Style="{DynamicResource DataGridCellButtonStyle}"/>
+        </DataTemplate>
+    </Page.Resources>
     <Grid Background="{StaticResource $BackgroundColor_White}">       
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>

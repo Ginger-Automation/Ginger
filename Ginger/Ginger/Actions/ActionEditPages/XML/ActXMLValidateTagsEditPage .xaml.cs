@@ -80,6 +80,7 @@ namespace Ginger.Actions.XML
                 GridColsView =
             [
                 new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 },
+                new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["PathVEButton"] },
                 new GridColView() { Field = nameof(ActInputValue.Value), Header = "Attribute", WidthWeight = 150 },
             ]
             };
@@ -93,7 +94,9 @@ namespace Ginger.Actions.XML
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
+            if (AIV == null) return;
+            string field = (sender as Button)?.Tag as string ?? nameof(ActInputValue.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, field, Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
 
