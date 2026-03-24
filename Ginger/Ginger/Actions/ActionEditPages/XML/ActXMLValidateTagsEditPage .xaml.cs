@@ -94,7 +94,8 @@ namespace Ginger.Actions.XML
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-            if (AIV == null) return;
+            if (AIV == null)
+            { return; }
             string field = (sender as Button)?.Tag as string ?? nameof(ActInputValue.Value);
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, field, Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
