@@ -879,6 +879,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 {
                     wasUpdated |= UpdateCapabilityValue("appium:bundleId", dialog.SelectedAppBundleId);
                 }
+                DeleteCapabilityIfExist("appium:appPackage");
+                DeleteCapabilityIfExist("appium:appActivity");
             }
             else
             {
@@ -890,11 +892,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 {
                     wasUpdated |= UpdateCapabilityValue("appium:appActivity", dialog.SelectedAppActivity);
                 }
-            }
-
-            if (!string.IsNullOrWhiteSpace(dialog.SelectedAppUdid))
-            {
-                wasUpdated |= UpdateCapabilityValue("appium:app", dialog.SelectedAppUdid);
+                DeleteCapabilityIfExist("appium:bundleId");
             }
 
             bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedAppType);
