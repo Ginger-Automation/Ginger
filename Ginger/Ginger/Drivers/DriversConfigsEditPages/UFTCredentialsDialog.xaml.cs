@@ -56,7 +56,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         // UI controls are defined in XAML and exposed by InitializeComponent
         private UftPhoneViewModel mSelectedPhone;
         private UftAppViewModel mSelectedApp;
-        private string mPreferredDeviceName;
         private string mPreferredDeviceUuid;
         private string mPreferredAppId;
         private readonly HashSet<string> mWorkspaces = new();
@@ -91,7 +90,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             mTenantIdParam = tenantIdParam;
             mUftmBasicCallFunc = uftmBasicCallFunc;
             DialogResult = false;
-            mPreferredDeviceName = initialDeviceName;
             mPreferredDeviceUuid = initialDeviceUuid;
             mPreferredAppId = initialAppId;
             mInitialPlatform = initialPlatform;
@@ -399,6 +397,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             xAppsResultBorder.Visibility = Visibility.Visible;
 
+            bool isLoading = treatContentAsMessage && string.Equals(content, "Loading...", StringComparison.OrdinalIgnoreCase);
+
+            if (xAppsLoadingPanel != null)
+            {
+                xAppsLoadingPanel.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (isLoading)
+            {
+                xAppsListBox.Visibility = Visibility.Collapsed;
+                if (xAppsMessageTextBlock != null)
+                {
+                    xAppsMessageTextBlock.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
+
             if (!treatContentAsMessage)
             {
                 List<UftAppViewModel> parsedApps = ParseApps(content);
@@ -513,7 +528,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 return null;
             }
 
-            if (string.IsNullOrWhiteSpace(type))
+            if (string.IsNullOrWhiteSpace(type) ||
+                string.Equals(type, "Any", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
@@ -661,12 +677,24 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (!string.IsNullOrWhiteSpace(mPreferredAppId))
             {
-                targetApp = mApps.FirstOrDefault(a =>
-                    string.Equals(a.Id, mPreferredAppId, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(a.AppUdid, mPreferredAppId, StringComparison.OrdinalIgnoreCase));
+                targetApp = mApps.FirstOrDefault(a => IsAppMatch(a, mPreferredAppId));
             }
 
             xAppsListBox.SelectedItem = targetApp;
+
+            if (targetApp != null)
+            {
+                xAppsListBox.ScrollIntoView(targetApp);
+            }
+        }
+
+        private static bool IsAppMatch(UftAppViewModel app, string preferredId)
+        {
+            return string.Equals(app.Id, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.AppUdid, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.Identifier, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.BundleId, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.AppPackage, preferredId, StringComparison.OrdinalIgnoreCase);
         }
 
         private void UpdateCurrentAppMarker()
@@ -678,9 +706,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             foreach (UftAppViewModel app in mApps)
             {
-                app.IsCurrent = !string.IsNullOrEmpty(mPreferredAppId) &&
-                    (string.Equals(app.Id, mPreferredAppId, StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(app.AppUdid, mPreferredAppId, StringComparison.OrdinalIgnoreCase));
+                app.IsCurrent = !string.IsNullOrEmpty(mPreferredAppId) && IsAppMatch(app, mPreferredAppId);
             }
 
             xAppsListBox?.Items?.Refresh();
@@ -797,6 +823,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             xPhonesResultBorder.Visibility = Visibility.Visible;
 
+            bool isLoading = treatContentAsMessage && string.Equals(content, "Loading...", StringComparison.OrdinalIgnoreCase);
+
+            if (xPhonesLoadingPanel != null)
+            {
+                xPhonesLoadingPanel.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (isLoading)
+            {
+                xPhonesListBox.Visibility = Visibility.Collapsed;
+                if (xPhonesMessageTextBlock != null)
+                {
+                    xPhonesMessageTextBlock.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
+
             if (!treatContentAsMessage)
             {
                 List<UftPhoneViewModel> parsedPhones = ParsePhones(content);
@@ -806,7 +849,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     mPhones.Add(phone);
                 }
 
-                // collect workspaces from parsed phones for filter population
                 mWorkspaces.Clear();
                 foreach (var p in mPhones)
                 {
@@ -816,7 +858,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     }
                 }
 
-                // populate filters and apply current selections (show filtered results)
                 PopulateFilters();
                 ApplyFilters();
 
@@ -1147,7 +1188,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
 
                 mPreferredDeviceUuid = SelectedPhoneUuid;
-                mPreferredDeviceName = SelectedPhoneName;
                 UpdateCurrentPhoneMarker();
             }
         }
@@ -1183,7 +1223,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 e.Handled = true;
                 xPhonesListBox.SelectedItem = null;
                 mPreferredDeviceUuid = null;
-                mPreferredDeviceName = null;
                 UpdateCurrentPhoneMarker();
             }
         }
@@ -1244,15 +1283,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     string.Equals(phone.Uuid, mPreferredDeviceUuid, StringComparison.OrdinalIgnoreCase));
             }
 
-            if (targetPhone == null && !string.IsNullOrWhiteSpace(mPreferredDeviceName))
-            {
-                targetPhone = mPhones.FirstOrDefault(phone =>
-                    string.Equals(phone.DeviceName, mPreferredDeviceName, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(phone.DisplayName, mPreferredDeviceName, StringComparison.OrdinalIgnoreCase));
-            }
-
             xPhonesListBox.SelectedItem = targetPhone;
-            
+
+            if (targetPhone != null)
+            {
+                xPhonesListBox.ScrollIntoView(targetPhone);
+            }
         }
 
         private void UpdateCurrentPhoneMarker()
@@ -1277,26 +1313,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(mPreferredDeviceUuid) && !string.IsNullOrEmpty(phone.Uuid) &&
-                string.Equals(phone.Uuid, mPreferredDeviceUuid, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            if (!string.IsNullOrEmpty(mPreferredDeviceName))
-            {
-                if (!string.IsNullOrEmpty(phone.DeviceName) && string.Equals(phone.DeviceName, mPreferredDeviceName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-
-                if (!string.IsNullOrEmpty(phone.DisplayName) && string.Equals(phone.DisplayName, mPreferredDeviceName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return !string.IsNullOrEmpty(mPreferredDeviceUuid) &&
+                   !string.IsNullOrEmpty(phone.Uuid) &&
+                   string.Equals(phone.Uuid, mPreferredDeviceUuid, StringComparison.OrdinalIgnoreCase);
         }
 
         private sealed class UftPhoneViewModel
