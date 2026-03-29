@@ -305,7 +305,7 @@ namespace Ginger.Run.RunSetActions
                             string accountReportURL = GingerRemoteExecutionUtils.GetOnlineHTMLReportlink(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID);
                             if (!string.IsNullOrEmpty(accountReportURL))
                             {
-                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + accountReportURL + "' style ='font-size:16px;color:#E9206E;text-decoration:underline;font-weight:700'> Open Online Report </a>");
+                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + accountReportURL + "' style ='font-size:16px;color:#0071bc;text-decoration:underline;font-weight:700'> Open Online Report </a>");
                                 emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                             }
                         }
@@ -328,7 +328,7 @@ namespace Ginger.Run.RunSetActions
                                     reportName = "\\viewreport.html'";
                                 }
 
-                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + reportsResultFolder + reportName + " style ='font-size:16px;color:#E9206E;text-decoration:underline;font-weight:700'> Open Online Report </a>");
+                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + reportsResultFolder + reportName + " style ='font-size:16px;color:#0071bc;text-decoration:underline;font-weight:700'> Open Online Report </a>");
                                 emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                             }
                         }
