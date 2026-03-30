@@ -45,11 +45,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 
 [Files]
-Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
-Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
+Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
+Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net10.0-windows10.0.17763.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
-Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-8.0.22-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
-Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-8.0.22-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-10.0.3-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-10.0.3-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

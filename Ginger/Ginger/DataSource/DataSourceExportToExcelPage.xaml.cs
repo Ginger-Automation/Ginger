@@ -424,7 +424,6 @@ namespace Ginger.DataSource
 
             if (mActDSTableElement != null)
             {
-
                 xExcelExportQuery.ValueTextBox.Text =
                         mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.Where(x => x.IsSelected).ToList(),
                             mActDSTableElement.ExcelConfig.WhereConditionStringList,

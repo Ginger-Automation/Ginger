@@ -78,7 +78,7 @@ namespace Ginger.Repository
             {
                 xActionListView.DataSourceList = mActionsFolder.GetFolderItems();
             }
-            xActionListView.SetFolderTreeRoot(new SharedActionsFolderTreeItem(mActionsFolder));
+            xActionListView.SetFolderTreeRootFactory(() => new SharedActionsFolderTreeItem(mActionsFolder));
             xActionListView.IsToggleButtonVisible = true;
         }
 
