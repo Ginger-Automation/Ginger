@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,30 +129,33 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             return query;
         }
 
-        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList,ObservableList<WhereConditionItem> whereConditionList,string tableName,DataSourceBase.eDSType dSType)
+
+        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
         {
             // Build column list (NO SQL, just col1,col2,col3)
             string columnList = string.Join(",",
                 mColumnList.Where(x => x.IsSelected).Select(x => x.ColumnText));
 
-            // No conditions → return column list only
+            // PR Change: Return early when no conditions
             if (whereConditionList == null || whereConditionList.Count == 0)
             {
                 return columnList;
             }
 
-            // Build WHERE clause in Ginger format
             string whereClause = "";
+
+            // Build WHERE clause (Ginger format)
             for (int i = 0; i < whereConditionList.Count; i++)
             {
+
                 var item = whereConditionList[i];
 
-                if (string.IsNullOrEmpty(item.TableColumn) ||
-                    string.IsNullOrEmpty(item.RowValue))
+
+                // PR change: skip invalid items
+                if (string.IsNullOrEmpty(item.TableColumn) || string.IsNullOrEmpty(item.RowValue))
                     continue;
 
                 string predicate = "";
-
                 switch (item.Opertor)
                 {
                     case "Equals":
@@ -172,17 +176,26 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                     case "EndsWith":
                         predicate = $"{item.TableColumn} Like \"%{item.RowValue}\"";
                         break;
-                }
+                    case "NotStartsWith":
+                        predicate = $"{item.TableColumn} Not Like \"{item.RowValue}%\"";
+                        break;
+                    case "NotEndsWith":
+                        predicate = $"{item.TableColumn} Not Like \"%{item.RowValue}\"";
+                        break;
 
+                }
                 if (i > 0)
                     whereClause += " AND ";
-
                 whereClause += predicate;
             }
-
-            // Return Ginger expected string: "col1,col2 where condition"
+            if (string.IsNullOrWhiteSpace(whereClause))
+            {
+                return columnList;   // return only columns, no where clause
+            }
             return $"{columnList} where {whereClause}";
+
         }
+
         public ObservableList<GingerCore.DataSource.ActDSConditon> GetConditons(ObservableList<WhereConditionItem> conditonStringList, System.Data.DataTable mDataTable)
         {
             var dsConditionList = new ObservableList<GingerCore.DataSource.ActDSConditon>();

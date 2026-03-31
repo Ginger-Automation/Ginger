@@ -75,8 +75,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V139.DevToolsSessionDomains;
-using DevToolsVersion = OpenQA.Selenium.DevTools.V139;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V145.DevToolsSessionDomains;
+using DevToolsVersion = OpenQA.Selenium.DevTools.V145;
 
 
 
@@ -603,7 +603,7 @@ namespace GingerCore.Drivers
                 {
                     Kind = ProxyKind.Manual,
                     HttpProxy = Proxy,
-                    FtpProxy = Proxy,
+                    //FtpProxy = Proxy,
                     SslProxy = Proxy,
                     SocksProxy = Proxy,
                     SocksVersion = 5
@@ -664,7 +664,7 @@ namespace GingerCore.Drivers
                     }
                     mProxy.Kind = ProxyKind.Manual;
                     mProxy.HttpProxy = Proxy;
-                    mProxy.FtpProxy = Proxy;
+                    //mProxy.FtpProxy = Proxy;
                     mProxy.SslProxy = Proxy;
                     mProxy.SocksProxy = Proxy;
 
@@ -1160,7 +1160,7 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("error starting process", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver(mBrowserType);
+                    UpdateDriver(mBrowserType).ConfigureAwait(true);
                     StartDriver();
                 }
             }
@@ -1319,7 +1319,7 @@ namespace GingerCore.Drivers
             return env == "docker";
         }
 
-        private string UpdateDriver(eBrowserType browserType)
+        private async Task<string> UpdateDriver(eBrowserType browserType)
         {
             try
             {
@@ -1364,7 +1364,7 @@ namespace GingerCore.Drivers
 
                 SetBrowserVersion(driverOptions);
                 var driverFinder = new DriverFinder(driverOptions);
-                var driverpath = driverFinder.GetDriverPath();
+                var driverpath = await driverFinder.GetDriverPathAsync();
                 Reporter.ToLog(eLogLevel.INFO, $"Updated {browserType} driver to latest and placed in {driverpath}.");
                 return driverpath;
             }
@@ -1379,10 +1379,9 @@ namespace GingerCore.Drivers
             }
         }
 
-        public string GetDriverPath(eBrowserType browserType)
+        public async Task<string> GetDriverPath(eBrowserType browserType)
         {
-            string DriverPath = string.Empty;
-            DriverPath = UpdateDriver(browserType);
+            string DriverPath = await UpdateDriver(browserType);
             return DriverPath;
         }
         private static void CloseDriverProcess(DriverService driverService)

@@ -828,7 +828,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
 
             DriverConfigParam serverParam = mAppiumServer;
-            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid);
+            string currentAppId = FindExistingCapability("appium:bundleId")?.Value ?? FindExistingCapability("appium:appPackage")?.Value;
+            string currentPlatform = mDevicePlatformType?.Value;
+            UFTCredentialsDialog dialog = new UFTCredentialsDialog(serverParam, credentials.clientId, credentials.clientSecret, credentials.tenantId, UFTMBasicCallAsync, currentDeviceName, currentDeviceUuid, currentAppId, currentPlatform);
 
             Window owner = Window.GetWindow(this);
 
@@ -836,6 +838,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (dialogResult == true)
             {
                 ApplySelectedPhoneDetails(dialog);
+                ApplySelectedAppDetails(dialog);
             }
         }
 
@@ -854,6 +857,45 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             wasUpdated |= UpdateCapabilityValue("appium:udid", dialog.SelectedPhoneUuid ?? string.Empty);
 
             bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedPhonePlatform);
+
+            if (wasUpdated || platformUpdated)
+            {
+                xCapabilitiesGrid.Grid?.Items.Refresh();
+            }
+        }
+
+        private void ApplySelectedAppDetails(UFTCredentialsDialog dialog)
+        {
+            if (dialog == null || string.IsNullOrWhiteSpace(dialog.SelectedAppId))
+            {
+                return;
+            }
+
+            bool wasUpdated = false;
+
+            if (string.Equals(dialog.SelectedAppType, "IOS", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrWhiteSpace(dialog.SelectedAppBundleId))
+                {
+                    wasUpdated |= UpdateCapabilityValue("appium:bundleId", dialog.SelectedAppBundleId);
+                }
+                DeleteCapabilityIfExist("appium:appPackage");
+                DeleteCapabilityIfExist("appium:appActivity");
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(dialog.SelectedAppPackage))
+                {
+                    wasUpdated |= UpdateCapabilityValue("appium:appPackage", dialog.SelectedAppPackage);
+                }
+                if (!string.IsNullOrWhiteSpace(dialog.SelectedAppActivity))
+                {
+                    wasUpdated |= UpdateCapabilityValue("appium:appActivity", dialog.SelectedAppActivity);
+                }
+                DeleteCapabilityIfExist("appium:bundleId");
+            }
+
+            bool platformUpdated = ApplyPlatformFromSelection(dialog.SelectedAppType);
 
             if (wasUpdated || platformUpdated)
             {

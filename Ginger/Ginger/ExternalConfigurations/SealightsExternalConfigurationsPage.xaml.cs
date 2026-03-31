@@ -18,11 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
+using GingerCore;            // EncryptionHandler
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.Configurations
 {
@@ -62,11 +65,29 @@ namespace Ginger.Configurations
             xSealighsSessionTimeoutTextBox.Init(mContext, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsSessionTimeout));
             xSealighsReportedEntityLevelComboBox.BindControl(_SealightsConfiguration, nameof(SealightsConfiguration.SealightsReportedEntityLevel));
             ApplyValidationRules();
+            xSealighsAgentTokenTextBox.ValueTextBox.LostKeyboardFocus += xSealighsAgentTokenTextBox_LostKeyboardFocus;
             if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
             {
                 xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
             }
             xSealightsTestRecommendationsRadioButton.Init(typeof(SealightsConfiguration.eSealightsTestRecommendations), xSealightsTestRecommendationsPanel, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsTestRecommendations), SealightsTestRecommendationRadioButton_CheckedHandler);
+            
+        }
+
+
+        private void xSealighsAgentTokenTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var textbox = xSealighsAgentTokenTextBox.ValueTextBox;
+            string current = textbox.Text;
+
+            // Skip value expressions (AskLisa behavior)
+            if (ValueExpression.IsThisAValueExpression(current))
+                return;  // same rule as AskLisa [1]
+            // Encrypt only if not already encrypted
+            if (!EncryptionHandler.IsStringEncrypted(current))
+            {
+                textbox.Text = EncryptionHandler.EncryptwithKey(current);
+            }
         }
 
         private void ApplyValidationRules()
@@ -96,22 +117,30 @@ namespace Ginger.Configurations
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
+
+            // Ensure Agent Token is encrypted before save
+            if(!string.IsNullOrWhiteSpace(_SealightsConfiguration.SealightsAgentToken)
+        && !ValueExpression.IsThisAValueExpression(_SealightsConfiguration.SealightsAgentToken)
+        && !EncryptionHandler.IsStringEncrypted(_SealightsConfiguration.SealightsAgentToken))
+    {
+                _SealightsConfiguration.SealightsAgentToken =
+                    EncryptionHandler.EncryptwithKey(_SealightsConfiguration.SealightsAgentToken);
+            }
+
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
 
         private void SealightsLogRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
         {
             string value = ((RadioButton)sender).Tag?.ToString();
-
             SealightsConfiguration.eSealightsLog sealightsLog;
-
             Enum.TryParse(value, out sealightsLog);
 
             if (sealightsLog == SealightsConfiguration.eSealightsLog.Yes)
             {
                 xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
 
-                // Adding Init and validation in ordre to fix the issue: Validation is not working when Sealights is not Enable on the Init/load Configuration form
+                // you re-init all controls here...
                 Context mContext = new Context();
                 xSealightsURLTextBox.Init(mContext, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsURL));
                 xSealighsAgentTokenTextBox.Init(mContext, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsAgentToken));
@@ -120,8 +149,10 @@ namespace Ginger.Configurations
                 xSealighsBuildSessionIDTextBox.Init(mContext, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsBuildSessionID));
                 xSealighsSessionTimeoutTextBox.Init(mContext, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsSessionTimeout));
                 xSealighsReportedEntityLevelComboBox.BindControl(_SealightsConfiguration, nameof(SealightsConfiguration.SealightsReportedEntityLevel));
-
                 ApplyValidationRules();
+
+                // IMPORTANT: re-attach the handler after re-init
+                xSealighsAgentTokenTextBox.ValueTextBox.LostKeyboardFocus += xSealighsAgentTokenTextBox_LostKeyboardFocus;
             }
             else
             {
