@@ -485,7 +485,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (e.ChangeType == WatcherChangeTypes.Deleted)
                     {
-                        if (mSubFoldersCache.Any(x => x.FolderName == e.Name))
+                        if (mSubFoldersCache != null && mSubFoldersCache.Any(x => x.FolderName == e.Name))
                         {
                             HandleDirecortyChange(e);
                         }
