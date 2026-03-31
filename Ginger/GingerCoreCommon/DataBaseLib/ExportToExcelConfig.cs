@@ -130,7 +130,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
 
 
-        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
+        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList,ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
         {
             // Build column list (NO SQL, just col1,col2,col3)
             string columnList = string.Join(",",
