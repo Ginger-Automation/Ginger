@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using Amdocs.Ginger.CoreNET.External.GingerPlay;
-using OpenQA.Selenium.DevTools.V137.Audits;
 using System;
 
 namespace GingerCoreNET.GeneralLib

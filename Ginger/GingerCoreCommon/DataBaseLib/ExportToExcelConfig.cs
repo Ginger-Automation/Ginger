@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             // Build WHERE clause (Ginger format)
             for (int i = 0; i < whereConditionList.Count; i++)
             {
-                
+
                 var item = whereConditionList[i];
 
 
@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
                 string predicate = "";
                 switch (item.Opertor)
-                { 
+                {
                     case "Equals":
                         predicate = $"{item.TableColumn} = \"{item.RowValue}\"";
                         break;

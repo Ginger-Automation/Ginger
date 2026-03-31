@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2025 European Support Limited
+Copyright ? 2014-2026 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Ginger.Activities;
 
 namespace Ginger.Drivers.DriversConfigsEditPages
@@ -51,10 +52,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private const string PhonesListBoxName = "xPhonesListBox";
         private const string PhonesMessageTextBlockName = "xPhonesMessageTextBlock";
         private readonly ObservableCollection<UftPhoneViewModel> mPhones = new();
+        private readonly ObservableCollection<UftAppViewModel> mApps = new();
         // UI controls are defined in XAML and exposed by InitializeComponent
         private UftPhoneViewModel mSelectedPhone;
-        private string mPreferredDeviceName;
+        private UftAppViewModel mSelectedApp;
         private string mPreferredDeviceUuid;
+        private string mPreferredAppId;
         private readonly HashSet<string> mWorkspaces = new();
         private readonly Dictionary<string, string> mWorkspaceNameToUuid = new(StringComparer.OrdinalIgnoreCase);
 
@@ -64,9 +67,20 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         public string SelectedPhonePlatform { get; private set; }
 
+        public string SelectedAppId { get; private set; }
+        public string SelectedAppName { get; private set; }
+        public string SelectedAppType { get; private set; }
+        public string SelectedAppIdentifier { get; private set; }
+        public string SelectedAppBundleId { get; private set; }
+        public string SelectedAppPackage { get; private set; }
+        public string SelectedAppActivity { get; private set; }
+        public string SelectedAppUdid { get; private set; }
+
         public bool? DialogResult { get; private set; }
 
-        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<string, Task<string>> uftmBasicCallFunc, string initialDeviceName = null, string initialDeviceUuid = null)
+        private string mInitialPlatform;
+
+        public UFTCredentialsDialog(DriverConfigParam serverParam, DriverConfigParam clientIdParam, DriverConfigParam clientSecretParam, DriverConfigParam tenantIdParam, Func<string, Task<string>> uftmBasicCallFunc, string initialDeviceName = null, string initialDeviceUuid = null, string initialAppId = null, string initialPlatform = null)
         {
             InitializeComponent();
 
@@ -78,10 +92,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DialogResult = false;
             mPreferredDeviceName = initialDeviceName;
             mPreferredDeviceUuid = initialDeviceUuid;
+            mPreferredAppId = initialAppId;
+            mInitialPlatform = initialPlatform;
 
             InitCredentialsEditors();
             InitPhonesList();
-            // When the page is first loaded, automatically trigger the refresh to load devices
+            InitAppsList();
             this.Loaded += UFTCredentialsDialog_Loaded;
         }
 
@@ -93,6 +109,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 try
                 {
                     ShowPhonesButton_Click(xShowPhonesBtn, new RoutedEventArgs());
+                    RefreshAppsButton_Click(xRefreshAppsBtn, new RoutedEventArgs());
                 }
                 catch (Exception ex)
                 {
@@ -190,6 +207,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             {
                 xPhonesListBox.ItemsSource = mPhones;
                 xPhonesListBox.SelectionChanged += PhonesListBox_SelectionChanged;
+            }
+        }
+
+        private void InitAppsList()
+        {
+            if (xAppsListBox != null)
+            {
+                xAppsListBox.ItemsSource = mApps;
+                xAppsListBox.SelectionChanged += AppsListBox_SelectionChanged;
             }
         }
 
@@ -311,6 +337,383 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
+        private async void RefreshAppsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (mUftmBasicCallFunc == null)
+            {
+                DisplayAppsResult("Fetching apps is not available in the current context.", treatContentAsMessage: true);
+                return;
+            }
+
+            if (!ValidateCredentials(out string validationMessage))
+            {
+                DisplayAppsResult(validationMessage, treatContentAsMessage: true);
+                return;
+            }
+
+            Button triggerButton = sender as Button;
+            object originalButtonContent = null;
+            if (triggerButton != null)
+            {
+                originalButtonContent = triggerButton.Content;
+                triggerButton.IsEnabled = false;
+                triggerButton.Content = "Loading...";
+            }
+
+            DisplayAppsResult("Loading...", treatContentAsMessage: true);
+
+            try
+            {
+                string result = await mUftmBasicCallFunc("/rest/apps/getAplicationsLastVersion");
+                if (string.IsNullOrWhiteSpace(result))
+                {
+                    DisplayAppsResult("No apps fetched or authentication failed.", treatContentAsMessage: true);
+                }
+                else
+                {
+                    bool treatAsMessage = ShouldTreatFetchResultAsMessage(result);
+                    DisplayAppsResult(result, treatAsMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch UFT Mobile apps from dialog", ex);
+                DisplayAppsResult($"Error: {ex.Message}", treatContentAsMessage: true);
+            }
+            finally
+            {
+                if (triggerButton != null)
+                {
+                    triggerButton.IsEnabled = true;
+                    triggerButton.Content = originalButtonContent ?? "Refresh";
+                }
+            }
+        }
+
+        private void DisplayAppsResult(string content, bool treatContentAsMessage = false)
+        {
+            if (xAppsResultBorder == null)
+            {
+                return;
+            }
+
+            xAppsResultBorder.Visibility = Visibility.Visible;
+
+            bool isLoading = treatContentAsMessage && string.Equals(content, "Loading...", StringComparison.OrdinalIgnoreCase);
+
+            if (xAppsLoadingPanel != null)
+            {
+                xAppsLoadingPanel.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (isLoading)
+            {
+                xAppsListBox.Visibility = Visibility.Collapsed;
+                if (xAppsMessageTextBlock != null)
+                {
+                    xAppsMessageTextBlock.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
+
+            if (!treatContentAsMessage)
+            {
+                List<UftAppViewModel> parsedApps = ParseApps(content);
+                mApps.Clear();
+                foreach (UftAppViewModel app in parsedApps)
+                {
+                    mApps.Add(app);
+                }
+
+                PopulateAppFilters();
+                ApplyAppFilters();
+
+                xAppsListBox.Visibility = mApps.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                mApps.Clear();
+                xAppsListBox.SelectedItem = null;
+                xAppsListBox.Visibility = Visibility.Collapsed;
+            }
+
+            if (xAppsMessageTextBlock != null)
+            {
+                bool showMessage = treatContentAsMessage || mApps.Count == 0;
+                xAppsMessageTextBlock.Visibility = showMessage ? Visibility.Visible : Visibility.Collapsed;
+                if (showMessage)
+                {
+                    xAppsMessageTextBlock.Text = string.IsNullOrWhiteSpace(content)
+                        ? "No apps fetched or authentication failed."
+                        : content;
+                }
+            }
+
+            ApplyPreferredAppSelection();
+        }
+
+        private List<UftAppViewModel> ParseApps(string rawContent)
+        {
+            List<UftAppViewModel> apps = new();
+            if (string.IsNullOrWhiteSpace(rawContent))
+            {
+                return apps;
+            }
+
+            try
+            {
+                JToken token = JToken.Parse(rawContent);
+                ExtractAppsFromToken(token, apps);
+            }
+            catch (JsonReaderException)
+            {
+                // not JSON
+            }
+
+            return apps;
+        }
+
+        private void ExtractAppsFromToken(JToken token, List<UftAppViewModel> result)
+        {
+            if (token == null)
+            {
+                return;
+            }
+
+            if (token is JArray array)
+            {
+                foreach (JToken child in array)
+                {
+                    ExtractAppsFromToken(child, result);
+                }
+            }
+            else if (token is JObject obj)
+            {
+                if (obj.TryGetValue("data", StringComparison.OrdinalIgnoreCase, out JToken dataToken) && dataToken is JArray)
+                {
+                    ExtractAppsFromToken(dataToken, result);
+                    return;
+                }
+
+                if (obj.TryGetValue("value", StringComparison.OrdinalIgnoreCase, out JToken valueToken) && valueToken is JArray)
+                {
+                    ExtractAppsFromToken(valueToken, result);
+                    return;
+                }
+
+                UftAppViewModel app = CreateAppFromObject(obj);
+                if (app != null)
+                {
+                    result.Add(app);
+                }
+            }
+        }
+
+        private UftAppViewModel CreateAppFromObject(JObject obj)
+        {
+            string id = GetStringValue(obj, "id");
+            string name = GetStringValue(obj, "name");
+            string version = GetStringValue(obj, "version");
+            string type = GetStringValue(obj, "type");
+            string identifier = GetStringValue(obj, "identifier");
+            string bundleId = GetStringValue(obj, "bundleId");
+            string appPackage = GetStringValue(obj, "appPackage");
+            string appActivity = GetStringValue(obj, "appActivity");
+            string appUdid = GetStringValue(obj, "appUdid");
+            string fileName = GetStringValue(obj, "fileName");
+            string instrumentationStatus = GetStringValue(obj, "instrumentationStatus");
+            string iconBase64 = GetStringValue(obj, "icon");
+            bool instrumented = obj.TryGetValue("instrumented", out JToken instToken) && instToken.Value<bool>();
+
+            if (string.IsNullOrWhiteSpace(id) && string.IsNullOrWhiteSpace(name))
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(type) ||
+                string.Equals(type, "Any", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            return new UftAppViewModel
+            {
+                Id = id,
+                Name = name,
+                Version = version,
+                Type = type,
+                Identifier = identifier,
+                BundleId = bundleId,
+                AppPackage = appPackage,
+                AppActivity = appActivity,
+                AppUdid = appUdid,
+                FileName = fileName,
+                Instrumented = instrumented,
+                InstrumentationStatus = instrumentationStatus,
+                IconBase64 = iconBase64
+            };
+        }
+
+        private void PopulateAppFilters()
+        {
+            var osTypes = mApps.Select(a => a.Type).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
+            var osList = new List<string> { "All" };
+            osList.AddRange(osTypes);
+            xAppOsTypeCombo.ItemsSource = osList;
+
+            int preselectedIndex = 0;
+            if (!string.IsNullOrWhiteSpace(mInitialPlatform))
+            {
+                string mapped = mInitialPlatform.Trim().ToLowerInvariant().Contains("ios") ? "IOS" : "ANDROID";
+                string match = osList.FirstOrDefault(o => string.Equals(o, mapped, StringComparison.OrdinalIgnoreCase));
+                if (match != null)
+                {
+                    preselectedIndex = osList.IndexOf(match);
+                }
+            }
+            xAppOsTypeCombo.SelectedIndex = preselectedIndex;
+        }
+
+        private void AppFilters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyAppFilters();
+        }
+
+        private void ApplyAppFilters()
+        {
+            bool hasPlatformPreference = !string.IsNullOrWhiteSpace(mInitialPlatform);
+            foreach (var app in mApps)
+            {
+                app.IsGrayedOut = hasPlatformPreference && !PlatformMatchesInitial(app.Type);
+            }
+
+            var filtered = mApps.AsEnumerable();
+
+            if (xAppOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
+            {
+                filtered = filtered.Where(a => string.Equals(a.Type, os, StringComparison.OrdinalIgnoreCase));
+            }
+
+            xAppsListBox.ItemsSource = filtered.ToList();
+        }
+
+        private bool PlatformMatchesInitial(string platform)
+        {
+            if (string.IsNullOrWhiteSpace(mInitialPlatform) || string.IsNullOrWhiteSpace(platform))
+            {
+                return false;
+            }
+
+            bool initialIsIos = mInitialPlatform.IndexOf("ios", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool platformIsIos = platform.IndexOf("ios", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            return initialIsIos == platformIsIos;
+        }
+
+        private void AppsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox listBox)
+            {
+                mSelectedApp = listBox.SelectedItem as UftAppViewModel;
+                if (mSelectedApp == null)
+                {
+                    SelectedAppId = null;
+                    SelectedAppName = null;
+                    SelectedAppType = null;
+                    SelectedAppIdentifier = null;
+                    SelectedAppBundleId = null;
+                    SelectedAppPackage = null;
+                    SelectedAppActivity = null;
+                    SelectedAppUdid = null;
+                }
+                else
+                {
+                    SelectedAppId = mSelectedApp.Id;
+                    SelectedAppName = mSelectedApp.Name;
+                    SelectedAppType = mSelectedApp.Type;
+                    SelectedAppIdentifier = mSelectedApp.Identifier;
+                    SelectedAppBundleId = mSelectedApp.BundleId;
+                    SelectedAppPackage = mSelectedApp.AppPackage;
+                    SelectedAppActivity = mSelectedApp.AppActivity;
+                    SelectedAppUdid = mSelectedApp.AppUdid;
+                }
+
+                mPreferredAppId = SelectedAppId;
+                UpdateCurrentAppMarker();
+            }
+        }
+
+        private void AppItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not ListBoxItem item)
+            {
+                return;
+            }
+
+            if (item.IsSelected)
+            {
+                e.Handled = true;
+                xAppsListBox.SelectedItem = null;
+                mPreferredAppId = null;
+                UpdateCurrentAppMarker();
+            }
+        }
+
+        private void CopyAppIdentifier_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is UftAppViewModel app)
+            {
+                GingerCore.General.SetClipboardText(app.Identifier ?? string.Empty);
+                e.Handled = true;
+            }
+        }
+
+        private void ApplyPreferredAppSelection()
+        {
+            if (xAppsListBox == null)
+            {
+                return;
+            }
+
+            UftAppViewModel targetApp = null;
+
+            if (!string.IsNullOrWhiteSpace(mPreferredAppId))
+            {
+                targetApp = mApps.FirstOrDefault(a => IsAppMatch(a, mPreferredAppId));
+            }
+
+            xAppsListBox.SelectedItem = targetApp;
+
+            if (targetApp != null)
+            {
+                xAppsListBox.ScrollIntoView(targetApp);
+            }
+        }
+
+        private static bool IsAppMatch(UftAppViewModel app, string preferredId)
+        {
+            return string.Equals(app.Id, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.AppUdid, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.Identifier, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.BundleId, preferredId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(app.AppPackage, preferredId, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void UpdateCurrentAppMarker()
+        {
+            if (mApps == null || mApps.Count == 0)
+            {
+                return;
+            }
+
+            foreach (UftAppViewModel app in mApps)
+            {
+                app.IsCurrent = !string.IsNullOrEmpty(mPreferredAppId) && IsAppMatch(app, mPreferredAppId);
+            }
+
+            xAppsListBox?.Items?.Refresh();
+        }
+
         private void ParseWorkspacesIntoMap(string json)
         {
             mWorkspaceNameToUuid.Clear();
@@ -421,6 +824,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             xPhonesResultBorder.Visibility = Visibility.Visible;
+
+            bool isLoading = treatContentAsMessage && string.Equals(content, "Loading...", StringComparison.OrdinalIgnoreCase);
+
+            if (xPhonesLoadingPanel != null)
+            {
+                xPhonesLoadingPanel.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (isLoading)
+            {
+                xPhonesListBox.Visibility = Visibility.Collapsed;
+                if (xPhonesMessageTextBlock != null)
+                {
+                    xPhonesMessageTextBlock.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
 
             if (!treatContentAsMessage)
             {
@@ -602,7 +1022,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             var osList = new List<string> { "All" };
             osList.AddRange(osTypes);
             xOsTypeCombo.ItemsSource = osList;
-            xOsTypeCombo.SelectedIndex = 0;
+
+            int preselectedIndex = 0;
+            if (!string.IsNullOrWhiteSpace(mInitialPlatform))
+            {
+                string match = osList.FirstOrDefault(o => o.IndexOf(mInitialPlatform, StringComparison.OrdinalIgnoreCase) >= 0
+                    || mInitialPlatform.IndexOf(o, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (match != null)
+                {
+                    preselectedIndex = osList.IndexOf(match);
+                }
+            }
+            xOsTypeCombo.SelectedIndex = preselectedIndex;
             // Workspaces
             var ws = mWorkspaces.OrderBy(x => x).ToList();
             var wsList = new List<string> { "All" };
@@ -636,6 +1067,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void ApplyFilters()
         {
+            bool hasPlatformPreference = !string.IsNullOrWhiteSpace(mInitialPlatform);
+            foreach (var phone in mPhones)
+            {
+                phone.IsGrayedOut = hasPlatformPreference && !PlatformMatchesInitial(phone.Platform);
+            }
+
             var filtered = mPhones.AsEnumerable();
 
             if (xOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
@@ -798,6 +1235,24 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mSelectedPhone != null && mSelectedApp != null)
+            {
+                string phonePlatform = mSelectedPhone.Platform?.Trim().ToLowerInvariant() ?? string.Empty;
+                string appType = mSelectedApp.Type?.Trim().ToLowerInvariant() ?? string.Empty;
+
+                bool phoneIsIos = phonePlatform.Contains("ios");
+                bool appIsIos = appType.Contains("ios");
+
+                if (phoneIsIos != appIsIos)
+                {
+                    string deviceOs = phoneIsIos ? "iOS" : "Android";
+                    string appOs = appIsIos ? "iOS" : "Android";
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage,
+                        $"The selected device is {deviceOs} but the selected app is {appOs}. Please select a device and app with the same platform.");
+                    return;
+                }
+            }
+
             DialogResult = true;
             mDialogWindow?.Close();
         }
@@ -843,6 +1298,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             xPhonesListBox.SelectedItem = targetPhone;
             
+            if (targetPhone != null)
+            {
+                xPhonesListBox.ScrollIntoView(targetPhone);
+        }
         }
 
         private void UpdateCurrentPhoneMarker()
@@ -867,10 +1326,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(mPreferredDeviceUuid) && !string.IsNullOrEmpty(phone.Uuid) &&
-                string.Equals(phone.Uuid, mPreferredDeviceUuid, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
+            return !string.IsNullOrEmpty(mPreferredDeviceUuid) &&
+                   !string.IsNullOrEmpty(phone.Uuid) &&
+                   string.Equals(phone.Uuid, mPreferredDeviceUuid, StringComparison.OrdinalIgnoreCase);
             }
 
             if (!string.IsNullOrEmpty(mPreferredDeviceName))
@@ -904,6 +1362,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             public bool? HealthError { get; init; }
             public string HealthMessage { get; init; }
             public bool IsCurrent { get; set; }
+            public bool IsGrayedOut { get; set; }
+            public double CardOpacity => IsGrayedOut ? 0.4 : 1.0;
 
             public string DisplayName
             {
@@ -1069,6 +1529,92 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     "offline" => "Offline",
                     _ => string.Empty
                 };
+            }
+        }
+
+        private sealed class UftAppViewModel
+        {
+            public string Id { get; init; }
+            public string Name { get; init; }
+            public string Version { get; init; }
+            public string Type { get; init; }
+            public string Identifier { get; init; }
+            public string BundleId { get; init; }
+            public string AppPackage { get; init; }
+            public string AppActivity { get; init; }
+            public string AppUdid { get; init; }
+            public string FileName { get; init; }
+            public bool Instrumented { get; init; }
+            public string InstrumentationStatus { get; init; }
+            public string IconBase64 { get; init; }
+            public bool IsCurrent { get; set; }
+            public bool IsGrayedOut { get; set; }
+            public double CardOpacity => IsGrayedOut ? 0.4 : 1.0;
+
+            private ImageSource mIconSource;
+            private bool mIconResolved;
+
+            public ImageSource IconSource
+            {
+                get
+                {
+                    if (!mIconResolved)
+                    {
+                        mIconResolved = true;
+                        mIconSource = ConvertBase64ToImage(IconBase64);
+                    }
+                    return mIconSource;
+                }
+            }
+
+            public bool HasIcon => IconSource != null;
+
+            public string DisplayName => string.IsNullOrWhiteSpace(Name) ? (string.IsNullOrWhiteSpace(Identifier) ? "Unnamed App" : Identifier) : Name;
+
+            public string VersionDisplay => string.IsNullOrWhiteSpace(Version) ? string.Empty : $"v{Version}";
+
+            public string IdentifierDisplay => string.IsNullOrWhiteSpace(Identifier) ? string.Empty : Identifier;
+
+            public string InstrumentationDisplay => Instrumented ? "Instrumented" : "Not Instrumented";
+
+            public eImageType IconType => string.Equals(Type, "IOS", StringComparison.OrdinalIgnoreCase)
+                ? eImageType.Ios
+                : eImageType.Android;
+
+            public Brush CardBorderBrush => IsCurrent
+                ? (Brush)new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E20074"))
+                : Brushes.Black;
+
+            public Brush TypeBrush => string.Equals(Type, "IOS", StringComparison.OrdinalIgnoreCase)
+                ? Brushes.DodgerBlue
+                : Brushes.MediumSeaGreen;
+
+            public Brush InstrumentationBrush => Instrumented ? Brushes.ForestGreen : Brushes.SlateGray;
+
+            private static ImageSource ConvertBase64ToImage(string base64)
+            {
+                if (string.IsNullOrWhiteSpace(base64))
+                {
+                    return null;
+                }
+
+                try
+                {
+                    byte[] bytes = Convert.FromBase64String(base64);
+                    using var ms = new System.IO.MemoryStream(bytes);
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.StreamSource = ms;
+                    bitmap.DecodePixelWidth = 56;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
     }

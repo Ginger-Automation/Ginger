@@ -241,7 +241,7 @@
   
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
   
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
@@ -293,7 +293,7 @@
   
     <PackageReference Include="log4net" Version="2.0.15" />
   
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.10.3" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.11.1" />
   
     <PackageReference Include="MailKit" Version="4.14.1" />
   
@@ -320,7 +320,7 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.2" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="19.225.2" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="MimeKit" Version="4.14.0" />
+    <PackageReference Include="MimeKit" Version="4.15.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -332,8 +332,8 @@
     <PackageReference Include="protobuf-net.Core" Version="3.2.56" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
-    <PackageReference Include="Selenium.Support" Version="4.35.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.35.0" />
+    <PackageReference Include="Selenium.Support" Version="4.41.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.41.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SkiaSharp" Version="3.116.1" />

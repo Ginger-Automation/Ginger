@@ -200,6 +200,10 @@ namespace GingerCore.Actions
                         return;
                     }
                 }
+                else if (Var.GetType() == typeof(VariablePasswordString))
+                {
+                    Var.SetValue(calculatedValue);
+                }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)
             {

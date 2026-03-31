@@ -67,7 +67,7 @@ namespace Ginger.Actions
 
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
             {
-                if ((v.GetType() != typeof(VariablePasswordString)) && (v.GetType() != typeof(VariableDynamic)))
+                if (v.GetType() != typeof(VariableDynamic))
                 {
                     VariableNameComboBox.Items.Add(v.Name);
                 }

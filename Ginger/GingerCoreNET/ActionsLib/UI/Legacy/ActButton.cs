@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 // This class is for Button actions
@@ -133,7 +134,7 @@ namespace GingerCore.Actions
         Act IObsoleteAction.GetNewAction()
         {
             bool uIElementTypeAssigned = false;
-            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); }, NullLoggerFactory.Instance);
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
             Type currentType = GetActionTypeByElementActionName(this.ButtonAction);

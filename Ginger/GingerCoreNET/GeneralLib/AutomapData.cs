@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using AutoMapper;
 using GingerCore.Variables;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 cfg.CreateMap<List<Guid>, List<Guid>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<Guid>>());
                 cfg.CreateMap<T, T>()
                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            });
+            }, NullLoggerFactory.Instance);
             return config.CreateMapper();
         }
 

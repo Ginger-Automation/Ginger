@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.IO;
 using DocumentFormat.OpenXml;
 using GingerCoreNET.GeneralLib;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -194,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
         private static ObservableList<DiameterAVP> GetAvpsForMessage(string[] avpsNames)
         {
-            var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
+            var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>(), NullLoggerFactory.Instance);
             var mapper = mapperConfig.CreateMapper();
 
             List<DiameterAvpDictionaryItem> dictionaryItems = AvpDictionaryList.Where(avp => avpsNames.Contains(avp.Name)).ToList();
@@ -1995,7 +1996,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 // Search in the user custom response avp list
                 var avp = mAct.CustomResponseAvpList?.FirstOrDefault(avp => avp.Code == avpCode);
 
-                var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
+                var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>(), NullLoggerFactory.Instance);
                 var mapper = mapperConfig.CreateMapper();
 
                 avpInfo = mapper.Map<DiameterAvpDictionaryItem>(avp);
