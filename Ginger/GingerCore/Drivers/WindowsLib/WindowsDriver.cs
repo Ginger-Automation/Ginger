@@ -239,16 +239,33 @@ namespace GingerCore.Drivers.WindowsLib
                     case "ActScreenShot":
                         try
                         {
-                            //TODO: When capturing all windows, we do showwindow. for few applications show window is causing application to minimize
-                            //Disabling the capturing all windows for Windows driver until we fix show window issue
-                            if (mUIAutomationHelper.GetCurrentWindow() != null)
+                            if (act.WindowsToCapture == Act.eWindowsToCapture.AllAvailableWindows)
+                            {
+                                List<AppWindow> list = mUIAutomationHelper.GetListOfDriverAppWindows();
+                                foreach (AppWindow aw in list)
+                                {
+                                    using (Bitmap bmp = mUIAutomationHelper.GetAppWindowAsBitmap(aw))
+                                    {
+                                        if (bmp != null)
+                                        {
+                                            act.AddScreenShot(bmp);
+                                        }
+                                    }
+                                    List<Bitmap> bList = mUIAutomationHelper.GetAppDialogAsBitmap(aw);
+                                    foreach (Bitmap tempbmp in bList)
+                                    {
+                                        act.AddScreenShot(tempbmp);
+                                    }
+                                    bList.Clear();
+                                }
+                            }
+                            else if (mUIAutomationHelper.GetCurrentWindow() != null)
                             {
                                 using (Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap())
                                 {
                                     act.AddScreenShot(bmp);
                                 }
                             }
-                            //if not running well. need to add return same as PBDrive
                         }
                         catch (Exception ex)
                         {

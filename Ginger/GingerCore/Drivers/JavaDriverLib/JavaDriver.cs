@@ -743,6 +743,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     return;
                 }
+                // TakeScreenShots may populate ScreenShots via error-recovery paths while the top-level payload is still an error.
+                if (actClass.Equals("ActScreenShot") && act is ActScreenShot actScreenShot && actScreenShot.ScreenShots.Count > 0)
+                {
+                    return;
+                }
                 else
                 {
                     SetActionStatusFromResponse(act, Response);

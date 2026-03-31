@@ -744,7 +744,7 @@ namespace GingerCore.Drivers
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
-                            FirefoxOption.AddArgument("--headless");                           
+                            FirefoxOption.AddArgument("--headless");
                         }
 
                         if (IsUserProfileFolderPathValid())
@@ -2041,6 +2041,21 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
+                else if (act.WindowsToCapture == Act.eWindowsToCapture.AllAvailableWindows)
+                {
+                    // keep the current window and switch back at the end
+                    String currentWindow = Driver.CurrentWindowHandle;
+
+                    ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
+                    foreach (String winHandle in openWindows)
+                    {
+                        Driver.SwitchTo().Window(winHandle);
+                        Thread.Sleep(200);
+                        AddCurrentScreenShot(act);
+                    }
+                    // switch back to the original window
+                    Driver.SwitchTo().Window(currentWindow);
+                }
                 else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage || TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure)
                 {
                     AddScreenshotIntoAct(act, true);
@@ -2051,17 +2066,7 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    //keep the current window and switch back at the end
-                    String currentWindow = Driver.CurrentWindowHandle;
-
-                    ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
-                    foreach (String winHandle in openWindows)
-                    {
-                        Driver.SwitchTo().Window(winHandle);
-                        AddCurrentScreenShot(act);
-                    }
-                    //Switch back to the last window
-                    Driver.SwitchTo().Window(currentWindow);
+                    AddScreenshotIntoAct(act);
                 }
 
             }
@@ -2153,8 +2158,63 @@ namespace GingerCore.Drivers
 
         private void AddCurrentScreenShot(ActScreenShot act)
         {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            act.AddScreenShot(ss.AsByteArray, Driver.Title);
+            try
+            {
+                Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+                if (IsLikelyBlankScreenshot(ss.AsByteArray))
+                {
+                    // Some browser/driver combinations can return a blank viewport screenshot
+                    // for backgrounded tabs/windows. In that case retry with full page capture.
+                    AddScreenshotIntoAct(act, true);
+                    return;
+                }
+                act.AddScreenShot(ss.AsByteArray, Driver.Title);
+            }
+            catch
+            {
+                AddScreenshotIntoAct(act, true);
+            }
+        }
+
+        private static bool IsLikelyBlankScreenshot(byte[] screenshotBytes)
+        {
+            if (screenshotBytes == null || screenshotBytes.Length == 0)
+            {
+                return true;
+            }
+
+            try
+            {
+                using (MemoryStream memoryStream = new(screenshotBytes))
+                using (Bitmap bitmap = new(memoryStream))
+                {
+                    if (bitmap.Width <= 0 || bitmap.Height <= 0)
+                    {
+                        return true;
+                    }
+
+                    Color first = bitmap.GetPixel(0, 0);
+                    int sampleStepX = Math.Max(bitmap.Width / 10, 1);
+                    int sampleStepY = Math.Max(bitmap.Height / 10, 1);
+
+                    for (int y = 0; y < bitmap.Height; y += sampleStepY)
+                    {
+                        for (int x = 0; x < bitmap.Width; x += sampleStepX)
+                        {
+                            if (bitmap.GetPixel(x, y).ToArgb() != first.ToArgb())
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
 
@@ -3625,19 +3685,19 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case ActGenElement.eGenElementAction.SetAttributeUsingJs:
-                {
-                    e = LocateElement(act);
-                    char[] delimit = new char[] { '=' };
-                    string insertval = act.GetInputParamCalculatedValue("Value");
-                    string[] vals = insertval.Split(delimit, 2);
-                    if (vals.Length != 2)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
-                        return;
-                    }
+                        e = LocateElement(act);
+                        char[] delimit = new char[] { '=' };
+                        string insertval = act.GetInputParamCalculatedValue("Value");
+                        string[] vals = insertval.Split(delimit, 2);
+                        if (vals.Length != 2)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, @"Input string should be in the format : attribute=value");
+                            return;
+                        }
                         ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
-                }
-                break;
+                    }
+                    break;
                 default:
                     Reporter.ToLog(eLogLevel.DEBUG, "Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                     break;
@@ -5746,7 +5806,7 @@ namespace GingerCore.Drivers
                             ProcessSvgChildElements(parentContext, pomSetting, htmlElemNode, foundElementInfo, path, foundElementsList, PomMetaData, isShadowRootDetected, ScreenShot);
                         }
 
-                        POMUtils.TriggerFineTuneWithAI(pomSetting, foundElementInfo,this.PomCategory,null);
+                        POMUtils.TriggerFineTuneWithAI(pomSetting, foundElementInfo, this.PomCategory, null);
 
 
                         // Recursively find elements within shadow DOM
@@ -5790,7 +5850,7 @@ namespace GingerCore.Drivers
             };
         }
 
-        private void ProcessSvgChildElements(ISearchContext searchContext,PomSetting pomSetting, HtmlNode svgHtmlNode, HTMLElementInfo svgElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, Bitmap ScreenShot = null)
+        private void ProcessSvgChildElements(ISearchContext searchContext, PomSetting pomSetting, HtmlNode svgHtmlNode, HTMLElementInfo svgElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, Bitmap ScreenShot = null)
         {
             try
             {
@@ -5802,7 +5862,7 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
-                        Tuple<string, eElementType> childElementType = GetElementTypeEnum(htmlNode: svgChildNode,TypeAtt:nameof(eElementType.Svg));
+                        Tuple<string, eElementType> childElementType = GetElementTypeEnum(htmlNode: svgChildNode, TypeAtt: nameof(eElementType.Svg));
 
                         // Check if this SVG child element should be learned
                         if (ShouldLearnElement(pomSetting, childElementType.Item2))
@@ -6072,11 +6132,11 @@ namespace GingerCore.Drivers
                 if (parent != null)
                 {
                     string parentSelector = "";
-                    
+
                     // Try to find unique parent identifier
                     string parentClass = parent.GetAttributeValue("class", null);
                     string parentDataNodeId = parent.GetAttributeValue("data-node-id", null);
-                    
+
                     if (!string.IsNullOrEmpty(parentDataNodeId))
                     {
                         parentSelector = $"*[@data-node-id='{EscapeXPathString(parentDataNodeId)}']";
@@ -6123,9 +6183,9 @@ namespace GingerCore.Drivers
         private void AddSvgSpecificProperties(HTMLElementInfo elementInfo, HtmlNode svgNode)
         {
             // Add SVG-specific attributes as properties
-            var svgSpecificAttributes = new[] 
-            { 
-                "data-node-id", "data-backend-id", "data-parent-id", 
+            var svgSpecificAttributes = new[]
+            {
+                "data-node-id", "data-backend-id", "data-parent-id",
                 "transform", "href", "fill", "style", "text-anchor",
                 "x", "y", "class"
             };
@@ -6588,9 +6648,9 @@ namespace GingerCore.Drivers
                 "MENU" => eElementType.MenuBar,
                 "H1" or "H2" or "H3" or "H4" or "H5" or "H6" or "P" => eElementType.Text,
                 "SVG" => eElementType.Svg,
-                "G" or "PATH" or "RECT" or "CIRCLE" or "ELLIPSE" or "LINE" or "POLYGON" or "POLYLINE" or "USE" when !string.IsNullOrEmpty(elementTypeAtt) && elementTypeAtt.Equals(nameof(eElementType.Svg),StringComparison.InvariantCultureIgnoreCase) => eElementType.Svg,
+                "G" or "PATH" or "RECT" or "CIRCLE" or "ELLIPSE" or "LINE" or "POLYGON" or "POLYLINE" or "USE" when !string.IsNullOrEmpty(elementTypeAtt) && elementTypeAtt.Equals(nameof(eElementType.Svg), StringComparison.InvariantCultureIgnoreCase) => eElementType.Svg,
 
-               _ => eElementType.Unknown,
+                _ => eElementType.Unknown,
             };
             return elementType;
         }
@@ -8111,7 +8171,7 @@ namespace GingerCore.Drivers
                     // NEW: Enhance SVG detection
                     EnhanceSvgSpyDetection();
                     CurrentPageURL = string.Empty;
-                    
+
                 }
                 catch
                 {
@@ -8990,7 +9050,7 @@ namespace GingerCore.Drivers
 
         private string GenerateSvgElementXPathFromWebElement(IWebElement svgElement)
         {
-           return GenerateEnhancedSvgXPath(svgElement); 
+            return GenerateEnhancedSvgXPath(svgElement);
         }
 
         /// <summary>
@@ -10999,7 +11059,7 @@ namespace GingerCore.Drivers
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Status = eRunStatus.Failed;
                 act.Error = $"Action '{act.ElementAction}' failed: {ex.Message}";
@@ -11123,20 +11183,20 @@ namespace GingerCore.Drivers
             switch (clickType)
             {
                 case ActUIElement.eElementAction.Click:
-                        clickElement.Click();
+                    clickElement.Click();
                     break;
 
-                case ActUIElement.eElementAction.JavaScriptClick:                    
-                        ((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].click()", clickElement);
+                case ActUIElement.eElementAction.JavaScriptClick:
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].click()", clickElement);
                     break;
 
-                case ActUIElement.eElementAction.MouseClick:                    
-                        OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
-                        action.MoveToElement(clickElement).Click().Build().Perform();                    
+                case ActUIElement.eElementAction.MouseClick:
+                    OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
+                    action.MoveToElement(clickElement).Click().Build().Perform();
                     break;
 
                 case ActUIElement.eElementAction.DoubleClick:
-                        OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+                    OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
                     actionDoubleClick.DoubleClick(clickElement).Build().Perform();
                     break;
 
@@ -11149,7 +11209,7 @@ namespace GingerCore.Drivers
                 case ActUIElement.eElementAction.AsyncClick:
                     try
                     {
-                            ((IJavaScriptExecutor)Driver).ExecuteScript("var el=arguments[0]; setTimeout(function() { el.click(); }, 100);", clickElement);
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("var el=arguments[0]; setTimeout(function() { el.click(); }, 100);", clickElement);
                     }
                     catch (Exception)
                     {
@@ -11375,6 +11435,7 @@ namespace GingerCore.Drivers
                 // return screenshot of what's visible currently in the viewport
                 var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
                 act.AddScreenShot(screenshot.AsByteArray, Driver.Title);
+                return;
             }
             switch (mBrowserType)
             {

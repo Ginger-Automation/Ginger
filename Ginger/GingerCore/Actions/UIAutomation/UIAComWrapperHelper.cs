@@ -4857,23 +4857,33 @@ namespace GingerCore.Drivers
         {
             try
             {
-                //TODO: Implement Multi window capture
-                //not in use
                 if (act.WindowsToCapture == Act.eWindowsToCapture.AllAvailableWindows)
                 {
-                    //FIXME                    
-                }
-                else
-                {
-                    if (CurrentWindow != null)
+                    List<AppWindow> windows = GetListOfDriverAppWindows();
+                    foreach (AppWindow aw in windows)
                     {
-                        using (Bitmap tempBmp = GetCurrentWindowBitmap())
+                        using (Bitmap bmp = GetAppWindowAsBitmap(aw))
                         {
-                            act.AddScreenShot(tempBmp);
+                            if (bmp != null)
+                            {
+                                act.AddScreenShot(bmp);
+                            }
                         }
+                        List<Bitmap> dialogs = GetAppDialogAsBitmap(aw);
+                        foreach (Bitmap dialogBmp in dialogs)
+                        {
+                            act.AddScreenShot(dialogBmp);
+                        }
+                        dialogs.Clear();
                     }
                 }
-                return;
+                else if (CurrentWindow != null)
+                {
+                    using (Bitmap tempBmp = GetCurrentWindowBitmap())
+                    {
+                        act.AddScreenShot(tempBmp);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -5039,66 +5049,66 @@ namespace GingerCore.Drivers
         public override async Task<List<ElementInfo>> GetVisibleControls()
         {
             return await Task.Run(async () =>
-             {
+            {
 
-                 List<ElementInfo> list = [];
-                 List<ElementInfo> HTMLlist;
+                List<ElementInfo> list = [];
+                List<ElementInfo> HTMLlist;
 
-                 //TODO: find a better property - since if the window is off screen controls will not show            
-                 try
-                 {
-                     UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
-                     UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
-                     string IEElementXpath = "";
+                //TODO: find a better property - since if the window is off screen controls will not show            
+                try
+                {
+                    UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
+                    UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
+                    string IEElementXpath = "";
 
-                     foreach (UIAuto.AutomationElement AE in AEC)
-                     {
-                         if (StopProcess)
-                         {
-                             break;
-                         }
+                    foreach (UIAuto.AutomationElement AE in AEC)
+                    {
+                        if (StopProcess)
+                        {
+                            break;
+                        }
 
-                         UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
-                         if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
-                         {
-                             ei = (UIAElementInfo)GetElementInfoFor(AE);
-                             IEElementXpath = ei.XPath;
-                             InitializeBrowser(AE);
-                             HTMLlist = await HTMLhelperObj.GetVisibleElement();
-                             list.Add(ei);
-                             if (HTMLlist != null && HTMLlist.Count > 0)
-                             {
-                                 list.AddRange(HTMLlist);
-                             }
-                             //foreach(ElementInfo e1 in HTMLlist)
-                             //{
-                             //    list.Add(e1);
-                             //}
-                         }
+                        UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
+                        if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+                        {
+                            ei = (UIAElementInfo)GetElementInfoFor(AE);
+                            IEElementXpath = ei.XPath;
+                            InitializeBrowser(AE);
+                            HTMLlist = await HTMLhelperObj.GetVisibleElement();
+                            list.Add(ei);
+                            if (HTMLlist != null && HTMLlist.Count > 0)
+                            {
+                                list.AddRange(HTMLlist);
+                            }
+                            //foreach(ElementInfo e1 in HTMLlist)
+                            //{
+                            //    list.Add(e1);
+                            //}
+                        }
 
 
-                         if (String.IsNullOrEmpty(IEElementXpath))
-                         {
-                             list.Add(ei);
-                         }
-                         else if (!ei.XPath.Contains(IEElementXpath))
-                         {
-                             //TODO: Here we check if automation element is child of IE browser element 
-                             // If yes then we skip it because we already have HTML element for this
-                             // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
-                             // Need to find a better way to speed up
-                             list.Add(ei);
-                         }
+                        if (String.IsNullOrEmpty(IEElementXpath))
+                        {
+                            list.Add(ei);
+                        }
+                        else if (!ei.XPath.Contains(IEElementXpath))
+                        {
+                            //TODO: Here we check if automation element is child of IE browser element 
+                            // If yes then we skip it because we already have HTML element for this
+                            // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
+                            // Need to find a better way to speed up
+                            list.Add(ei);
+                        }
 
-                     }
-                 }
-                 catch (Exception ex)
-                 {
-                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
-                 }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
+                }
 
-                 return list;
-             });
+                return list;
+            });
 
         }
 
