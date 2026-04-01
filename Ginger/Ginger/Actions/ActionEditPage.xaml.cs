@@ -530,7 +530,7 @@ namespace Ginger.Actions
             {
                 SetActReturnValuesGrid();
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to initialize Output Values grid", ex);
             }
