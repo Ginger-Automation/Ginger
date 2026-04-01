@@ -100,27 +100,27 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
         -   name: 'Testing GingerUtilsTest'
             if: success() || failure()  
-            run: dotnet test  Ginger/GingerUtilsTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+            run: dotnet test  Ginger/GingerUtilsTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal -- RunConfiguration.DisableParallelization=true
 
         -   name: 'Testing GingerCoreCommonTest'
             if: success() || failure()  
-            run: dotnet test  Ginger/GingerCoreCommonTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+            run: dotnet test  Ginger/GingerCoreCommonTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal -- RunConfiguration.DisableParallelization=true
 
         -   name: 'Testing GingerCoreNETUnitTest'
             if: success() || failure()  
-            run: dotnet test  Ginger/GingerCoreNETUnitTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+            run: dotnet test  Ginger/GingerCoreNETUnitTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal -- RunConfiguration.DisableParallelization=true
 
         -   name: 'Testing GingerPluginCoreTest'
             if: success() || failure()  
-            run: dotnet test  Ginger/GingerPluginCoreTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+            run: dotnet test  Ginger/GingerPluginCoreTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal -- RunConfiguration.DisableParallelization=true
 
         -   name: 'Testing GingerConsoleTest'
             if: success() || failure()  
-            run: dotnet test  Ginger/GingerConsoleTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal
+            run: dotnet test  Ginger/GingerConsoleTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal -- RunConfiguration.DisableParallelization=true
 
         -   name: 'Testing GingerAutoPilotTest'
             if: success() || failure()  
-            run: dotnet test  Ginger/GingerAutoPilotTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal     
+            run: dotnet test  Ginger/GingerAutoPilotTest --configuration ${{ env.BUILD_CONFIGURATION }} --logger trx --results-directory D:\a\TestResults --verbosity=normal -- RunConfiguration.DisableParallelization=true
         
             
 # ------------------------------------------------------------------------------------------------------
