@@ -526,7 +526,14 @@ namespace Ginger.Actions
             //Output Values
 
 
-            SetActReturnValuesGrid();
+            try
+            {
+                SetActReturnValuesGrid();
+            }
+            catch (NullReferenceException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to initialize Output Values grid", ex);
+            }
 
             if (mAction.ActReturnValues.Count > 0 || mAction.Artifacts.Count > 0)
             {
