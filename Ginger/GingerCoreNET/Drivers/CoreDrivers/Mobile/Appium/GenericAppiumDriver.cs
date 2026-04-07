@@ -1794,20 +1794,24 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
             {
                 if (ei == null) return;
 
-                // If already have bounds property or width/height set - assume ok
-                if ((ei.Properties != null && ei.Properties.Any(p => string.Equals(p.Name, "bounds", StringComparison.InvariantCultureIgnoreCase)))
-                    || (ei.Width > 0 && ei.Height > 0))
+                // If we already have concrete size, nothing to do.
+                if (ei.Width > 0 && ei.Height > 0)
                 {
                     return;
                 }
 
                 // Try attribute "bounds" (common for Android UiAutomator)
-                string boundsAttr = null;
+                string boundsAttr = ei.Properties?
+                    .FirstOrDefault(p => string.Equals(p.Name, "bounds", StringComparison.InvariantCultureIgnoreCase))
+                    ?.Value;
                 if (ei.ElementObject is IWebElement we)
                 {
                     try
                     {
-                        boundsAttr = we.GetAttribute("bounds");
+                        if (string.IsNullOrEmpty(boundsAttr))
+                        {
+                            boundsAttr = we.GetAttribute("bounds");
+                        }
                     }
                     catch { boundsAttr = null; }
                 }
@@ -2932,6 +2936,16 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                     ElementInfo filteredElementInfo =
                         POMExecutionUtils.FilterElementDetailsByCategory(ElementInfo, PomCategory);
 
+                    // Keep exact spied element identity when caller did not request locator-based re-resolution.
+                    // FilterElementDetailsByCategory may strip ElementObject in some flows, which can cause
+                    // fallback XY lookup to highlight a nearby element (seen on iOS).
+                    if (!locateElementByItLocators &&
+                        filteredElementInfo.ElementObject == null &&
+                        ElementInfo.ElementObject != null)
+                    {
+                        filteredElementInfo.ElementObject = ElementInfo.ElementObject;
+                    }
+
                     ((IWindowExplorer)mSeleniumDriver)
                         .HighLightElement(filteredElementInfo, locateElementByItLocators);
 
@@ -3088,7 +3102,6 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 // ANDROID (mobile) + iOS → KEEP EXISTING LOGIC
                 // ================================================
                 foundNode = FindElementXmlNodeByXY(mousePosCurrent.X, mousePosCurrent.Y, false).Result;
-
                 if (foundNode != null)
                 {
                     foundElement = GetElementInfoforXmlNode(foundNode).Result;
@@ -3398,6 +3411,8 @@ public string SimulatePhotoOrBarcode(string photoString, string action)
                 {
                     EI.X = Convert.ToInt32(boundsXY[0]);
                     EI.Y = Convert.ToInt32(boundsXY[1]);
+                    EI.Width = Math.Max(0, Convert.ToInt32(boundsXY[2]) - EI.X);
+                    EI.Height = Math.Max(0, Convert.ToInt32(boundsXY[3]) - EI.Y);
                 }
             }
 
