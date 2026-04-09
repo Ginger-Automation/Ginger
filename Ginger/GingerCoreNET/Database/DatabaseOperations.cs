@@ -489,11 +489,14 @@ namespace GingerCore.Environments
                             Password = EncryptionHandler.DecryptwithKey(PassCalculated)
                         };
                         if (port1.HasValue) my.Port = port1.Value;
-                        Database.ConnectionString = my.ConnectionString;
+                        if (string.IsNullOrEmpty(ConnectionStringCalculated))
+                        {
+                            Database.ConnectionString = my.ConnectionString;
+                        }
 
                         oConn = new MySqlConnection
                         {
-                            ConnectionString = my.ConnectionString
+                            ConnectionString = GetConnectionString()
                         };
                         oConn.Open();
                         break;
