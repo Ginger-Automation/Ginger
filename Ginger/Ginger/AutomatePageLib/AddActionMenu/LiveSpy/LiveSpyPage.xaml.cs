@@ -265,8 +265,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                             mWindowExplorerDriver.UnHighLightElements();
                             mSpyElement.WindowExplorer = mWindowExplorerDriver;
 
-                            // Learn details (fills properties/locators)
-                            xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
+                            // Learn details (fills properties/locators) and keep enriched instance if returned
+                            var learnedElement = xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
+                            if (learnedElement != null)
+                            {
+                                mSpyElement = learnedElement;
+                                mSpyElement.WindowExplorer = mWindowExplorerDriver;
+                            }
 
                             // Ensure element location/size fields are updated (important for mobile highlighting)
                             try

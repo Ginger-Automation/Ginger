@@ -275,7 +275,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (matchingOriginalElement == null)
             {
-                mWinExplorer.LearnElementInfoDetails(mSpyElement);
+                var learnedElement = mWinExplorer.LearnElementInfoDetails(mSpyElement);
+                if (learnedElement != null)
+                {
+                    mSpyElement = learnedElement;
+                    mSpyElement.WindowExplorer = mWinExplorer;
+                }
                 matchingOriginalElement = mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
             }
 

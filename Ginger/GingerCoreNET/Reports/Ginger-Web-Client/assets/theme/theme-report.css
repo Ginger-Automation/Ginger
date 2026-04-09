@@ -5491,6 +5491,17 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   padding-right: 0.5rem;
 }
 
+.p-panelmenu .p-menuitem-text {
+  color: #495057;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100ch; 
+}
+
 .p-slidemenu {
   padding: 0.25rem 0;
   background: #ffffff;
