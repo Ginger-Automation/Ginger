@@ -579,33 +579,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void ApplyAppFilters()
         {
-            bool hasPlatformPreference = !string.IsNullOrWhiteSpace(mInitialPlatform);
-            foreach (var app in mApps)
-            {
-                app.IsGrayedOut = hasPlatformPreference && !PlatformMatchesInitial(app.Type);
-            }
-
             var filtered = mApps.AsEnumerable();
 
-            if (xAppOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
+            if (xAppOsTypeCombo?.SelectedItem is string appOs && !string.IsNullOrWhiteSpace(appOs) && !string.Equals(appOs, "All", StringComparison.OrdinalIgnoreCase))
             {
-                filtered = filtered.Where(a => string.Equals(a.Type, os, StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(a => string.Equals(a.Type, appOs, StringComparison.OrdinalIgnoreCase));
             }
 
             xAppsListBox.ItemsSource = filtered.ToList();
-        }
-
-        private bool PlatformMatchesInitial(string platform)
-        {
-            if (string.IsNullOrWhiteSpace(mInitialPlatform) || string.IsNullOrWhiteSpace(platform))
-            {
-                return false;
-            }
-
-            bool initialIsIos = mInitialPlatform.IndexOf("ios", StringComparison.OrdinalIgnoreCase) >= 0;
-            bool platformIsIos = platform.IndexOf("ios", StringComparison.OrdinalIgnoreCase) >= 0;
-
-            return initialIsIos == platformIsIos;
         }
 
         private void AppsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1063,17 +1044,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void ApplyFilters()
         {
-            bool hasPlatformPreference = !string.IsNullOrWhiteSpace(mInitialPlatform);
-            foreach (var phone in mPhones)
-            {
-                phone.IsGrayedOut = hasPlatformPreference && !PlatformMatchesInitial(phone.Platform);
-            }
-
             var filtered = mPhones.AsEnumerable();
 
-            if (xOsTypeCombo?.SelectedItem is string os && !string.IsNullOrWhiteSpace(os) && os != "All")
+            if (xOsTypeCombo?.SelectedItem is string deviceOs && !string.IsNullOrWhiteSpace(deviceOs) && !string.Equals(deviceOs, "All", StringComparison.OrdinalIgnoreCase))
             {
-                filtered = filtered.Where(p => string.Equals(p.Platform, os, StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(p => string.Equals(p.Platform, deviceOs, StringComparison.OrdinalIgnoreCase));
             }
 
             if (xWorkspaceCombo?.SelectedItem is string ws && !string.IsNullOrWhiteSpace(ws) && ws != "All")
