@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2026 European Support Limited
 
@@ -129,6 +129,9 @@ namespace Ginger.Environments
                   new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" },
                 ]
             };
+
+            grdApps.SetAllColumnsDefaultView(view);
+            grdApps.InitViewItems();
         }
 
         private void SetGridData()
