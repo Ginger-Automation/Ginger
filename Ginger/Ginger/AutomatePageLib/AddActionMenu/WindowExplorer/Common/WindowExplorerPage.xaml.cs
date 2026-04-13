@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Ginger.Actions.Locators.ASCF;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
@@ -1441,7 +1442,7 @@ namespace Ginger.WindowExplorer
                     }
 
                     // Draw rectangle in screenshot view using the element's (now fresh) bounds
-                    DrawElementRectangleAsync(inspectElementInfo);
+                    DrawElementRectangleAsync(inspectElementInfo, highlightInApp: false);
 
                     // Keep persistent highlighted element reference for UI flows
                     currentHighlightedElement = inspectElementInfo;
@@ -1482,12 +1483,32 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void DrawElementRectangleAsync(ElementInfo clickedElementInfo)
+        private void DrawElementRectangleAsync(ElementInfo clickedElementInfo, bool highlightInApp = true)
         {
             try
             {
                 // remove previous rectangle
                 RemoveElemntRectangle();
+
+                // For some Android paths the element is identified but bounds are not populated yet.
+                // Refresh once before rectangle math; if still invalid, skip drawing a misleading rectangle.
+                if (clickedElementInfo.Width <= 0 || clickedElementInfo.Height <= 0)
+                {
+                    try
+                    {
+                        mWindowExplorerDriver?.UpdateElementInfoFields(clickedElementInfo);
+                    }
+                    catch (Exception exUpd)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "DrawElementRectangleAsync: UpdateElementInfoFields failed before rectangle draw: " + exUpd.Message, exUpd);
+                    }
+
+                    if (clickedElementInfo.Width <= 0 || clickedElementInfo.Height <= 0)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "DrawElementRectangleAsync: skipping rectangle draw due to invalid element bounds.");
+                        return;
+                    }
+                }
 
                 // element bounds in source image/device coordinates
                 System.Drawing.Point ElementStartPoint = new System.Drawing.Point(clickedElementInfo.X, clickedElementInfo.Y);
@@ -1597,28 +1618,31 @@ namespace Ginger.WindowExplorer
                     mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Visible;
                 }), System.Windows.Threading.DispatcherPriority.Render);
 
-                // ask driver to highlight in the actual app as well (non-blocking)
-                try
+                if (highlightInApp)
                 {
-                    var drv = mWindowExplorerDriver;
-                    if (drv != null)
+                    // ask driver to highlight in the actual app as well (non-blocking)
+                    try
                     {
-                        System.Threading.Tasks.Task.Run(() =>
+                        var drv = mWindowExplorerDriver;
+                        if (drv != null)
                         {
-                            try
+                            System.Threading.Tasks.Task.Run(() =>
                             {
-                                drv.HighLightElement(clickedElementInfo, locateElementByItLocators: true);
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Driver HighLightElement failed", ex);
-                            }
-                        });
+                                try
+                                {
+                                    drv.HighLightElement(clickedElementInfo, locateElementByItLocators: true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, "Driver HighLightElement failed", ex);
+                                }
+                            });
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Request to driver highlight element failed", ex);
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Request to driver highlight element failed", ex);
+                    }
                 }
             }
             catch (Exception ex)

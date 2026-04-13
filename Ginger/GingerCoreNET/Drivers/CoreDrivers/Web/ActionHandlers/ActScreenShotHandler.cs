@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -86,8 +87,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleOnlyActiveWindowOperationAsync()
         {
-            byte[] screenshot = await _browser.CurrentWindow.CurrentTab.ScreenshotAsync();
-            string currentTabTitle = await _browser.CurrentWindow.CurrentTab.TitleAsync();
+            IBrowserTab currentTab = _browser.CurrentWindow.CurrentTab;
+            await PrepareTabForScreenshotAsync(currentTab);
+
+            byte[] screenshot = await currentTab.ScreenshotAsync();
+            string currentTabTitle = await currentTab.TitleAsync();
             _act.AddScreenShot(screenshot, currentTabTitle);
         }
 
@@ -127,16 +131,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private async Task HandleAllAvailableWindowsOperationAsync()
         {
             List<IBrowserWindow> windows = new(_browser.Windows);
+            if (windows.Count == 0)
+            {
+                await HandleOnlyActiveWindowOperationAsync();
+                return;
+            }
             foreach (IBrowserWindow window in windows)
             {
                 List<IBrowserTab> tabs = new(window.Tabs);
                 foreach (IBrowserTab tab in tabs)
                 {
+                    await PrepareTabForScreenshotAsync(tab);
                     byte[] screenshot = await tab.ScreenshotAsync();
                     string currentTabTitle = await tab.TitleAsync();
                     _act.AddScreenShot(screenshot, currentTabTitle);
                 }
             }
+        }
+
+        private static Task PrepareTabForScreenshotAsync(IBrowserTab tab)
+        {
+            if (tab is PlaywrightBrowserTab playwrightBrowserTab)
+            {
+                return playwrightBrowserTab.BringToFrontAsync();
+            }
+            return Task.CompletedTask;
         }
 
         private async Task HandleFullPageOperationAsync()
