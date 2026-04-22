@@ -145,9 +145,9 @@ namespace Ginger.Reports
                     Reporter.ToUser(eUserMsgKey.FolderNameTextBoxIsEmpty);
                     return;
                 }
-                else if (extraInformationCalculated.Length > 100)
+                else if (extraInformationCalculated.Length > 255)
                 {
-                    Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
+                    Reporter.ToUser(eUserMsgKey.FolderPathsAreTooLong);
                     return;
                 }
             }
