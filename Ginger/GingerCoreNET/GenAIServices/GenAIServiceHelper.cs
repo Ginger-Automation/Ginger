@@ -22,6 +22,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -104,8 +105,8 @@ namespace GingerCoreNET.GenAIServices
             catch (Exception ex)
             {
                 var error = "Failed to get access token";
-                Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}");
-                Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}, InnerException:{ex.InnerException},StackTrace:{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{WebUtility.HtmlEncode(ex.Message ?? string.Empty)}");
+                Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{WebUtility.HtmlEncode(ex.Message ?? string.Empty)}, InnerException:{WebUtility.HtmlEncode(ex.InnerException?.ToString() ?? string.Empty)},StackTrace:{WebUtility.HtmlEncode(ex.StackTrace ?? string.Empty)}");
                 return false;
             }
         }
@@ -245,11 +246,11 @@ namespace GingerCoreNET.GenAIServices
             var content = new MultipartFormDataContent
             {
                 { new StringContent(Question), "question" },
-                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Account)), "account" },
-                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DomainType)), "domainType" },
-                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.TemperatureLevel)), "temperatureVal" },
-                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.MaxTokenValue)), "maxTokensVal" },
-                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DataPath)), "dataPath" }
+                { new StringContent(WebUtility.HtmlEncode(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Account) ?? string.Empty)), "account" },
+                { new StringContent(WebUtility.HtmlEncode(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DomainType) ?? string.Empty)), "domainType" },
+                { new StringContent(WebUtility.HtmlEncode(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.TemperatureLevel) ?? string.Empty)), "temperatureVal" },
+                { new StringContent(WebUtility.HtmlEncode(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.MaxTokenValue) ?? string.Empty)), "maxTokensVal" },
+                { new StringContent(WebUtility.HtmlEncode(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DataPath) ?? string.Empty)), "dataPath" }
             };
             return content;
         }
