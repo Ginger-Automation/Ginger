@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.External.Configurations;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -167,7 +168,7 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                         body = doc.RootElement.GetRawText();
                     }
 
-                    var content = new StringContent(body, Encoding.UTF8, contentType);
+                    var content = new StringContent(WebUtility.HtmlEncode(body), Encoding.UTF8, contentType);
                     HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
