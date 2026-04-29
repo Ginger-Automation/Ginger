@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.External.Configurations;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.External.WireMock
@@ -99,7 +100,8 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
 
                 using (HttpClient client = new HttpClient())
                 {
-                    var content = new StringContent($"{{\"targetBaseUrl\": \"{targetUrl}\"}}", Encoding.UTF8, "application/json");
+                    string json = JsonSerializer.Serialize(new { targetBaseUrl = targetUrl });
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{StartRecordingEndpoint}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
@@ -153,7 +155,19 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
                     {
                         contentType = "application/json";
                     }
-                    var content = new StringContent(stubMapping, Encoding.UTF8, contentType);
+
+                    string body;
+                    if (string.IsNullOrEmpty(stubMapping))
+                    {
+                        body = stubMapping;
+                    }
+                    else
+                    {
+                        using JsonDocument doc = JsonDocument.Parse(stubMapping);
+                        body = doc.RootElement.GetRawText();
+                    }
+
+                    var content = new StringContent(body, Encoding.UTF8, contentType);
                     HttpResponseMessage response = await client.PostAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
@@ -204,7 +218,18 @@ namespace Amdocs.Ginger.CoreNET.External.WireMock
 
                 using (HttpClient client = new HttpClient())
                 {
-                    var content = new StringContent(stubMapping, Encoding.UTF8, "application/json");
+                    string body;
+                    if (string.IsNullOrEmpty(stubMapping))
+                    {
+                        body = stubMapping;
+                    }
+                    else
+                    {
+                        using JsonDocument doc = JsonDocument.Parse(stubMapping);
+                        body = doc.RootElement.GetRawText();
+                    }
+
+                    var content = new StringContent(body, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await client.PutAsync($"{NormalizeUrl(GingerCore.ValueExpression.PasswordCalculation(_baseUrl))}{MappingEndpoint}/{stubId}", content);
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
