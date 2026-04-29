@@ -489,7 +489,34 @@ namespace GingerCore.Environments
                             Password = EncryptionHandler.DecryptwithKey(PassCalculated)
                         };
                         if (port1.HasValue) my.Port = port1.Value;
-                        Database.ConnectionString = my.ConnectionString;
+                        if (!string.IsNullOrEmpty(ConnectionStringCalculated))
+                        {
+                            foreach (string segment in ConnectionStringCalculated.Split(';', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                int eq = segment.IndexOf('=');
+                                if (eq <= 0)
+                                {
+                                    continue;
+                                }
+
+                                string key = segment.Substring(0, eq).Trim();
+                                if (key.Equals("SslMode", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string value = segment.Substring(eq + 1).Trim();
+                                    if (Enum.TryParse(value, ignoreCase: true, out MySqlSslMode sslMode))
+                                    {
+                                        my.SslMode = sslMode;
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(ConnectionStringCalculated))
+                        {
+                            Database.ConnectionString = my.ConnectionString;
+                        }
 
                         oConn = new MySqlConnection
                         {
