@@ -105,8 +105,7 @@ namespace GingerCoreNET.GenAIServices
             catch (Exception ex)
             {
                 var error = "Failed to get access token";
-                Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{WebUtility.HtmlEncode(ex.Message ?? string.Empty)}");
-                Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{WebUtility.HtmlEncode(ex.Message ?? string.Empty)}, InnerException:{WebUtility.HtmlEncode(ex.InnerException?.ToString() ?? string.Empty)},StackTrace:{WebUtility.HtmlEncode(ex.StackTrace ?? string.Empty)}");
+                Reporter.ToLog(eLogLevel.ERROR, error, ex);
                 return false;
             }
         }
