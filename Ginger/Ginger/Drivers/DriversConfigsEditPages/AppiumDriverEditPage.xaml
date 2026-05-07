@@ -99,7 +99,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                             <Label  Content="App type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
-                            <RadioButton x:Name="xNativeHybRdBtn" Content="Native/Hybrid" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AppType" VerticalAlignment="Center" Margin="8,0,0,0" IsChecked="True" Checked="ActivityTypeSelectionChanged"/>
+                            <RadioButton x:Name="xNativeHybRdBtn" Content="Native/Hybrid" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AppType" VerticalAlignment="Center" Margin="36,0,0,0" IsChecked="True" Checked="ActivityTypeSelectionChanged"/>
                             <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="7,0,0,0" Checked="ActivityTypeSelectionChanged"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical"  Margin="0,5,0,0">
