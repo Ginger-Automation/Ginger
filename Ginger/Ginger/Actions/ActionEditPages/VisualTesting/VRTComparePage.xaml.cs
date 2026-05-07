@@ -88,6 +88,7 @@ namespace Ginger.Actions.VisualTesting
                 }
             });
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCreateBaselineCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.CreateBaselineImage));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFullPageScreenshotCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.IsFullPageScreenshot));
 
             InitLayout();
 
@@ -160,6 +161,8 @@ namespace Ginger.Actions.VisualTesting
                     xCreateBaselineCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewImage.Visibility = Visibility.Collapsed;
                     xCreateBaselineNote.Visibility = Visibility.Collapsed;
+                    xFullPageScreenshotLabel.Visibility = Visibility.Collapsed;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewBaselineImage.Visibility = Visibility.Collapsed;
                     VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
                     break;
@@ -222,6 +225,16 @@ namespace Ginger.Actions.VisualTesting
                         xBaselineImageRadioButtonPnl.Visibility = Visibility.Visible;
                         VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
                         xPreviewBaselineImage.Visibility = Visibility.Collapsed;
+                        if (baselineImageBy == VRTAnalyzer.eBaselineImageBy.ActiveWindow && actionBy == VRTAnalyzer.eActionBy.Window)
+                        {
+                            xFullPageScreenshotLabel.Visibility = Visibility.Visible;
+                            xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            xFullPageScreenshotLabel.Visibility = Visibility.Collapsed;
+                            xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
+                        }
                     }
                     else
                     {
@@ -231,6 +244,16 @@ namespace Ginger.Actions.VisualTesting
                         VRTBaseImageFramePnl.Visibility = Visibility.Collapsed;
                         xBaselineImagePath.Visibility = Visibility.Collapsed;
                         xPreviewImage.Visibility = Visibility.Collapsed;
+                        if (actionBy == VRTAnalyzer.eActionBy.Window)
+                        {
+                            xFullPageScreenshotLabel.Visibility = Visibility.Visible;
+                            xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            xFullPageScreenshotLabel.Visibility = Visibility.Collapsed;
+                            xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
+                        }
                     }
 
                     break;
@@ -263,6 +286,8 @@ namespace Ginger.Actions.VisualTesting
                     xCreateBaselineCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewImage.Visibility = Visibility.Collapsed;
                     xCreateBaselineNote.Visibility = Visibility.Collapsed;
+                    xFullPageScreenshotLabel.Visibility = Visibility.Collapsed;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewBaselineImage.Visibility = Visibility.Collapsed;
                     VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
                     break;
