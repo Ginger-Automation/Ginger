@@ -262,16 +262,16 @@ namespace GingerCore.Actions.WebAPI
                         certificateKey = General.DecryptPassword(certificateKey, ValueExpression.IsThisAValueExpression(certificateKey), mAct);
                         if (!string.IsNullOrEmpty(path))
                         {
-                            if (string.IsNullOrEmpty(certificateKey))
+                            X509Certificate2 certificate = LoadCertificateFromPath(path, certificateKey);
+                            if (certificate == null)
                             {
-                                handler.ClientCertificates.Add(new X509Certificate2(path));
+                                mAct.Error = "Request setup Failed because of missing/wrong input";
+                                mAct.ExInfo = "Failed to load certificate from path: " + path;
+                                return false;
                             }
-                            else
-                            {
-                                handler.ClientCertificates.Add(new X509Certificate2(path, certificateKey));
-                            }
+                            handler.ClientCertificates.Add(certificate);
 
-                            ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                            ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate cert, X509Chain chain, SslPolicyErrors sslPolicyErrors)
                             {
                                 if (sslPolicyErrors == SslPolicyErrors.None)
                                 {
@@ -307,6 +307,92 @@ namespace GingerCore.Actions.WebAPI
                 Reporter.ToLog(eLogLevel.ERROR, "SSL Error: " + ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Loads a certificate from the given path. Supports:
+        /// - PFX/P12 files (with optional password)
+        /// - PEM/CRT files (with automatic private key file detection)
+        /// - Directory containing PEM/CRT and KEY files
+        /// </summary>
+        private static X509Certificate2 LoadCertificateFromPath(string path, string password)
+        {
+            string[] pemExtensions = [".pem", ".crt", ".cer"];
+            string[] keyExtensions = [".key"];
+            string[] pfxExtensions = [".pfx", ".p12"];
+
+            // If path is a directory, find certificate and key files within it
+            if (Directory.Exists(path))
+            {
+                string certFile = null;
+                string keyFile = null;
+
+                foreach (string file in Directory.GetFiles(path))
+                {
+                    string ext = Path.GetExtension(file).ToLower();
+                    if (pemExtensions.Contains(ext) && certFile == null)
+                    {
+                        certFile = file;
+                    }
+                    else if (keyExtensions.Contains(ext) && keyFile == null)
+                    {
+                        keyFile = file;
+                    }
+                    else if (pfxExtensions.Contains(ext))
+                    {
+                        // PFX found in directory, use it directly
+                        return string.IsNullOrEmpty(password)
+                            ? new X509Certificate2(file)
+                            : new X509Certificate2(file, password);
+                    }
+                }
+
+                if (certFile != null && keyFile != null)
+                {
+                    return X509Certificate2.CreateFromPemFile(certFile, keyFile);
+                }
+                else if (certFile != null)
+                {
+                    return string.IsNullOrEmpty(password)
+                        ? new X509Certificate2(certFile)
+                        : new X509Certificate2(certFile, password);
+                }
+
+                Reporter.ToLog(eLogLevel.ERROR, $"No certificate files found in directory: {path}");
+                return null;
+            }
+
+            // If path is a file
+            if (File.Exists(path))
+            {
+                string ext = Path.GetExtension(path).ToLower();
+
+                // PEM/CRT file - look for a corresponding key file in the same directory
+                if (pemExtensions.Contains(ext))
+                {
+                    string directory = Path.GetDirectoryName(path);
+                    string keyFile = Directory.GetFiles(directory)
+                        .FirstOrDefault(f => keyExtensions.Contains(Path.GetExtension(f).ToLower()));
+
+                    if (!string.IsNullOrEmpty(keyFile))
+                    {
+                        return X509Certificate2.CreateFromPemFile(path, keyFile);
+                    }
+
+                    // No key file found, try loading PEM with password
+                    return string.IsNullOrEmpty(password)
+                        ? new X509Certificate2(path)
+                        : new X509Certificate2(path, password);
+                }
+
+                // PFX/P12 or other format
+                return string.IsNullOrEmpty(password)
+                    ? new X509Certificate2(path)
+                    : new X509Certificate2(path, password);
+            }
+
+            Reporter.ToLog(eLogLevel.ERROR, $"Certificate path does not exist: {path}");
+            return null;
         }
 
         private static string GetCertificateChainErrorStatusInfo(X509Chain chain)
