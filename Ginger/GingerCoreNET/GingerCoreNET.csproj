@@ -295,7 +295,7 @@
   
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.13.1" />
   
-    <PackageReference Include="MailKit" Version="4.14.1" />
+    <PackageReference Include="MailKit" Version="4.16.0" />
   
     <PackageReference Include="MedallionShell" Version="1.6.2" />
   
@@ -320,7 +320,7 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.2" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="19.225.2" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="MimeKit" Version="4.15.1" />
+    <PackageReference Include="MimeKit" Version="4.16.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -343,7 +343,7 @@
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.5" />
-    <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
+    <PackageReference Include="System.Formats.Asn1" Version="10.0.2" />
     <PackageReference Include="System.IO.Packaging" Version="9.0.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
