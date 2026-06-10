@@ -793,5 +793,29 @@ namespace Ginger.Actions
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             RowSelectorValue.Text = mAct.LocateRowValue;
         }
+
+        private void ColumnValueVE_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.LocateColTitle, Context.GetAsContext(mAct.Context));
+            w.ShowAsWindow(eWindowShowStyle.Dialog);
+            cmbColumnValue.Text = mAct.LocateColTitle;
+            SetDescriptionDetails();
+            if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
+            {
+                UpdateRelatedActions();
+            }
+        }
+
+        private void WhereColumnTitleVE_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.WhereColumnTitle, Context.GetAsContext(mAct.Context));
+            w.ShowAsWindow(eWindowShowStyle.Dialog);
+            WhereColumnTitle.Text = mAct.WhereColumnTitle;
+            SetDescriptionDetails();
+            if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
+            {
+                UpdateRelatedActions();
+            }
+        }
     }
 }
