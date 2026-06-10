@@ -203,6 +203,14 @@ namespace GingerCore.Environments
 
                     case eDBTypes.PostgreSQL:
                         {
+                            /*
+                             * If the connection string already has some value then we must consider it 
+                             * and update the same based on the individul values in Username, Password, TNS (Server, host)
+                             * If these fields are empty then keep the Connection string as is
+                             * 
+                             * Current code seems considering that server/TNSCalculated will always be populated but it's not tru from function POV
+                             * If the user intends to use Connection String allow it to use it standalone
+                             */
                             string postgreSQLHost = TNSCalculated;
                             int? port = null;
                             if (TNSCalculated.Contains(':', StringComparison.Ordinal))
@@ -417,27 +425,35 @@ namespace GingerCore.Environments
                         break;
 
                     case eDBTypes.PostgreSQL:
-                        string postgreSQLHost = TNSCalculated;
-                        int? port = null;
-                        if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                        if (string.IsNullOrEmpty(ConnectionStringCalculated))
                         {
-                            var parts = TNSCalculated.Split(':', 2);
-                            postgreSQLHost = parts[0];
-                            if (int.TryParse(parts[1], out int p)) port = p;
+                            string postgreSQLHost = TNSCalculated;
+                            int? port = null;
+                            if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                            {
+                                var parts = TNSCalculated.Split(':', 2);
+                                postgreSQLHost = parts[0];
+                                if (int.TryParse(parts[1], out int p)) port = p;
+                            }
+                            ValidateHostPort(postgreSQLHost, port);
+
+                            var pg = new NpgsqlConnectionStringBuilder
+                            {
+                                Host = postgreSQLHost,
+                                Database = Database.Name ?? string.Empty,
+                                Username = UserCalculated,
+                                Password = EncryptionHandler.DecryptwithKey(PassCalculated)
+                            };
+                            if (port.HasValue) pg.Port = port.Value;
+                            Database.ConnectionString = pg.ConnectionString;
                         }
-                        ValidateHostPort(postgreSQLHost, port);
-
-                        var pg = new NpgsqlConnectionStringBuilder
+                        else
                         {
-                            Host = postgreSQLHost,
-                            Database = Database.Name ?? string.Empty,
-                            Username = UserCalculated,
-                            Password = EncryptionHandler.DecryptwithKey(PassCalculated)
-                        };
-                        if (port.HasValue) pg.Port = port.Value;
-                        Database.ConnectionString = pg.ConnectionString;
+                            var pg = new NpgsqlConnectionStringBuilder(GetConnectionString());
+                            Database.ConnectionString = pg.ConnectionString;
+                        }
 
-                        oConn = new NpgsqlConnection(pg.ConnectionString);
+                        oConn = new NpgsqlConnection(Database.ConnectionString);
                         oConn.Open();
                         break;
 
