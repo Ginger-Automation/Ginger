@@ -449,7 +449,8 @@ namespace GingerCore.Environments
                         }
                         else
                         {
-                            Database.ConnectionString = GetConnectionString();
+                            var pg = new NpgsqlConnectionStringBuilder(GetConnectionString());
+                            Database.ConnectionString = pg.ConnectionString;
                         }
 
                         oConn = new NpgsqlConnection(Database.ConnectionString);
