@@ -417,25 +417,35 @@ namespace GingerCore.Environments
                         break;
 
                     case eDBTypes.PostgreSQL:
-                        string postgreSQLHost = TNSCalculated;
-                        int? port = null;
-                        if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                        var pg = new NpgsqlConnectionStringBuilder();
+                        if (string.IsNullOrEmpty(ConnectionStringCalculated))
                         {
-                            var parts = TNSCalculated.Split(':', 2);
-                            postgreSQLHost = parts[0];
-                            if (int.TryParse(parts[1], out int p)) port = p;
-                        }
-                        ValidateHostPort(postgreSQLHost, port);
+                            string postgreSQLHost = TNSCalculated;
+                            int? port = null;
+                            if (TNSCalculated.Contains(':', StringComparison.Ordinal))
+                            {
+                                var parts = TNSCalculated.Split(':', 2);
+                                postgreSQLHost = parts[0];
+                                if (int.TryParse(parts[1], out int p)) port = p;
+                            }
+                            ValidateHostPort(postgreSQLHost, port);
 
-                        var pg = new NpgsqlConnectionStringBuilder
+                            pg = new NpgsqlConnectionStringBuilder
+                            {
+                                Host = postgreSQLHost,
+                                Database = Database.Name ?? string.Empty,
+                                Username = UserCalculated,
+                                Password = EncryptionHandler.DecryptwithKey(PassCalculated)
+                            };
+                            if (port.HasValue) pg.Port = port.Value;
+                        }
+                        else
                         {
-                            Host = postgreSQLHost,
-                            Database = Database.Name ?? string.Empty,
-                            Username = UserCalculated,
-                            Password = EncryptionHandler.DecryptwithKey(PassCalculated)
-                        };
-                        if (port.HasValue) pg.Port = port.Value;
-                        Database.ConnectionString = pg.ConnectionString;
+                            pg = new NpgsqlConnectionStringBuilder
+                            {
+                                ConnectionString = GetConnectionString()
+                            };
+                        }
 
                         oConn = new NpgsqlConnection(pg.ConnectionString);
                         oConn.Open();
