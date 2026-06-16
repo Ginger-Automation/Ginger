@@ -417,6 +417,7 @@ namespace GingerCore.Environments
                         break;
 
                     case eDBTypes.PostgreSQL:
+                        var pg = new NpgsqlConnectionStringBuilder();
                         if (string.IsNullOrEmpty(ConnectionStringCalculated))
                         {
                             string postgreSQLHost = TNSCalculated;
@@ -429,7 +430,7 @@ namespace GingerCore.Environments
                             }
                             ValidateHostPort(postgreSQLHost, port);
 
-                            var pg = new NpgsqlConnectionStringBuilder
+                            pg = new NpgsqlConnectionStringBuilder
                             {
                                 Host = postgreSQLHost,
                                 Database = Database.Name ?? string.Empty,
@@ -437,18 +438,16 @@ namespace GingerCore.Environments
                                 Password = EncryptionHandler.DecryptwithKey(PassCalculated)
                             };
                             if (port.HasValue) pg.Port = port.Value;
-                            Database.ConnectionString = pg.ConnectionString;
                         }
                         else
                         {
-                            var pg = new NpgsqlConnectionStringBuilder
+                            pg = new NpgsqlConnectionStringBuilder
                             {
                                 ConnectionString = GetConnectionString()
                             };
-                            Database.ConnectionString = pg.ConnectionString;
                         }
 
-                        oConn = new NpgsqlConnection(Database.ConnectionString);
+                        oConn = new NpgsqlConnection(pg.ConnectionString);
                         oConn.Open();
                         break;
 
