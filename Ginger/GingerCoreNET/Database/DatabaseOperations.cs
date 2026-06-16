@@ -203,14 +203,6 @@ namespace GingerCore.Environments
 
                     case eDBTypes.PostgreSQL:
                         {
-                            /*
-                             * If the connection string already has some value then we must consider it 
-                             * and update the same based on the individul values in Username, Password, TNS (Server, host)
-                             * If these fields are empty then keep the Connection string as is
-                             * 
-                             * Current code seems considering that server/TNSCalculated will always be populated but it's not tru from function POV
-                             * If the user intends to use Connection String allow it to use it standalone
-                             */
                             string postgreSQLHost = TNSCalculated;
                             int? port = null;
                             if (TNSCalculated.Contains(':', StringComparison.Ordinal))
@@ -449,7 +441,11 @@ namespace GingerCore.Environments
                         }
                         else
                         {
-                            Database.ConnectionString = GetConnectionString();
+                            var pg = new NpgsqlConnectionStringBuilder
+                            {
+                                ConnectionString = GetConnectionString()
+                            };
+                            Database.ConnectionString = pg.ConnectionString;
                         }
 
                         oConn = new NpgsqlConnection(Database.ConnectionString);
