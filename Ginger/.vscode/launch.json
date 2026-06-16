@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Ginger (Debug)",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/Ginger/Ginger.csproj",
+      "preLaunchTask": "build solution (Debug)"
+    }
+  ]
+}

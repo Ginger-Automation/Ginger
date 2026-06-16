@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build solution (Debug)",
+            "type": "process",
+            "command": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "$ErrorActionPreference='Stop'; $vswhere='${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe'; if (!(Test-Path $vswhere)) { $vswhere='${env:ProgramFiles}\\Microsoft Visual Studio\\Installer\\vswhere.exe' }; if (!(Test-Path $vswhere)) { throw \"vswhere.exe not found in Program Files or Program Files (x86). Install Visual Studio Build Tools.\" }; $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -find \"MSBuild\\**\\Bin\\MSBuild.exe\" | Select-Object -First 1; if (-not $msbuild) { throw \"MSBuild.exe not found. Install MSBuild workload in Visual Studio Build Tools.\" }; & $msbuild \"${workspaceFolder}\\Ginger.sln\" /t:Build /m /graphBuild /p:Configuration=Debug /p:Platform=\"Any CPU\" /v:m"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
