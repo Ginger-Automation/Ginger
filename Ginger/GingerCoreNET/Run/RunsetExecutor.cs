@@ -730,6 +730,7 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //CloseAllAgents();
                 CloseAllEnvironments();
+                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             }
             catch (Exception ex)

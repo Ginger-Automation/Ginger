@@ -4515,6 +4515,7 @@ namespace Ginger.Run
 
                 if (standaloneExecution)
                 {
+                    WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
                     IsRunning = false;
                     Status = RunsetStatus;
                 }
