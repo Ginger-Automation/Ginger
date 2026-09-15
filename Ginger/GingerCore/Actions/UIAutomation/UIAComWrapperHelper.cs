@@ -24,6 +24,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
@@ -2759,17 +2760,7 @@ namespace GingerCore.Drivers
 
                 if (!asyncFlag)// Regular Click
                 {
-                    string status = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
-                    if (!status.Contains("Clicked Successfully"))
-                    {
-                        status = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
-                        if (!status.Contains("Clicked Successfully"))
-                        {
-                            winAPI.SendClick(element);
-                            status = "Clicked Successfully using Mouse event";
-                        }
-                    }
-                    return status;
+                    return ClickElementWithDesktopEngine(element, allowPhysicalInput: true);
                 }
                 else// Async Click
                 {
@@ -2778,17 +2769,8 @@ namespace GingerCore.Drivers
                     {
                         try
                         {
-                            status = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
-                            if (!status.Contains("Clicked Successfully"))
-                            {
-                                status = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
-                                if (!status.Contains("Clicked Successfully"))
-                                {
-                                    winAPI.SendClick(element);
-                                    status = "Clicked Successfully using Mouse event";
-                                    clickTriggeredFlag = true;
-                                }
-                            }
+                            status = ClickElementWithDesktopEngine(element, allowPhysicalInput: true);
+                            clickTriggeredFlag = status.Contains("Clicked Successfully");
                         }
                         catch (Exception ex)
                         {
@@ -2825,6 +2807,38 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.DEBUG, "Element you are trying to click is not Enabled.");
                 return "Element you are trying to click is not Enabled.";
             }
+        }
+
+        private static string ClickElementWithDesktopEngine(UIAuto.AutomationElement element, bool allowPhysicalInput)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.Click, null, allowPhysicalInput));
+            if (engineResult.Success)
+            {
+                return "Clicked Successfully. " + engineResult.ExecutionInfo;
+            }
+            return engineResult.ErrorMessage;
+        }
+
+        private static bool TrySetValueViaDesktopEngine(UIAuto.AutomationElement element, string value, out string info)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.SetValue, value, allowPhysicalInput: false));
+            if (engineResult.Success)
+            {
+                info = engineResult.ExecutionInfo;
+                return true;
+            }
+
+            info = engineResult.ErrorMessage;
+            return false;
+        }
+
+        private static string GetValueViaDesktopEngine(UIAuto.AutomationElement element)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.GetValue, null, allowPhysicalInput: false));
+            return engineResult.Success ? engineResult.OutputValue : null;
         }
 
         public override void ClickOnXYPoint(object obj, string clickPoint)
@@ -3160,11 +3174,24 @@ namespace GingerCore.Drivers
                 switch (controlType)
                 {
                     case "Edit Box":   // Windows         sfd            
-                        element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
-                        ((UIAuto.ValuePattern)vp).SetValue(value);
-                        break;
                     case "text":
                     case "edit":
+                        if (TrySetValueViaDesktopEngine(element, value, out string setValueInfo))
+                        {
+                            if (mPlatform == ePlatformType.PowerBuilder && element.Current.IsKeyboardFocusable)
+                            {
+                                WinAPIAutomation.SendTabKey();
+                            }
+                            break;
+                        }
+                        if (mPlatform == ePlatformType.PowerBuilder)
+                        {
+                            winAPI.SetElementText(element, value);
+                            break;
+                        }
+                        throw new Exception(string.IsNullOrEmpty(setValueInfo)
+                            ? "Element doesn't support UIAuto.ValuePattern.Pattern, make sure locator is finding the correct element"
+                            : setValueInfo);
                     case "list view":
                         if (mPlatform == ePlatformType.PowerBuilder)
                         {
@@ -3191,16 +3218,6 @@ namespace GingerCore.Drivers
                                     }
                                     else
                                     {
-                                        //TODO: one day try to work without win apu and moving the cursor
-                                        //something like below, didn't work
-                                        // It did fine the edit text box but value disappear...
-                                        //element.SetFocus();
-                                        //Thread.Sleep(1);
-                                        //UIAuto.AutomationElement parentElement2 = UIAuto.TreeWalker.ContentViewWalker.GetParent(element);
-                                        //// Find The PB Edit box which is created after click cell
-                                        //UIAuto.PropertyCondition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, "10"); 
-                                        //UIAuto.AutomationElement AEEditBox = parentElement2.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
-
                                         winAPI.SetElementText(element, value);
                                         element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                     }
@@ -4233,6 +4250,10 @@ namespace GingerCore.Drivers
                 {
                     elementValue = GetElementValueByTextpattern(element);
                 }
+                if (string.IsNullOrEmpty(elementValue))
+                {
+                    elementValue = GetValueViaDesktopEngine(element);
+                }
                 if (string.IsNullOrEmpty(elementValue) && General.CompareStringsIgnoreCase(ControlType, ""))
                 {
                     elementValue = GetControlValueFromChildControl(element);
@@ -4246,6 +4267,10 @@ namespace GingerCore.Drivers
                 if (string.IsNullOrEmpty(value) && mPlatform.Equals(ePlatformType.PowerBuilder))
                 {
                     value = GetControlValueFromChildControl(element);
+                }
+                if (string.IsNullOrEmpty(value))
+                {
+                    value = GetValueViaDesktopEngine(element);
                 }
                 if (string.IsNullOrEmpty(value))
                 {

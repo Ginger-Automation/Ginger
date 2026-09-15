@@ -19,6 +19,7 @@ extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.GingerOCR;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,17 @@ namespace GingerCore.Drivers.Common
 
         private WinAPIAutomation winAPI = new WinAPIAutomation();
         public bool taskFinished;
+
+        /// <summary>
+        /// Runs the operation through the desktop automation chain. Physical input is
+        /// never enabled here because these operations never moved the real mouse.
+        /// </summary>
+        private static ActionResult ExecuteDesktopAction(UIAuto.AutomationElement automationElement, DesktopOperation operation, string value)
+        {
+            DesktopActionContext context = DesktopActionMapper.FromElement(automationElement, operation, value, allowPhysicalInput: false);
+            return DesktopActionMapper.ToActionResult(DesktopAutomationEngine.Default.Execute(context));
+        }
+
         public ActionResult ToggleElement(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();
@@ -87,29 +99,7 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult SetValue(UIAuto.AutomationElement automationElement, string value)
         {
-            ActionResult actionResult = new ActionResult();
-            object pattern;
-
-            try
-            {
-                automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out pattern);
-
-                if (pattern != null)
-                {
-                    ((UIAuto.ValuePattern)pattern).SetValue(value);
-                    actionResult.executionInfo = "Element Value set to " + value;
-                }
-                else
-                {
-                    actionResult.errorMessage = "Failed to set the value " + value;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Setting the value using value pattern", ex);
-                actionResult.errorMessage = "Failed to set the value " + value;
-            }
-            return actionResult;
+            return ExecuteDesktopAction(automationElement, DesktopOperation.SetValue, value);
         }
 
         public ActionResult SetText(UIAuto.AutomationElement automationElement, string value)
@@ -299,23 +289,7 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult ClickElement(UIAuto.AutomationElement automationElement)
         {
-            ActionResult actionResult = new ActionResult();
-            Boolean clickTriggeredFlag = false;
-            try
-            {
-                actionResult = ClickUsingInvokePattern(automationElement, ref clickTriggeredFlag);
-                if (!string.IsNullOrEmpty(actionResult.errorMessage))
-                {
-                    clickTriggeredFlag = false;
-                    actionResult = ClickUsingLegacyPattern(automationElement, ref clickTriggeredFlag);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElement", ex);
-                actionResult.errorMessage = "Failed to click the element";
-            }
-            return actionResult;
+            return ExecuteDesktopAction(automationElement, DesktopOperation.Click, null);
         }
 
         public ActionResult DoubleClickElement(UIAuto.AutomationElement automationElement)
@@ -657,34 +631,7 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult GetValue(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
-            ActionResult actionResult = new ActionResult();
-            object valuePattern;
-            try
-            {
-                //if(elementType==eElementType.CheckBox)
-                //{
-                //    object togglePattern;
-                //    automationElement.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out togglePattern);
-
-                //    ToggleState toggleState = ((UIAuto.TogglePattern)togglePattern).Current.ToggleState;
-                //    actionResult.outputValue = Convert.ToString(toggleState);
-                //}
-                //else
-                //{
-                actionResult = GetPropertyValue(automationElement, UIAuto.ValuePatternIdentifiers.ValueProperty);
-                if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
-                {
-                    actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty);
-                }
-                //}      
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Get Value", ex);
-                actionResult.errorMessage = "Failed to Get the value";
-            }
-            return actionResult;
-
+            return ExecuteDesktopAction(automationElement, DesktopOperation.GetValue, null);
         }
 
         public static ActionResult GetValueByOCR(UIAuto.AutomationElement automationElement)
