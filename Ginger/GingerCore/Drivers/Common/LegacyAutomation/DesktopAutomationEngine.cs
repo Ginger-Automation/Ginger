@@ -46,6 +46,10 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             return new DesktopAutomationEngine(
             [
                 new UiaPatternLayer(),
+                // Runs ahead of the generic MSAA layer because it is the only one
+                // that can see inside a PowerBuilder DataWindow. It is inert for
+                // every other window class.
+                new DataWindowMsaaLayer(),
                 new MsaaLayer(),
                 new Win32Layer(),
                 new PhysicalInputLayer()
@@ -108,12 +112,36 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                 return emptyRead;
             }
 
+            // The operator sees a plain sentence; the per-technique detail stays in
+            // ExInfo and the debug log for whoever has to diagnose it.
+            Reporter.ToLog(eLogLevel.DEBUG, "No desktop automation layer could handle the action. " + attempts);
+
             return new DesktopEngineResult
             {
                 Success = false,
-                ErrorMessage = "All desktop automation layers failed. " + attempts,
+                ErrorMessage = DescribeFailure(context.Operation),
                 ExecutionInfo = attempts.ToString()
             };
+        }
+
+        /// <summary>
+        /// Wording aimed at whoever is reading the run report, not at whoever wrote
+        /// the driver, so it names the business action and the next step instead of
+        /// the automation interfaces that were tried.
+        /// </summary>
+        private static string DescribeFailure(DesktopOperation operation)
+        {
+            string attemptedAction = operation switch
+            {
+                DesktopOperation.Click => "click this element",
+                DesktopOperation.SetValue => "set a value on this element",
+                DesktopOperation.GetValue => "read the value of this element",
+                _ => "complete this operation"
+            };
+
+            return "Ginger could not " + attemptedAction
+                + ". The application does not make the element available for automation and every supported way of reaching it was tried."
+                + " Check that the locator points at the control itself rather than the area around it, or use a coordinate or image based action for it.";
         }
     }
 }

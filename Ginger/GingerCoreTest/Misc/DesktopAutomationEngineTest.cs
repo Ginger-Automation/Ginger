@@ -98,8 +98,15 @@ namespace GingerCoreTest.Misc
             DesktopEngineResult result = engine.Execute(new DesktopActionContext { Operation = DesktopOperation.Click });
 
             Assert.IsFalse(result.Success);
-            StringAssert.Contains(result.ErrorMessage, "UIA [Failed]");
-            StringAssert.Contains(result.ErrorMessage, "Win32 [Failed]");
+
+            // The operator-facing message stays free of automation jargon...
+            StringAssert.Contains(result.ErrorMessage, "Ginger could not click this element");
+            Assert.IsFalse(result.ErrorMessage.Contains("[Failed]"),
+                "The reported error must not expose the per-technique attempt log");
+
+            // ...while the detail needed to diagnose it survives in ExInfo.
+            StringAssert.Contains(result.ExecutionInfo, "UIA [Failed]");
+            StringAssert.Contains(result.ExecutionInfo, "Win32 [Failed]");
         }
 
         /// <summary>
@@ -142,7 +149,7 @@ namespace GingerCoreTest.Misc
         {
             List<string> names = DesktopAutomationEngine.CreateDefault().Layers.Select(layer => layer.Name).ToList();
 
-            CollectionAssert.AreEqual(new List<string> { "UIA-Pattern", "MSAA", "Win32", "PhysicalInput" }, names);
+            CollectionAssert.AreEqual(new List<string> { "UIA-Pattern", "DataWindowMsaa", "MSAA", "Win32", "PhysicalInput" }, names);
         }
 
         [TestMethod]
@@ -160,11 +167,11 @@ namespace GingerCoreTest.Misc
             ActionResult actionResult = DesktopActionMapper.ToActionResult(new DesktopEngineResult
             {
                 Success = false,
-                ErrorMessage = "All desktop automation layers failed. UIA [Skipped]: no pattern",
+                ErrorMessage = "Ginger could not click this element.",
                 ExecutionInfo = "UIA [Skipped]: no pattern"
             });
 
-            StringAssert.Contains(actionResult.errorMessage, "All desktop automation layers failed");
+            StringAssert.Contains(actionResult.errorMessage, "Ginger could not click this element");
             StringAssert.Contains(actionResult.executionInfo, "no pattern");
         }
 

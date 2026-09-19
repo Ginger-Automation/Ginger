@@ -255,9 +255,12 @@
     <Compile Include="Drivers\Common\LegacyAutomation\DesktopAutomationEngine.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\UiaPatternLayer.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\MsaaLayer.cs" />
+    <Compile Include="Drivers\Common\LegacyAutomation\DataWindowMsaaLayer.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\Win32Layer.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\Win32Native.cs" />
+    <Compile Include="Drivers\Common\LegacyAutomation\Win32KeyMessages.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\PhysicalInputLayer.cs" />
+    <Compile Include="Drivers\Common\LegacyAutomation\InteractiveDesktop.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">

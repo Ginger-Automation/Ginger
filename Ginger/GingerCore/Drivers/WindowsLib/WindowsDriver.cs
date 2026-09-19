@@ -150,6 +150,17 @@ namespace GingerCore.Drivers.WindowsLib
 
             }
             mUIAutomationHelper.ImplicitWait = mImplicitWait;
+
+            // Written once at start so a run that failed overnight carries the
+            // evidence of the session it ran in, rather than only the symptoms.
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Ginger desktop environment: " + GingerCore.Drivers.Common.LegacyAutomation.InteractiveDesktop.DescribeSession());
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Desktop environment details could not be logged", ex);
+            }
         }
 
         public override void UpdateContext(Context context)

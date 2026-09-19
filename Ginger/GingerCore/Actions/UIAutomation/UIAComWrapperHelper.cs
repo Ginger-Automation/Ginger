@@ -2841,6 +2841,70 @@ namespace GingerCore.Drivers
             return engineResult.Success ? engineResult.OutputValue : null;
         }
 
+        /// <summary>
+        /// PowerBuilder set-value paths use a trailing Tab to force the control to
+        /// commit. While the desktop cannot take physical input this posts VK_TAB as
+        /// a window message to the element's focused child instead, which needs
+        /// neither focus nor an unlocked desktop.
+        /// </summary>
+        /// <remarks>
+        /// On a desktop that can take physical input this goes straight to the
+        /// keyboard, exactly as it always has. The window-message route runs only
+        /// where the keystroke would otherwise have been swallowed in silence.
+        /// </remarks>
+        private static void SendCommitTabKey(UIAuto.AutomationElement element)
+        {
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                IntPtr focus = Win32KeyMessages.ResolveFocusedChild(TryGetNativeHandle(element));
+                if (focus != IntPtr.Zero && Win32KeyMessages.SendTab(focus, 2000))
+                {
+                    return;
+                }
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not post a commit Tab as a window message, using the physical keyboard");
+            }
+
+            WinAPIAutomation.SendTabKey();
+        }
+
+        /// <summary>
+        /// Sends a plain Unicode string as WM_CHAR window messages while the desktop
+        /// cannot take physical input, falling back to the keyboard when the element
+        /// resolves to no child HWND.
+        /// </summary>
+        private static void SendTypedKeys(UIAuto.AutomationElement element, string value)
+        {
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                IntPtr focus = Win32KeyMessages.ResolveFocusedChild(TryGetNativeHandle(element));
+                if (focus != IntPtr.Zero && Win32KeyMessages.SendChars(focus, value, 2000))
+                {
+                    return;
+                }
+                // The value is deliberately left out of the log, since set-value
+                // steps carry passwords and other secrets.
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not type into the element as window messages, using the physical keyboard");
+            }
+
+            WinAPIAutomation.SendInputKeys(value);
+        }
+
+        private static IntPtr TryGetNativeHandle(UIAuto.AutomationElement element)
+        {
+            if (element == null)
+            {
+                return IntPtr.Zero;
+            }
+            try
+            {
+                return new IntPtr(Convert.ToInt64(element.Current.NativeWindowHandle));
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
+        }
+
         public override void ClickOnXYPoint(object obj, string clickPoint)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
@@ -3180,7 +3244,7 @@ namespace GingerCore.Drivers
                         {
                             if (mPlatform == ePlatformType.PowerBuilder && element.Current.IsKeyboardFocusable)
                             {
-                                WinAPIAutomation.SendTabKey();
+                                SendCommitTabKey(element);
                             }
                             break;
                         }
@@ -3205,7 +3269,7 @@ namespace GingerCore.Drivers
                                     element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                     ((UIAuto.ValuePattern)vp).SetValue(value);
 
-                                    WinAPIAutomation.SendTabKey();
+                                    SendCommitTabKey(element);
                                 }
                                 else
                                 {
@@ -3257,7 +3321,7 @@ namespace GingerCore.Drivers
                                 element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                 ((UIAuto.ValuePattern)vp).SetValue(value);
 
-                                WinAPIAutomation.SendTabKey();
+                                SendCommitTabKey(element);
                             }
                             else
                             {
@@ -3447,7 +3511,7 @@ namespace GingerCore.Drivers
                     case "pane":
                         if (element.Current.ClassName.Contains("SysDateTimePick32"))
                         {
-                            WinAPIAutomation.SendInputKeys(value);
+                            SendTypedKeys(element, value);
                         }
                         //Tab Control handling for PB
                         else if (element.Current.ClassName == "PBTabControl32_100")
@@ -4098,6 +4162,21 @@ namespace GingerCore.Drivers
 
             try
             {
+                if (!InteractiveDesktop.IsAvailable())
+                {
+                    // The legacy read below is a right-click + Copy, which needs the
+                    // real mouse and keyboard and so reads nothing on a locked
+                    // desktop. Try the layered engine (UIA ValuePattern / MSAA /
+                    // Win32 WM_GETTEXT) instead and only fall through when none of
+                    // them can read the control.
+                    val = GetValueViaDesktopEngine(element);
+                    if (val != null)
+                    {
+                        return val;
+                    }
+                    val = string.Empty;
+                }
+
                 if (element.Current.IsOffscreen == false)
                 {
                     ClearClipboardText();
@@ -4190,6 +4269,19 @@ namespace GingerCore.Drivers
                 if (element.Current.BoundingRectangle == null || mPlatform.Equals(ePlatformType.Windows))
                 {
                     return val;
+                }
+                if (!InteractiveDesktop.IsAvailable())
+                {
+                    // The legacy path below pokes the child control with the physical
+                    // mouse (SendClickOnXYPoint) and keyboard (SendTabKey), neither of
+                    // which reaches the control on a locked desktop. Read the value
+                    // straight from the element through the layered engine instead and
+                    // only fall through when it comes up empty.
+                    string engineValue = GetValueViaDesktopEngine(element);
+                    if (!string.IsNullOrEmpty(engineValue))
+                    {
+                        return engineValue;
+                    }
                 }
                 double xCoordinate = ((element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width / 2));
                 double yCoordinate = ((element.Current.BoundingRectangle.Y + element.Current.BoundingRectangle.Height / 2));

@@ -26,12 +26,19 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
     {
         public static DesktopActionContext FromElement(UIAuto.AutomationElement element, DesktopOperation operation, string value, bool allowPhysicalInput)
         {
+            // Physical input stays available as the engine's last resort, because
+            // some controls - a grid cell with no Invoke pattern, no accessible
+            // action and no window handle - can only be reached that way. It is
+            // dropped only when the desktop cannot receive it at all, where a
+            // click would be silently swallowed and reported as a success.
+            bool effectiveAllowPhysicalInput = allowPhysicalInput && InteractiveDesktop.IsAvailable();
+
             DesktopActionContext context = new DesktopActionContext
             {
                 Operation = operation,
                 AutomationElement = element,
                 Value = value,
-                AllowPhysicalInput = allowPhysicalInput
+                AllowPhysicalInput = effectiveAllowPhysicalInput
             };
 
             if (element != null)
@@ -54,7 +61,7 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             ActionResult actionResult = new ActionResult();
             if (engineResult == null)
             {
-                actionResult.errorMessage = "Desktop automation engine returned no result";
+                actionResult.errorMessage = "Ginger could not complete this operation on the element.";
                 return actionResult;
             }
 
