@@ -584,7 +584,16 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.ClickXY:
-                        mUIAutomationHelper.ClickOnXYPoint(AE, actPBC.ValueForDriver);
+                        status = mUIAutomationHelper.ClickOnXYPoint(AE, actPBC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actPBC.Error = status;
+                        }
+                        else
+                        {
+                            actPBC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActPBControl.eControlAction.RightClick:
@@ -592,7 +601,16 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.DoubleClick:
-                        mUIAutomationHelper.DoDoubleClick(AE, actPBC.Value);
+                        status = mUIAutomationHelper.DoDoubleClick(AE, actPBC.Value);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actPBC.Error = status;
+                        }
+                        else
+                        {
+                            actPBC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActPBControl.eControlAction.Maximize:
@@ -683,8 +701,18 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.SendKeys:
-                        mUIAutomationHelper.SendKeysToControl(AE, actPBC.ValueForDriver);
-                        actPBC.ExInfo = actPBC.ValueForDriver + " set";
+                        status = mUIAutomationHelper.SendKeysToControl(AE, actPBC.ValueForDriver);
+                        if (!status.Contains("Keys Sent Successfully"))
+                        {
+                            actPBC.Error = status;
+                        }
+                        else
+                        {
+                            // Deliberately the wording this step has always reported.
+                            // Which route carried the keys goes to the log instead, so
+                            // a flow validating this text keeps seeing what it expects.
+                            actPBC.ExInfo = actPBC.ValueForDriver + " set";
+                        }
                         break;
 
                     default:

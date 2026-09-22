@@ -32,7 +32,20 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
         public bool CanHandle(DesktopActionContext context)
         {
-            return context.NativeWindowHandle != IntPtr.Zero;
+            if (context.NativeWindowHandle != IntPtr.Zero)
+            {
+                return true;
+            }
+
+            // A target point on a known window is enough on its own: a grid cell is
+            // drawn rather than created as a window, so it has no handle of its own and
+            // would otherwise never reach this layer at all. It serves the clicks only
+            // - reading and writing a value both need the target's own handle, which a
+            // context like this does not have, so claiming them would put a technique
+            // in the attempt log that was never going to be tried.
+            return context.HasTargetPoint
+                && context.PointOwnerWindowHandle != IntPtr.Zero
+                && (context.Operation == DesktopOperation.Click || context.Operation == DesktopOperation.DoubleClick);
         }
 
         public LayerResult TryExecute(DesktopActionContext context)
@@ -47,7 +60,56 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                         {
                             return LayerResult.Ok(Name, "Click via BM_CLICK");
                         }
-                        return LayerResult.Skip("HWND is not an enabled button control");
+
+                        // Stands in for the mouse, so it runs only where the mouse is
+                        // not on the table. The desktop is asked rather than the
+                        // caller's own permission: most call sites switch physical
+                        // input off because they never used it, which says nothing
+                        // about whether it works, and treating that as licence to post
+                        // a click would change what every one of them does on an
+                        // ordinary unlocked desktop. Behind a lock screen the mouse
+                        // reaches nothing, and this is the only way such a target can
+                        // still be clicked.
+                        if (context.AllowPhysicalInput || context.DesktopCanTakePhysicalInput)
+                        {
+                            return LayerResult.Skip("HWND is not an enabled button control; leaving the click to physical input");
+                        }
+                        if (!context.HasTargetPoint)
+                        {
+                            return LayerResult.Skip("HWND is not an enabled button control and the target reports no rectangle to aim at");
+                        }
+                        IntPtr pointOwner = context.PointOwnerWindowHandle != IntPtr.Zero ? context.PointOwnerWindowHandle : hwnd;
+                        PointClickOutcome clickOutcome = Win32Native.ClickAtScreenPoint(
+                            pointOwner, context.TargetScreenX, context.TargetScreenY, context.TimeoutMs);
+                        if (clickOutcome == PointClickOutcome.Delivered)
+                        {
+                            return LayerResult.Ok(Name, "Click via WM_LBUTTONDOWN/UP at the target point");
+                        }
+
+                        return LayerResult.Skip(DescribeRefusedPoint(context, pointOwner, clickOutcome));
+
+                    case DesktopOperation.DoubleClick:
+                        // No BM_CLICK equivalent to try first: that message activates a
+                        // button once and carries no notion of a double click, so the
+                        // point is the only thing to aim at here.
+                        if (context.AllowPhysicalInput || context.DesktopCanTakePhysicalInput)
+                        {
+                            return LayerResult.Skip("Leaving the double click to physical input");
+                        }
+                        if (!context.HasTargetPoint)
+                        {
+                            return LayerResult.Skip("The target reports no rectangle to aim a double click at");
+                        }
+
+                        IntPtr doubleClickOwner = context.PointOwnerWindowHandle != IntPtr.Zero ? context.PointOwnerWindowHandle : hwnd;
+                        PointClickOutcome doubleClickOutcome = Win32Native.DoubleClickAtScreenPoint(
+                            doubleClickOwner, context.TargetScreenX, context.TargetScreenY, context.TimeoutMs);
+                        if (doubleClickOutcome == PointClickOutcome.Delivered)
+                        {
+                            return LayerResult.Ok(Name, "DoubleClick via WM_LBUTTONDBLCLK at the target point");
+                        }
+
+                        return LayerResult.Skip(DescribeRefusedPoint(context, doubleClickOwner, doubleClickOutcome));
 
                     case DesktopOperation.SetValue:
                         if (Win32Native.SetControlText(hwnd, context.Value ?? string.Empty, context.TimeoutMs))
@@ -72,6 +134,26 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
 
             return LayerResult.Skip("Operation not supported by window messages");
+        }
+
+        /// <summary>
+        /// Why a coordinate click was refused, in enough detail to act on.
+        /// </summary>
+        /// <remarks>
+        /// Both handles are named because they are chosen separately: the target's own
+        /// window comes from the element, the one aimed at is the nearest ancestor that
+        /// owns pixels, and a refusal caused by picking the wrong ancestor looks exactly
+        /// like one caused by a target that has moved.
+        /// </remarks>
+        private static string DescribeRefusedPoint(DesktopActionContext context, IntPtr pointOwner, PointClickOutcome outcome)
+        {
+            string cause = outcome == PointClickOutcome.PointNotOwned
+                ? "The point " + context.TargetScreenX + "," + context.TargetScreenY + " is not inside the window it was aimed at."
+                : "The application did not take the click at " + context.TargetScreenX + "," + context.TargetScreenY
+                    + ": its window stopped answering within " + context.TimeoutMs + "ms, so it is hung or not pumping messages.";
+
+            return cause + " Target's own window " + context.NativeWindowHandle.ToInt64() + "; aimed at "
+                + Win32Native.DescribePointOwnership(pointOwner, context.TargetScreenX, context.TargetScreenY);
         }
     }
 }

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Drivers.Common;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using HtmlAgilityPack;
 using mshtml;
 using SHDocVw;
@@ -1657,6 +1658,12 @@ namespace GingerCore.Drivers.PBDriver
                 element.scrollIntoView();
                 int elemX = getelementXCordinate(element);
                 int elemY = getelementYCordinate(element);
+
+                if (!InteractiveDesktop.IsAvailable())
+                {
+                    return ClickBrowserPointWithWindowMessages(elemX + x, elemY + y);
+                }
+
                 winAPI.SendClickOnWinXYPoint(AEBrowser, elemX + x, elemY + y);
                 return true;
             }
@@ -1666,6 +1673,39 @@ namespace GingerCore.Drivers.PBDriver
                 return false;
             }
         }
+        /// <summary>
+        /// Clicks a point in the browser by window message, for use where the mouse
+        /// cannot reach it.
+        /// </summary>
+        /// <remarks>
+        /// Reached only once the desktop has reported it cannot take physical input,
+        /// so every unlocked run still goes through the mouse exactly as before. The
+        /// mouse route reports nothing back and this method used to answer true
+        /// regardless, so behind a lock screen a click that landed on nothing was
+        /// recorded as a step that passed and the failure only surfaced later, in
+        /// whichever step expected the dialog it never opened.
+        /// </remarks>
+        private bool ClickBrowserPointWithWindowMessages(int browserX, int browserY)
+        {
+            // Offset from the browser's own rectangle, which is the origin the mouse
+            // route measures from, so both aim at the same pixel.
+            System.Drawing.Rectangle bounds = (System.Drawing.Rectangle)
+                AEBrowser.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
+            int screenX = bounds.X + browserX;
+            int screenY = bounds.Y + browserY;
+
+            DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
+                DesktopActionMapper.ForPoint(AEBrowser, DesktopOperation.Click, screenX, screenY));
+
+            if (!engineResult.Success)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, DesktopActionMapper.DescribeUnreachablePoint(
+                    DesktopOperation.Click, screenX, screenY, engineResult));
+            }
+
+            return engineResult.Success;
+        }
+
         public bool MouseHover(IHTMLElement element, string val = "")
         {
             int x = 0;
@@ -2571,21 +2611,49 @@ namespace GingerCore.Drivers.PBDriver
             }
         }
 
+        // children and all hand back an IHTMLElementCollection, so the elements have to be
+        // read out of it; the collection itself has no IHTMLElement to query for, and the
+        // failed cast used to surface as "element not found" for every path step.
+        private static List<IHTMLElement> ChildElements(object collection)
+        {
+            List<IHTMLElement> elements = [];
+
+            if (collection is IHTMLElementCollection items)
+            {
+                foreach (object item in items)
+                {
+                    // A collection carries comment and text nodes too, and those have no
+                    // tag name for a path step to match against.
+                    if (item is IHTMLElement element)
+                    {
+                        elements.Add(element);
+                    }
+                }
+            }
+
+            return elements;
+        }
+
         public IHTMLElement GetChild(IHTMLElement el, DocNode node)
         {
             // Find corresponding child of the elemnt 
             // based on the name and position of the node
             int childPos = 0;
             int pos = 0;
-            List<IHTMLElement> elChilds = [(IHTMLElement)el.children];
+
             if (node.Name.StartsWith(".."))
             {
                 el = el.parentElement;
                 node.Name = node.Name[2..];
             }
+
+            // Read after the '..' step, so it searches the children of the parent that
+            // step selected rather than of the element it moved up from.
+            List<IHTMLElement> elChilds = ChildElements(el.children);
+
             if (node.Name.StartsWith("/"))
             {
-                elChilds.Add((IHTMLElement)el.all);
+                elChilds.AddRange(ChildElements(el.all));
                 node.Name = node.Name[1..];
             }
 

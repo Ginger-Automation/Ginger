@@ -309,7 +309,13 @@ namespace GingerCore.Drivers.Common
                 }
                 if(!string.IsNullOrEmpty(actionResult.errorMessage))
                 {
-                    // 3) Fallback to mouse double-click
+                    // 3) Fallback to mouse double-click, or to the double-click
+                    // message when the mouse would reach nothing
+                    if (!InteractiveDesktop.IsAvailable())
+                    {
+                        return DoubleClickPoint(automationElement, ElementCentre(automationElement));
+                    }
+
                     winAPI.DoubleSendClick(automationElement);
                     actionResult.executionInfo = "Successfully double-clicked the element";
                 }
@@ -346,6 +352,11 @@ namespace GingerCore.Drivers.Common
             ActionResult actionResult = new ActionResult();
             try
             {
+                if (!InteractiveDesktop.IsAvailable())
+                {
+                    return DoubleClickPoint(automationElement, ElementCentre(automationElement));
+                }
+
                 winAPI.DoubleSendClick(automationElement);
                 actionResult.executionInfo = "Successfully double-clicked the element";
             }
@@ -364,6 +375,11 @@ namespace GingerCore.Drivers.Common
             {
                 int x = automationElement.Current.BoundingRectangle.X + xCoordinate;
                 int y = automationElement.Current.BoundingRectangle.Y + yCoordinate;
+
+                if (!InteractiveDesktop.IsAvailable())
+                {
+                    return ClickPoint(automationElement, DesktopOperation.Click, x, y);
+                }
 
                 winAPI.SendClickOnXYPoint(automationElement, x, y);
                 actionResult.executionInfo = "Successfully clicked the element";
@@ -387,6 +403,18 @@ namespace GingerCore.Drivers.Common
                     xy = xCoordinate + "," + yCoordinate;
                 }
 
+                if (!InteractiveDesktop.IsAvailable())
+                {
+                    // Reuses the offset rule the mouse path applies, including the one
+                    // where a coordinate of zero means the centre instead.
+                    Point target = string.IsNullOrEmpty(xy)
+                        ? ElementCentre(automationElement)
+                        : new Point(automationElement.Current.BoundingRectangle.X + xCoordinate,
+                            automationElement.Current.BoundingRectangle.Y + yCoordinate);
+
+                    return DoubleClickPoint(automationElement, target);
+                }
+
                 winAPI.SendDoubleClick(automationElement, xy);
                 actionResult.executionInfo = "Successfully double clicked the element";
             }
@@ -396,6 +424,43 @@ namespace GingerCore.Drivers.Common
                 actionResult.errorMessage = "Failed to Double click the element";
             }
             return actionResult;
+        }
+
+        /// <summary>
+        /// Clicks a screen point with window messages, for use where the mouse reaches
+        /// nothing.
+        /// </summary>
+        /// <remarks>
+        /// Reached only once the desktop has reported that it cannot take physical
+        /// input, so every unlocked run still goes through the mouse exactly as before.
+        /// Until this existed the mouse paths here reported success whatever happened,
+        /// because moving the cursor and pressing a button report nothing back - behind
+        /// a lock screen that made a step which clicked nothing indistinguishable from
+        /// one that worked.
+        /// </remarks>
+        private static ActionResult ClickPoint(UIAuto.AutomationElement automationElement, DesktopOperation operation, int screenX, int screenY)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
+                DesktopActionMapper.ForPoint(automationElement, operation, screenX, screenY));
+
+            ActionResult actionResult = DesktopActionMapper.ToActionResult(engineResult);
+            if (!engineResult.Success)
+            {
+                actionResult.errorMessage = DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
+            }
+
+            return actionResult;
+        }
+
+        private static ActionResult DoubleClickPoint(UIAuto.AutomationElement automationElement, Point target)
+        {
+            return ClickPoint(automationElement, DesktopOperation.DoubleClick, target.X, target.Y);
+        }
+
+        private static Point ElementCentre(UIAuto.AutomationElement automationElement)
+        {
+            var bounds = automationElement.Current.BoundingRectangle;
+            return new Point((int)(bounds.X + bounds.Width / 2), (int)(bounds.Y + bounds.Height / 2));
         }
 
         public ActionResult RightClickElementUsingXY(UIAuto.AutomationElement automationElement, int xCoordinate, int yCoordinate)

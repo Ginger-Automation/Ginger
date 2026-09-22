@@ -924,8 +924,18 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.SendKeys:
-                        mUIAutomationHelper.SendKeysToControl(AE, actWC.ValueForDriver);
-                        actWC.ExInfo = actWC.ValueForDriver + " set";
+                        string keysStatus = mUIAutomationHelper.SendKeysToControl(AE, actWC.ValueForDriver);
+                        if (!keysStatus.Contains("Keys Sent Successfully"))
+                        {
+                            actWC.Error = keysStatus;
+                        }
+                        else
+                        {
+                            // Deliberately the wording this step has always reported.
+                            // Which route carried the keys goes to the log instead, so
+                            // a flow validating this text keeps seeing what it expects.
+                            actWC.ExInfo = actWC.ValueForDriver + " set";
+                        }
                         break;
 
                     case ActWindowsControl.eControlAction.GetValue:
@@ -965,7 +975,16 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.ClickXY:
-                        mUIAutomationHelper.ClickOnXYPoint(AE, actWC.ValueForDriver);
+                        status = mUIAutomationHelper.ClickOnXYPoint(AE, actWC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.RightClick:
@@ -973,7 +992,16 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.DoubleClick:
-                        mUIAutomationHelper.DoDoubleClick(AE, actWC.ValueForDriver);
+                        status = mUIAutomationHelper.DoDoubleClick(AE, actWC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.Maximize:

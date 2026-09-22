@@ -114,18 +114,26 @@ namespace GingerCore.Drivers.Common
         public abstract string SendKeysAndValidateHandler(object element, ActUIElement action);
         public abstract string SelectAndValidateHandler(object element, ActUIElement action);
         public abstract void SelectControlByIndex(object element, string value);
-        public abstract void SendKeysToControl(object element, string value);
+        public abstract string SendKeysToControl(object element, string value);
         public abstract String GetControlValue(object element);
         public abstract String GetControlText(object element, string XY = "");
         public abstract String GetControlFieldValue(object element, String value);
         public abstract String GetControlPropertyValue(object element, String value);
         public abstract bool ClickContextMenuItem(object element, string value);
         public abstract string ClickElement(object element, Boolean asyncFlag = false);
-        public abstract void ClickOnXYPoint(object element, string value);
+
+        /// <summary>
+        /// Clicks a point inside a control, returning what happened. These two report
+        /// a status for the same reason <see cref="ClickElement"/> does: a coordinate
+        /// click can reach nothing at all - behind a lock screen it always does - and
+        /// while they returned void the driver had no way to tell, so the action was
+        /// recorded as passed whether or not anything was clicked.
+        /// </summary>
+        public abstract string ClickOnXYPoint(object element, string value);
 
         public abstract void DoRightClick(object element, string XY = "");
 
-        public abstract void DoDoubleClick(object element, string XY = "");
+        public abstract string DoDoubleClick(object element, string XY = "");
 
         public abstract string GetSelectedItem(object element);
 

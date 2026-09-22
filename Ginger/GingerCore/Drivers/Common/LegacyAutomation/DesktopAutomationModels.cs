@@ -23,8 +23,35 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
     public enum DesktopOperation
     {
         Click,
+        DoubleClick,
         SetValue,
         GetValue
+    }
+
+    /// <summary>
+    /// What became of a click aimed at a screen point.
+    /// </summary>
+    /// <remarks>
+    /// The two failures have to be told apart. A point no window owns is a locator or
+    /// a layout problem; an application that stopped answering is a timing or a load
+    /// one. Reporting both as "the point is not inside the window" produced a refusal
+    /// that flatly contradicted the bounds printed beside it.
+    /// </remarks>
+    public enum PointClickOutcome
+    {
+        /// <summary>
+        /// The clicks were queued on a window whose thread is alive and pumping.
+        /// Whether they had the intended effect is for the action to validate.
+        /// </summary>
+        Delivered,
+
+        /// <summary>No window under the given point, so nothing was sent.</summary>
+        PointNotOwned,
+
+        /// <summary>
+        /// The clicks could not be queued, or the owning window stopped answering.
+        /// </summary>
+        NotAcknowledged
     }
 
     public sealed class DesktopActionContext
@@ -40,6 +67,40 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// clicks screen coordinates and hits whatever window is on top.
         /// </summary>
         public bool AllowPhysicalInput { get; set; }
+
+        /// <summary>
+        /// Whether the real mouse can currently land on the application, which is a
+        /// different question from whether this caller is allowed to use it.
+        /// </summary>
+        /// <remarks>
+        /// Kept apart from <see cref="AllowPhysicalInput"/> because most call sites
+        /// never used the mouse and so switch it off permanently, which says nothing
+        /// about the desktop. Only this one licenses a message click to stand in for
+        /// the mouse: a posted click is acknowledged once the window takes it, which
+        /// is not the same as the control acting on it, so substituting one where the
+        /// mouse still works would turn a click that honestly failed into one that
+        /// reports success and never happened.
+        /// </remarks>
+        public bool DesktopCanTakePhysicalInput { get; set; }
+
+        /// <summary>
+        /// Centre of the target in screen coordinates, when the target reports a
+        /// rectangle. This is the same point the physical mouse would have been sent
+        /// to, which lets a layer aim at a control that exposes no pattern, no
+        /// accessible action and no HWND of its own - a grid cell being the usual one.
+        /// </summary>
+        public bool HasTargetPoint { get; set; }
+        public int TargetScreenX { get; set; }
+        public int TargetScreenY { get; set; }
+
+        /// <summary>
+        /// Nearest ancestor window that actually owns the target's pixels, used only to
+        /// aim a coordinate click. It is kept apart from
+        /// <see cref="NativeWindowHandle"/> on purpose: that one stays the target's own
+        /// handle, so the layers that decide what they can serve from the window class
+        /// keep seeing exactly what they see today.
+        /// </summary>
+        public IntPtr PointOwnerWindowHandle { get; set; }
 
         public int TimeoutMs { get; set; } = 5000;
     }

@@ -41,6 +41,19 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
         public static DesktopAutomationEngine Default { get; } = CreateDefault();
 
+        /// <summary>
+        /// Window messages only, for a click aimed at an explicit point.
+        /// </summary>
+        /// <remarks>
+        /// The pattern layers are deliberately absent. They activate the element as a
+        /// whole, and a caller that named a point inside it - a cell in a grid, a hit
+        /// area within one control - did not ask for that; routing a coordinate click
+        /// through them would quietly change where it lands. Physical input is absent
+        /// for the opposite reason: this chain exists for the case where the mouse
+        /// reaches nothing, and the caller has already tried it.
+        /// </remarks>
+        public static DesktopAutomationEngine PointClick { get; } = new DesktopAutomationEngine([new Win32Layer()]);
+
         public static DesktopAutomationEngine CreateDefault()
         {
             return new DesktopAutomationEngine(
@@ -134,6 +147,7 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             string attemptedAction = operation switch
             {
                 DesktopOperation.Click => "click this element",
+                DesktopOperation.DoubleClick => "double click this element",
                 DesktopOperation.SetValue => "set a value on this element",
                 DesktopOperation.GetValue => "read the value of this element",
                 _ => "complete this operation"
