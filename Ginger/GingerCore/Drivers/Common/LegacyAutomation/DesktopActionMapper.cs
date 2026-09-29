@@ -92,10 +92,6 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         {
             DesktopActionContext context = FromElement(element, operation, null, allowPhysicalInput: false);
 
-            // Stated rather than probed. Every caller reaches here only after finding
-            // the desktop cannot take physical input, and re-probing would let a screen
-            // unlocked in the meantime withdraw the one route this click has left.
-            context.DesktopCanTakePhysicalInput = false;
             context.HasTargetPoint = true;
             context.TargetScreenX = screenX;
             context.TargetScreenY = screenY;
@@ -103,20 +99,25 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         }
 
         /// <summary>
-        /// Why a coordinate click got nowhere, for the run report.
+        /// Why a coordinate click got nowhere by window message, for the run report.
         /// </summary>
         /// <remarks>
         /// Names the point and the state of the desktop together, because neither on
         /// its own explains the failure. Reporting it at all is the change: the
         /// coordinate paths returned nothing, so a click that reached no window was
         /// still recorded as a step that passed.
+        ///
+        /// The desktop is described rather than characterised. This route also runs on
+        /// a desktop that can take physical input, whenever the operator asked for the
+        /// quiet one, so asserting the opposite produced a line reading that input
+        /// could not be taken beside a session reporting it as available - which reads
+        /// as a contradiction and sends whoever finds it after the wrong cause.
         /// </remarks>
         public static string DescribeUnreachablePoint(DesktopOperation operation, int screenX, int screenY, DesktopEngineResult engineResult)
         {
             return "Ginger could not " + (operation == DesktopOperation.DoubleClick ? "double click" : "click")
-                + " the point " + screenX + "," + screenY
-                + " and the desktop could not take physical input (" + InteractiveDesktop.DescribeSession() + "). "
-                + engineResult?.ExecutionInfo;
+                + " the point " + screenX + "," + screenY + " by window message ("
+                + InteractiveDesktop.DescribeSession() + "). " + engineResult?.ExecutionInfo;
         }
 
         /// <summary>

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerCore.Drivers.Common.LegacyAutomation;
+using GingerCore.Drivers.PBDriver.DesktopAutomation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
@@ -34,6 +35,36 @@ namespace GingerCoreTest.Misc
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetFocus(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetFocus();
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern IntPtr CreateWindowExW(int exStyle, string className, string windowName,
+            int style, int x, int y, int width, int height, IntPtr parent, IntPtr menu, IntPtr instance, IntPtr param);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr GetModuleHandleW(string moduleName);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int left;
+            public int top;
+            public int right;
+            public int bottom;
+        }
 
         [TestMethod]
         public void UiaOnly_CannotSetValueOnFacadeWithoutValuePattern()
@@ -111,8 +142,11 @@ namespace GingerCoreTest.Misc
                 "A control the quiet layers can serve must never reach the physical mouse or keyboard");
             Assert.AreEqual("quiet-42", Win32Native.GetControlText(host.EditHwnd, 2000));
 
+            // Physical input withheld, which is what both the non-intrusive flag and a
+            // locked screen produce, and the only state in which the quiet route is
+            // meant to carry a click. Permitted and working, the mouse keeps it.
             DesktopActionContext clickContext = DesktopActionMapper.FromElement(
-                host.FacadeElement, DesktopOperation.Click, null, allowPhysicalInput: true);
+                host.FacadeElement, DesktopOperation.Click, null, allowPhysicalInput: false);
             clickContext.NativeWindowHandle = host.ButtonHwnd;
             clickContext.TimeoutMs = 2000;
 
@@ -123,6 +157,38 @@ namespace GingerCoreTest.Misc
 
             Assert.AreEqual(foregroundBefore, GetForegroundWindow(),
                 "The layered engine must not steal foreground focus");
+        }
+
+        /// <summary>
+        /// The mouse keeps every click it already had on an ordinary unlocked run.
+        /// </summary>
+        /// <remarks>
+        /// A button whose Invoke and default action both decline went to the mouse
+        /// before this chain existed. BM_CLICK is not interchangeable with a real
+        /// click for every control, so letting it answer here would quietly change
+        /// what a default run does to such a button - which is the one thing this
+        /// chain must not do, and what it did until the guard moved ahead of the
+        /// button message rather than behind it.
+        /// </remarks>
+        [TestMethod]
+        public void Win32_StandsAsideForTheMouse_WhenPhysicalInputIsPermittedAndWorking()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+            DesktopActionContext context = DesktopActionMapper.FromElement(
+                host.FacadeElement, DesktopOperation.Click, null, allowPhysicalInput: true);
+            context.NativeWindowHandle = host.ButtonHwnd;
+            context.TimeoutMs = 2000;
+
+            if (!context.AllowPhysicalInput)
+            {
+                Assert.Inconclusive("This pins behaviour on a desktop that can take physical input.");
+            }
+
+            DesktopEngineResult result = new DesktopAutomationEngine([new Win32Layer()]).Execute(context);
+
+            Assert.IsFalse(result.Success,
+                "Win32 must decline so the click falls through to the mouse, as it did before the layered"
+                + " chain existed: " + result.ExecutionInfo);
         }
 
         [TestMethod]
@@ -252,41 +318,141 @@ namespace GingerCoreTest.Misc
         }
 
         /// <summary>
-        /// On a locked screen Send Keys types straight into the window instead of using
-        /// the keyboard. What arrives there is a character rather than a keystroke, so
-        /// a value carrying a modifier or a named key has to be refused: typed verbatim
-        /// it would put "{ENTER}" in the field and report a pass, which is the silent
-        /// failure this whole path exists to remove.
+        /// The shape behind a PowerBuilder value that was typed but never committed.
         /// </summary>
+        /// <remarks>
+        /// Tab belongs to the dialog manager, which only ever sees keys that came off
+        /// the message queue, so a WM_KEYDOWN sent straight to a standard edit reaches
+        /// a window procedure with no reason to act on it. The control still takes the
+        /// message and still answers zero, which is the same answer it gives for a key
+        /// it acted on - so a delivery check reads that as a commit, and the keyboard
+        /// that would have done the job never runs.
+        /// </remarks>
         [TestMethod]
-        public void SendKeys_RefusesNotationItCannotTypeOnALockedScreen()
+        public void SendTab_ReportsFailureWhenTheKeystrokeMovesNoFocus()
         {
-            Assert.IsTrue(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("{ENTER}"));
-            Assert.IsTrue(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("account-99{TAB}"));
-            Assert.IsTrue(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("^a"));
-            Assert.IsTrue(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("%{F4}"));
-            Assert.IsTrue(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("+abc"));
-            Assert.IsTrue(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("~"));
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+            SetFocus(host.EditHwnd);
+            Assert.AreEqual(host.EditHwnd, GetFocus(), "the field could not be focused, so there is nothing to tab out of");
+
+            bool committed = Win32KeyMessages.SendTab(host.EditHwnd, 2000);
+
+            Assert.AreEqual(host.EditHwnd, GetFocus(),
+                "the premise of this test is a Tab that does nothing, and this one moved the focus");
+            Assert.IsFalse(committed,
+                "SendTab reported a commit the focus shows never happened, so the caller skipped the keyboard fallback");
         }
 
         /// <summary>
-        /// The other half of the same decision: plain text must still go through, or a
-        /// locked screen would fail every Send Keys step rather than only the ones it
-        /// genuinely cannot serve.
+        /// The other half of the same judgement: a control that reads Tab itself, the
+        /// way a DataWindow steps between columns, must still be reported as a
+        /// success. Calling that a failure would send the keyboard after it and tab
+        /// twice, past the field the run meant to land on.
         /// </summary>
         [TestMethod]
-        public void SendKeys_TypesPlainTextOnALockedScreenRatherThanFailingIt()
+        public void SendTab_ReportsSuccessWhenTheControlMovesTheFocusItself()
         {
-            Assert.IsFalse(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("account-99"));
-            Assert.IsFalse(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("2026-09-18"));
+            using Form frame = new Form
+            {
+                ShowInTaskbar = false,
+                StartPosition = FormStartPosition.Manual,
+                Location = new System.Drawing.Point(-32000, -32000)
+            };
 
-            // Punctuation that looks special but means nothing to Send Keys. Reading
-            // it as notation would fail ordinary form filling on a locked screen.
-            Assert.IsFalse(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("user@example.com"));
-            Assert.IsFalse(Ginger.Actions.ActSendKeys.UsesSendKeysNotation("Ref #A&B/12.5"));
+            using TextBox second = new TextBox { Top = 40 };
+            using SelfTabbingBox first = new SelfTabbingBox(second);
+            frame.Controls.Add(first);
+            frame.Controls.Add(second);
+            frame.Show();
 
-            Assert.IsFalse(Ginger.Actions.ActSendKeys.UsesSendKeysNotation(""));
-            Assert.IsFalse(Ginger.Actions.ActSendKeys.UsesSendKeysNotation(null));
+            Assert.IsTrue(first.Focus(), "the first field could not be focused");
+
+            bool committed = Win32KeyMessages.SendTab(first.Handle, 2000);
+
+            Assert.IsTrue(second.Focused, "the premise of this test is a control that moves the focus on Tab");
+            Assert.IsTrue(committed,
+                "SendTab called a Tab that did move the focus a failure, which sends the keyboard after it and tabs twice");
+        }
+
+        /// <summary>
+        /// A plain field in a dialog must commit without the keyboard.
+        /// </summary>
+        /// <remarks>
+        /// This is the ordinary case and it was the one that never worked. Tab
+        /// belongs to the dialog manager, so a key sent straight to the field
+        /// reaches a window procedure with no reason to act on it and every
+        /// set-value in a standard dialog fell through to the keyboard - taking the
+        /// foreground to press a key the dialog could be asked for directly, which
+        /// is the one thing the non-intrusive route exists to avoid.
+        ///
+        /// Built from the dialog class rather than from a Form because only a real
+        /// dialog runs the dialog manager, and a container that does its tab
+        /// handling in the message loop instead cannot be served this way at all.
+        /// </remarks>
+        [TestMethod]
+        public void SendTab_CommitsAPlainDialogFieldByAskingTheDialogRatherThanTheKeyboard()
+        {
+            const int WsOverlapped = 0x00CF0000;
+            const int WsChild = 0x40000000;
+            const int WsVisible = 0x10000000;
+            const int WsTabStop = 0x00010000;
+            const string DialogClass = "#32770";
+
+            IntPtr instance = GetModuleHandleW(null);
+            IntPtr dialog = CreateWindowExW(0, DialogClass, "commit host", WsOverlapped | WsVisible,
+                -32000, -32000, 300, 200, IntPtr.Zero, IntPtr.Zero, instance, IntPtr.Zero);
+            Assert.AreNotEqual(IntPtr.Zero, dialog, "could not create a dialog to test against");
+
+            try
+            {
+                IntPtr first = CreateWindowExW(0, "EDIT", string.Empty, WsChild | WsVisible | WsTabStop,
+                    0, 0, 200, 24, dialog, IntPtr.Zero, instance, IntPtr.Zero);
+                IntPtr second = CreateWindowExW(0, "EDIT", string.Empty, WsChild | WsVisible | WsTabStop,
+                    0, 40, 200, 24, dialog, IntPtr.Zero, instance, IntPtr.Zero);
+                Assert.AreNotEqual(IntPtr.Zero, first, "the dialog has no field to tab out of");
+                Assert.AreNotEqual(IntPtr.Zero, second, "the dialog has nowhere to tab to");
+
+                SetFocus(first);
+                Assert.AreEqual(first, GetFocus(), "the field could not be focused, so there is nothing to commit");
+
+                bool committed = Win32KeyMessages.SendTab(first, 2000);
+
+                Assert.IsTrue(committed,
+                    "a dialog field could not be tabbed out of without the keyboard, so every set-value still takes the foreground");
+                Assert.AreEqual(second, GetFocus(),
+                    "SendTab reported a commit while the keyboard was still in the field it was meant to leave");
+            }
+            finally
+            {
+                DestroyWindow(dialog);
+            }
+        }
+
+        /// <summary>
+        /// Stands in for a control that reads keys itself instead of leaving them to
+        /// the dialog manager, which is how a DataWindow moves between its columns.
+        /// </summary>
+        private sealed class SelfTabbingBox : TextBox
+        {
+            private const int WmKeyDown = 0x0100;
+            private const int VkTab = 0x09;
+
+            private readonly Control mMoveTo;
+
+            internal SelfTabbingBox(Control moveTo)
+            {
+                mMoveTo = moveTo;
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == WmKeyDown && (int)m.WParam == VkTab)
+                {
+                    mMoveTo.Focus();
+                    return;
+                }
+                base.WndProc(ref m);
+            }
         }
 
         /// <summary>
@@ -481,14 +647,17 @@ namespace GingerCoreTest.Misc
             Assert.IsFalse(fromElement.AllowPhysicalInput && !fromElement.DesktopCanTakePhysicalInput,
                 "Physical input may never stay allowed once the desktop cannot take it");
 
-            // Built only where the mouse has already been ruled out, so it states the
-            // answer instead of probing again and having a late unlock withdraw the
-            // only route the click has left.
+            // A coordinate click carries the same answer as everything else rather than
+            // declaring the mouse unavailable on its own account. Saying otherwise let
+            // a blind click be posted to a desktop whose mouse worked, where nothing
+            // reports back whether the control acted on it.
             DesktopActionContext forPoint = DesktopActionMapper.ForPoint(
                 host.FacadeElement, DesktopOperation.Click, 10, 10);
 
-            Assert.IsFalse(forPoint.DesktopCanTakePhysicalInput);
-            Assert.IsFalse(forPoint.AllowPhysicalInput);
+            Assert.AreEqual(InteractiveDesktop.IsAvailable(), forPoint.DesktopCanTakePhysicalInput,
+                "A coordinate click has to read the same desktop answer as every other action");
+            Assert.IsFalse(forPoint.AllowPhysicalInput,
+                "The point chain never runs physical input itself; the caller keeps that as its own last resort");
         }
 
         /// <summary>
@@ -541,6 +710,310 @@ namespace GingerCoreTest.Misc
                 "A plain BUTTON must stay on the Win32 layer");
             Assert.IsFalse(layer.CanHandle(host.CreateContext(DesktopOperation.GetValue, IntPtr.Zero)),
                 "No HWND means there is no DataWindow to talk to");
+        }
+
+        /// <summary>
+        /// The shape behind a locked run that reported a grid value as set while the
+        /// cell kept its old text.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow cell is drawn rather than created as a window, so it reports
+        /// no handle of its own. Reading only the target's handle meant this layer
+        /// declined every cell it exists to serve, the step fell through to the
+        /// keyboard, and behind a lock screen the keyboard wrote nothing.
+        /// </remarks>
+        [TestMethod]
+        public void DataWindowMsaa_ClaimsACellThatHasNoWindowOfItsOwn()
+        {
+            using DataWindowClassWindow dataWindow = new DataWindowClassWindow();
+            DataWindowMsaaLayer layer = new DataWindowMsaaLayer();
+
+            DesktopActionContext cell = new DesktopActionContext
+            {
+                Operation = DesktopOperation.SetValue,
+                NativeWindowHandle = IntPtr.Zero,
+                PointOwnerWindowHandle = dataWindow.Handle,
+                Value = "Pune",
+                TimeoutMs = 2000
+            };
+
+            Assert.IsTrue(layer.CanHandle(cell),
+                "A cell owned by a DataWindow must reach the only layer that can write it");
+        }
+
+        [TestMethod]
+        public void DataWindowMsaa_StillDeclinesACellOwnedByAnOrdinaryWindow()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+            DataWindowMsaaLayer layer = new DataWindowMsaaLayer();
+
+            DesktopActionContext cell = new DesktopActionContext
+            {
+                Operation = DesktopOperation.SetValue,
+                NativeWindowHandle = IntPtr.Zero,
+                PointOwnerWindowHandle = host.FormHwnd,
+                Value = "x",
+                TimeoutMs = 2000
+            };
+
+            Assert.IsFalse(layer.CanHandle(cell),
+                "Falling back to the owning window must not hand this layer ordinary controls");
+        }
+
+        /// <summary>
+        /// The route left for a DataWindow that hands out its cell values but will
+        /// not take one back: click into the cell and type, the way the physical
+        /// fallback does it.
+        /// </summary>
+        /// <remarks>
+        /// A coordinate click is queued rather than delivered in line, so it is
+        /// still in the application's queue when the call that queued it returns.
+        /// Typing at that moment addresses whatever held the keyboard beforehand,
+        /// which is the wrong window as soon as the click is what opens an editor.
+        ///
+        /// The control starts with text and is clicked past the end of it, so
+        /// waiting for the click and not waiting leave different contents behind.
+        /// An empty control would read the same either way and prove nothing.
+        /// </remarks>
+        [TestMethod]
+        public void Win32_WaitsForTheClickToLandBeforeTypingIntoWhatItOpened()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+            Assert.IsTrue(Win32Native.SetControlText(host.EditHwnd, "AB", 2000));
+
+            GetWindowRect(host.EditHwnd, out RECT edit);
+            int centreX = edit.left + ((edit.right - edit.left) / 2);
+            int centreY = edit.top + ((edit.bottom - edit.top) / 2);
+
+            Assert.AreEqual(PointClickOutcome.Delivered,
+                Win32Native.ClickAtScreenPoint(host.EditHwnd, centreX, centreY, 2000));
+
+            // Waiting for the keyboard to arrive on the control is what proves the
+            // queued click has been handled. The host shares this thread, so it has
+            // to be told to pump; a real application is doing so continuously,
+            // which is what the settle in WaitForEditor stands in for.
+            Assert.IsTrue(host.PumpUntil(() => GetFocus() == host.EditHwnd),
+                "The click has to be taken up before there is anywhere to type");
+
+            Assert.IsTrue(Win32KeyMessages.SendChars(host.EditHwnd, "Pune", 2000));
+            Assert.AreEqual("ABPune", Win32Native.GetControlText(host.EditHwnd, 2000),
+                "The characters have to arrive behind the click, not ahead of it");
+        }
+
+        /// <summary>
+        /// The wait for a click to be taken up has to wait even when it sees
+        /// nothing change.
+        /// </summary>
+        /// <remarks>
+        /// This is the case that made a locked run type ahead of its own click: the
+        /// cell already held the keyboard from the step before, so nothing moved
+        /// when it was clicked, and a wait that returned the moment it saw no
+        /// change handed back the state from before the click.
+        /// </remarks>
+        [TestMethod]
+        public void Win32_WaitsForAClickEvenWhereTheKeyboardNeverMoves()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            // Captured after everything has settled, so nothing moves during the
+            // wait and only the floor can end it.
+            Win32KeyMessages.FocusSnapshot settled = Win32KeyMessages.CaptureFocus(host.EditHwnd);
+
+            const int ceilingMs = 400;
+
+            Stopwatch clock = Stopwatch.StartNew();
+            IntPtr editor = Win32KeyMessages.WaitForEditor(host.EditHwnd, settled, ceilingMs);
+            clock.Stop();
+
+            Assert.IsTrue(clock.ElapsedMilliseconds >= Win32KeyMessages.EditorSettleMs,
+                "Returning straight away types ahead of the click: waited only " + clock.ElapsedMilliseconds + "ms");
+            Assert.IsTrue(clock.ElapsedMilliseconds < ceilingMs * 3,
+                "Nothing moving is not a reason to keep waiting past the ceiling: waited " + clock.ElapsedMilliseconds + "ms");
+            Assert.AreEqual(host.EditHwnd, editor,
+                "Having waited, it still has to answer with the window holding the keyboard");
+        }
+
+        /// <summary>
+        /// A write is confirmed by reading the cell back, and a DataWindow hands
+        /// that reading back padded out to the column width.
+        /// </summary>
+        /// <remarks>
+        /// Taken from a real run: a Get Value on this grid returned
+        /// "2109 Fox Dr, Champaign IL " with the trailing space still attached.
+        /// Comparing exactly meant a value that was written correctly was reported
+        /// as one the cell never took.
+        /// </remarks>
+        [TestMethod]
+        public void DataWindowMsaa_AcceptsTheValueThroughTheDataWindowsOwnPadding()
+        {
+            Assert.IsTrue(DataWindowMsaaLayer.CellHoldsValue("Pune      ", "Pune"),
+                "A character column pads on the right");
+            Assert.IsTrue(DataWindowMsaaLayer.CellHoldsValue("      1250", "1250"),
+                "A right aligned number pads on the left");
+            Assert.IsTrue(DataWindowMsaaLayer.CellHoldsValue("2109 Fox Dr, Champaign IL ", "2109 Fox Dr, Champaign IL"));
+
+            // Padding is all it is allowed to forgive. Anything else still has to
+            // read as the cell refusing the value.
+            Assert.IsFalse(DataWindowMsaaLayer.CellHoldsValue("Mumbai    ", "Pune"),
+                "A cell still holding its old value has not taken the new one");
+            Assert.IsFalse(DataWindowMsaaLayer.CellHoldsValue("PuneMumbai", "Pune"),
+                "Text typed alongside what was already there is not the value either");
+            Assert.IsFalse(DataWindowMsaaLayer.CellHoldsValue("Pu ne", "Pune"),
+                "Spaces inside the value are part of it");
+            Assert.IsFalse(DataWindowMsaaLayer.CellHoldsValue(null, "Pune"),
+                "A cell that cannot be read is an unverifiable write");
+        }
+
+        /// <summary>
+        /// The typing route is for a desktop the mouse cannot reach. While it can,
+        /// the value stays with the physical fallback that writes these cells today.
+        /// </summary>
+        /// <remarks>
+        /// This is the line that keeps an unlocked run behaving exactly as it does
+        /// now. A message click is acknowledged once the window takes it, which is
+        /// not the same as the cell accepting the value, so standing it in for input
+        /// that is known to work would swap a route that writes the cell for one
+        /// that only reports it did.
+        /// </remarks>
+        [TestMethod]
+        public void DataWindowMsaa_LeavesTheValueToTheMouseWhileTheMouseCanReachIt()
+        {
+            using DataWindowClassWindow dataWindow = new DataWindowClassWindow();
+            DataWindowMsaaLayer layer = new DataWindowMsaaLayer();
+
+            DesktopActionContext cell = new DesktopActionContext
+            {
+                Operation = DesktopOperation.SetValue,
+                NativeWindowHandle = IntPtr.Zero,
+                PointOwnerWindowHandle = dataWindow.Handle,
+                Value = "Pune",
+                HasTargetPoint = true,
+                TargetScreenX = -31900,
+                TargetScreenY = -31940,
+                DesktopCanTakePhysicalInput = true,
+                TimeoutMs = 2000
+            };
+
+            Assert.AreEqual(LayerExecutionStatus.Skipped, layer.TryExecute(cell).Status,
+                "With the mouse available the engine has to fall through to it, as it does today");
+        }
+
+        /// <summary>
+        /// Without a rectangle there is no cell to aim at, and a click sent anyway
+        /// would type the value into whatever the DataWindow has current.
+        /// </summary>
+        [TestMethod]
+        public void DataWindowMsaa_DeclinesRatherThanTypingIntoACellItCannotAimAt()
+        {
+            using DataWindowClassWindow dataWindow = new DataWindowClassWindow();
+            DataWindowMsaaLayer layer = new DataWindowMsaaLayer();
+
+            DesktopActionContext cell = new DesktopActionContext
+            {
+                Operation = DesktopOperation.SetValue,
+                NativeWindowHandle = IntPtr.Zero,
+                PointOwnerWindowHandle = dataWindow.Handle,
+                Value = "Pune",
+                HasTargetPoint = false,
+                DesktopCanTakePhysicalInput = false,
+                TimeoutMs = 2000
+            };
+
+            Assert.AreEqual(LayerExecutionStatus.Skipped, layer.TryExecute(cell).Status);
+        }
+
+        /// <summary>
+        /// A window of PowerBuilder's DataWindow class, which is all the layer's
+        /// class test looks at. It draws nothing and serves no cells.
+        /// </summary>
+        private sealed class DataWindowClassWindow : IDisposable
+        {
+            private const string DataWindowClass = "pbdw170";
+            private const int WsPopup = unchecked((int)0x80000000);
+
+            private delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+            private static readonly object mGate = new object();
+            private static WndProc mKeepAlive;
+            private static bool mRegistered;
+
+            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            private struct WNDCLASS
+            {
+                public uint style;
+                public IntPtr lpfnWndProc;
+                public int cbClsExtra;
+                public int cbWndExtra;
+                public IntPtr hInstance;
+                public IntPtr hIcon;
+                public IntPtr hCursor;
+                public IntPtr hbrBackground;
+                [MarshalAs(UnmanagedType.LPWStr)] public string lpszMenuName;
+                [MarshalAs(UnmanagedType.LPWStr)] public string lpszClassName;
+            }
+
+            [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+            private static extern ushort RegisterClassW(ref WNDCLASS wndClass);
+
+            [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+            private static extern IntPtr CreateWindowExW(int exStyle, string className, string windowName,
+                int style, int x, int y, int width, int height, IntPtr parent, IntPtr menu, IntPtr instance, IntPtr param);
+
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+            private static extern IntPtr DefWindowProcW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+            [DllImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool DestroyWindow(IntPtr hWnd);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            private static extern IntPtr GetModuleHandleW(string moduleName);
+
+            internal IntPtr Handle { get; }
+
+            internal DataWindowClassWindow()
+            {
+                IntPtr instance = GetModuleHandleW(null);
+
+                lock (mGate)
+                {
+                    if (!mRegistered)
+                    {
+                        // Held in a field because the window class outlives this call
+                        // and the delegate behind the pointer must not be collected.
+                        mKeepAlive = DefWindowProcW;
+                        WNDCLASS wndClass = new WNDCLASS
+                        {
+                            lpfnWndProc = Marshal.GetFunctionPointerForDelegate(mKeepAlive),
+                            hInstance = instance,
+                            lpszClassName = DataWindowClass
+                        };
+
+                        if (RegisterClassW(ref wndClass) == 0)
+                        {
+                            throw new InvalidOperationException(
+                                "Could not register a DataWindow window class: " + Marshal.GetLastWin32Error());
+                        }
+                        mRegistered = true;
+                    }
+                }
+
+                Handle = CreateWindowExW(0, DataWindowClass, "dw", WsPopup, -32000, -32000, 240, 120,
+                    IntPtr.Zero, IntPtr.Zero, instance, IntPtr.Zero);
+                if (Handle == IntPtr.Zero)
+                {
+                    throw new InvalidOperationException(
+                        "Could not create a DataWindow-classed window: " + Marshal.GetLastWin32Error());
+                }
+            }
+
+            public void Dispose()
+            {
+                if (Handle != IntPtr.Zero)
+                {
+                    DestroyWindow(Handle);
+                }
+            }
         }
 
         [TestMethod]
@@ -813,6 +1286,50 @@ namespace GingerCoreTest.Misc
         }
 
         /// <summary>
+        /// The mouse is asked for again at the moment it is used, not once when the
+        /// action started, so a screen locked part way through an action cannot be
+        /// clicked into.
+        /// </summary>
+        /// <remarks>
+        /// This is the one layer that cannot tell whether it worked: moving the cursor
+        /// on a locked desktop throws nothing and changes nothing, so the old code
+        /// returned a click the application never received. The gap is real rather
+        /// than theoretical - the desktop is read when the action begins, and the
+        /// quieter layers take their own time to decline before this one runs, which
+        /// is ample room for someone to lock the machine.
+        ///
+        /// A null element stands in for the target because it is never reached on a
+        /// locked machine, and on an unlocked one it fails on the first line of
+        /// SendClick before the cursor is touched. So the check runs either way
+        /// without moving the mouse of whoever is running the suite.
+        /// </remarks>
+        [TestMethod]
+        public void PhysicalInput_AsksAgainForTheMouseRatherThanTrustingTheAnswerFromWhenTheActionStarted()
+        {
+            DesktopActionContext context = new DesktopActionContext
+            {
+                Operation = DesktopOperation.Click,
+                AllowPhysicalInput = true,
+                DesktopCanTakePhysicalInput = true,
+                AutomationElement = null
+            };
+
+            LayerResult result = new PhysicalInputLayer().TryExecute(context);
+
+            if (InteractiveDesktop.IsAvailable())
+            {
+                Assert.AreNotEqual(LayerExecutionStatus.Skipped, result.Status,
+                    "The mouse still works, so the layer must not refuse the click: " + result.Message);
+                return;
+            }
+
+            Assert.AreEqual(LayerExecutionStatus.Skipped, result.Status,
+                "A locked screen was reported as a click rather than refused");
+            StringAssert.Contains(result.Message, "locked",
+                "A refusal has to say the screen was locked, or the run gives no clue why the click never happened");
+        }
+
+        /// <summary>
         /// A secure desktop still proves input cannot land, so that direction has to
         /// keep holding.
         /// </summary>
@@ -960,6 +1477,148 @@ namespace GingerCoreTest.Misc
             {
                 Assert.IsFalse(string.IsNullOrWhiteSpace(InteractiveDesktop.DescribeSession()));
             }
+        }
+
+        /// <summary>
+        /// A key that produces no character still has to move the caret, which is
+        /// what says the key press itself arrived.
+        /// </summary>
+        /// <remarks>
+        /// Without End the caret sits where the text was set, at the start, so the
+        /// typed character would land in front of the existing text. Where it ends up
+        /// is the evidence.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_DeliversANavigationKeyAsAKeyPressRatherThanAsText()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+            Assert.IsTrue(Win32Native.SetControlText(host.EditHwnd, "ABC", 2000));
+
+            Assert.IsTrue(Win32KeyMessages.TrySendNotation(host.EditHwnd, "{END}X", 2000, out string failure), failure);
+
+            Assert.AreEqual("ABCX", Win32Native.GetControlText(host.EditHwnd, 2000),
+                "End has to move the caret, otherwise the character lands at the front");
+        }
+
+        /// <summary>
+        /// A named key has to carry the character it would have produced, or the
+        /// control it reaches does nothing with it.
+        /// </summary>
+        /// <remarks>
+        /// A real key press becomes a character in the application's own message
+        /// loop, which is the step a sent message skips. Backspace shows it: the key
+        /// alone leaves the text as it was, and only the character deletes.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_GivesANamedKeyTheCharacterTheMessageLoopWouldHaveMade()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+            Assert.IsTrue(Win32Native.SetControlText(host.EditHwnd, "ABC", 2000));
+
+            Assert.IsTrue(Win32KeyMessages.TrySendNotation(host.EditHwnd, "{END}{BACKSPACE}", 2000, out string failure), failure);
+
+            Assert.AreEqual("AB", Win32Native.GetControlText(host.EditHwnd, 2000),
+                "Backspace has to remove a character rather than arrive and do nothing");
+        }
+
+        /// <summary>
+        /// The shorthands a Send Keys value is allowed to use.
+        /// </summary>
+        [TestMethod]
+        public void SendNotation_ReadsTheShorthandsAValueMayUse()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            // A repeat count means that many presses, and braces around a single
+            // character escape it, so this is three plus signs rather than the Shift
+            // modifier three times.
+            Assert.IsTrue(Win32KeyMessages.TrySendNotation(host.EditHwnd, "{+ 3}", 2000, out string failure), failure);
+            Assert.AreEqual("+++", Win32Native.GetControlText(host.EditHwnd, 2000));
+        }
+
+        /// <summary>
+        /// Punctuation that looks special but means nothing has to go through as
+        /// itself.
+        /// </summary>
+        /// <remarks>
+        /// The other half of refusing what cannot be delivered. Reading ordinary
+        /// text as notation would fail everyday form filling on a locked screen,
+        /// which is most of what these steps do.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_DoesNotMistakeOrdinaryPunctuationForNotation()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            const string typed = "user@example.com Ref #A&B/12.5";
+            Assert.IsTrue(Win32KeyMessages.TrySendNotation(host.EditHwnd, typed, 2000, out string failure), failure);
+
+            Assert.AreEqual(typed, Win32Native.GetControlText(host.EditHwnd, 2000));
+        }
+
+        /// <summary>
+        /// Case arrives as it was written, whatever the keyboard's lock keys are
+        /// doing.
+        /// </summary>
+        /// <remarks>
+        /// The keyboard route builds an upper case letter by holding Shift, so with
+        /// Caps Lock engaged the two cancel and "CoreTeam" is typed as "cOREtEAM". A
+        /// character sent as a message carries its own codepoint and never consults
+        /// the keyboard, which is why this route cannot reproduce that fault - and
+        /// why a locked run and an unlocked one can disagree about case.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_PreservesCaseWhateverTheKeyboardLockKeysAreDoing()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            const string mixedCase = "CoreTeam";
+            Assert.IsTrue(Win32KeyMessages.TrySendNotation(host.EditHwnd, mixedCase, 2000, out string failure), failure);
+
+            string actual = Win32Native.GetControlText(host.EditHwnd, 2000);
+            Assert.AreEqual(mixedCase, actual, "Case has to survive the trip, not be rebuilt from Shift");
+            Assert.AreNotEqual("cOREtEAM", actual, "That is the keyboard route's Caps Lock fault, not this one's");
+        }
+
+        /// <summary>
+        /// A value this cannot carry has to be refused rather than dropped or typed.
+        /// </summary>
+        /// <remarks>
+        /// A window message leaves the target thread's key state alone, so a control
+        /// asking whether Ctrl is held is told it is not and Ctrl+A arrives as a
+        /// plain A. Delivering that would run a different step from the one that was
+        /// written, and typing the value verbatim would put "^a" in the field and
+        /// call it a pass. Malformed and unknown are refused for the same reason.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_RefusesWhatItCannotDeliverRatherThanApproximatingIt()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            foreach (string value in new[] { "^a", "+{TAB}", "%{F4}", "^(ab)", "{ENTER", "{NOTAKEY}", "abc}" })
+            {
+                Assert.IsFalse(Win32KeyMessages.TrySendNotation(host.EditHwnd, value, 2000, out string refusal),
+                    "'" + value + "' cannot be delivered as window messages");
+                Assert.IsFalse(string.IsNullOrWhiteSpace(refusal), "A refusal has to say what got in the way");
+            }
+
+            Assert.AreEqual(string.Empty, Win32Native.GetControlText(host.EditHwnd, 2000),
+                "A refused value must not leave part of itself behind");
+        }
+
+        /// <summary>
+        /// Keys aimed at no window have to be reported, not swallowed.
+        /// </summary>
+        /// <remarks>
+        /// This is the case that made a locked run pass while typing nothing: the
+        /// keyboard route focused an element that could not be focused and typed at a
+        /// desktop that was not listening, and neither half said so.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_SaysWhyRatherThanReportingAnEmptySuccess()
+        {
+            Assert.IsFalse(Win32KeyMessages.TrySendNotation(IntPtr.Zero, "Pune", 2000, out string failure));
+            StringAssert.Contains(failure, "no window");
         }
     }
 }

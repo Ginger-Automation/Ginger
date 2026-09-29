@@ -56,6 +56,18 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                 switch (context.Operation)
                 {
                     case DesktopOperation.Click:
+                        // Asked before BM_CLICK, not after it. A click that reached
+                        // both patterns and neither took it went to the mouse before
+                        // this chain existed, and a button message arriving there
+                        // instead would change what an ordinary unlocked run does to
+                        // every button whose Invoke and default action both decline.
+                        // Permission alone is enough to stand aside here because the
+                        // mapper only grants it on a desktop that can take it.
+                        if (context.AllowPhysicalInput)
+                        {
+                            return LayerResult.Skip("Physical input is permitted and working; leaving the click to it");
+                        }
+
                         if (Win32Native.ClickButton(hwnd, context.TimeoutMs))
                         {
                             return LayerResult.Ok(Name, "Click via BM_CLICK");
@@ -70,7 +82,7 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                         // ordinary unlocked desktop. Behind a lock screen the mouse
                         // reaches nothing, and this is the only way such a target can
                         // still be clicked.
-                        if (context.AllowPhysicalInput || context.DesktopCanTakePhysicalInput)
+                        if (context.DesktopCanTakePhysicalInput)
                         {
                             return LayerResult.Skip("HWND is not an enabled button control; leaving the click to physical input");
                         }

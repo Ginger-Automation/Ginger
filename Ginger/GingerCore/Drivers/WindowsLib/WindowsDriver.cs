@@ -106,6 +106,19 @@ namespace GingerCore.Drivers.WindowsLib
         [UserConfiguredDescription("Applitool Server Url")]
         public String ApplitoolsServerUrl { get; set; }
 
+        /// <remarks>
+        /// Declared last, after the settings that were here before it. Agents saved by
+        /// an earlier build have no value stored for it, and adding it among the
+        /// existing ones moved the settings below it down a row - which is how a
+        /// Windows agent came to hold the word "false" in its ImplicitWait and refused
+        /// to start at all. Anything added later belongs below this, for the same
+        /// reason.
+        /// </remarks>
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Non-Intrusive Input Mode || Use window messages for clicks and keystrokes so the run does not take over the mouse, keyboard and foreground window. Default is false - validate your flows before enabling")]
+        public bool NonIntrusiveInputMode { get; set; }
+
         public override ePomElementCategory? PomCategory
         {
             get
@@ -143,13 +156,19 @@ namespace GingerCore.Drivers.WindowsLib
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
                     ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.Windows;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).NonIntrusiveInput = NonIntrusiveInputMode;
 
-                    mUIElementOperationsHelper = new UIElementOperationsHelper();
+                    mUIElementOperationsHelper = new UIElementOperationsHelper
+                    {
+                        NonIntrusiveInput = NonIntrusiveInputMode
+                    };
 
                     break;
 
             }
             mUIAutomationHelper.ImplicitWait = mImplicitWait;
+
+            GingerCore.Drivers.Common.LegacyAutomation.InteractiveDesktop.ReportInputPreference(NonIntrusiveInputMode, "The Windows agent");
 
             // Written once at start so a run that failed overnight carries the
             // evidence of the session it ran in, rather than only the symptoms.
@@ -896,9 +915,13 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch (Exception e)
+            // Rethrown rather than handled, so the runner reports it. "throw e"
+            // would restart the stack trace here and hide the line that actually
+            // failed, which is the only clue a run leaves for a step that broke
+            // somewhere deep in the automation helper.
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -1116,9 +1139,9 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -1155,9 +1178,9 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 

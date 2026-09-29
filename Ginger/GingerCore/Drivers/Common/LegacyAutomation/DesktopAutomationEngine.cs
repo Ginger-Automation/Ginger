@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.Drivers.PBDriver.DesktopAutomation;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -59,9 +60,12 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             return new DesktopAutomationEngine(
             [
                 new UiaPatternLayer(),
-                // Runs ahead of the generic MSAA layer because it is the only one
-                // that can see inside a PowerBuilder DataWindow. It is inert for
-                // every other window class.
+                // The one PowerBuilder specific layer, which is why it lives with the
+                // PowerBuilder driver rather than here. It runs ahead of the generic
+                // MSAA layer because it is the only one that can see inside a
+                // DataWindow, and it is inert for every other window class, so the
+                // chain behaves identically for the Windows and Java drivers that
+                // share it.
                 new DataWindowMsaaLayer(),
                 new MsaaLayer(),
                 new Win32Layer(),
@@ -98,12 +102,18 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                     continue;
                 }
 
+                string usedLayer = layerResult.LayerName ?? layer.Name;
                 DesktopEngineResult success = new DesktopEngineResult
                 {
                     Success = true,
-                    UsedLayer = layerResult.LayerName ?? layer.Name,
+                    UsedLayer = usedLayer,
                     OutputValue = layerResult.OutputValue,
-                    ExecutionInfo = context.Operation + " via " + (layerResult.LayerName ?? layer.Name) + ". " + layerResult.Message
+                    // The layer's message already names the operation and the technique
+                    // that carried it out, so the layer is named as the source of that
+                    // one attempt. Leading with the operation again produced lines like
+                    // "Click via UIA-Pattern. Click via InvokePattern", which read as
+                    // two clicks when only one happened.
+                    ExecutionInfo = layerResult.Message + " (" + usedLayer + " layer)"
                 };
 
                 // A read that comes back blank is kept only as a last resort, so a later

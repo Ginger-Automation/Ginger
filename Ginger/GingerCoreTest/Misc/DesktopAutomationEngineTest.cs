@@ -18,6 +18,7 @@ limitations under the License.
 
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.Common.LegacyAutomation;
+using GingerCore.Drivers.PBDriver.DesktopAutomation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,11 @@ namespace GingerCoreTest.Misc
             Assert.AreEqual("UIA", result.UsedLayer);
             Assert.AreEqual(1, uia.Calls);
             Assert.AreEqual(0, win32.Calls);
-            StringAssert.Contains(result.ExecutionInfo, "via UIA");
+
+            // The layer's own message is kept and the layer named once as its source.
+            // Leading with the operation as well produced "Click via UIA-Pattern.
+            // Click via InvokePattern", which reads as two clicks for one attempt.
+            Assert.AreEqual("UIA ok (UIA layer)", result.ExecutionInfo);
         }
 
         [TestMethod]

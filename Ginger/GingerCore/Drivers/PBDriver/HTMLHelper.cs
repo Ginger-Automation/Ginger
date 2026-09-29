@@ -60,6 +60,29 @@ namespace GingerCore.Drivers.PBDriver
         List<ElementInfo> frameElementsList = [];
         UIAuto.AutomationElement AEBrowser;
 
+        /// <summary>
+        /// Whether the agent this helper is working for asked for its clicks and
+        /// keystrokes to go through window messages ahead of the mouse and keyboard.
+        /// </summary>
+        /// <remarks>
+        /// Taken at construction and fixed thereafter. It is the owning helper's
+        /// answer, since this class is only ever reached through that one and both
+        /// the Windows and PowerBuilder drivers use it; having no setter is what
+        /// makes it impossible for the two to drift apart, which would show up as
+        /// this helper quietly using the mouse on a locked screen and reporting a
+        /// click that never landed.
+        /// </remarks>
+        public bool NonIntrusiveInput { get; }
+
+        /// <summary>
+        /// Whether a step should try the window-message route before reaching for the
+        /// mouse and keyboard, for the agent this helper is working for. Exists to
+        /// supply that agent's preference, which a route added later can ask correctly
+        /// and still get wrong by passing another agent's answer, or none.
+        /// </summary>
+        private bool PreferWindowMessages(bool physicalInputWorks) =>
+            InteractiveDesktop.PreferWindowMessages(physicalInputWorks, NonIntrusiveInput);
+
         public async Task<List<ElementInfo>> GetVisibleElement()
         {
             //List<ElementInfo> list = await GetElementList();
@@ -67,8 +90,9 @@ namespace GingerCore.Drivers.PBDriver
             return await GetElementList();
         }
 
-        public HTMLHelper(InternetExplorer IE, UIAuto.AutomationElement AE)
+        public HTMLHelper(InternetExplorer IE, UIAuto.AutomationElement AE, bool nonIntrusiveInput)
         {
+            NonIntrusiveInput = nonIntrusiveInput;
             browserObject = IE;
             AEBrowser = AE;
             dispHtmlDocument = (DispHTMLDocument)browserObject.Document;
@@ -1266,8 +1290,36 @@ namespace GingerCore.Drivers.PBDriver
                 }
 
                 ((IHTMLElement2)elem).focus();
-                //elem.getAttribute()                
-                System.Windows.Forms.SendKeys.SendWait(value + "{TAB}");
+
+                // Focusing the element is script rather than input, so it works with
+                // the screen locked. The keys are the only part that still wants a
+                // keyboard, and the browser's render window takes them as messages.
+                string keys = value + "{TAB}";
+                bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(keyboardIsUsable))
+                {
+                    if (WindowMessageKeystrokes.TrySend(AEBrowser, keys, out string failure))
+                    {
+                        return true;
+                    }
+
+                    if (!keyboardIsUsable)
+                    {
+                        // The caller turns false into "Unable to Send Keys", which does
+                        // not say why, and this is the only place that knows.
+                        Reporter.ToLog(eLogLevel.ERROR, "Could not send keys to the browser. The desktop cannot"
+                            + " take physical input (" + InteractiveDesktop.DescribeSession() + "), and " + failure
+                            + ". Unlock the screen for this step, or use an action on the element itself.");
+                        return false;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("send these keys", failure, out _))
+                    {
+                        return false;
+                    }
+                }
+
+                System.Windows.Forms.SendKeys.SendWait(keys);
                 return true;
             }
             catch (Exception ex)
@@ -1563,7 +1615,9 @@ namespace GingerCore.Drivers.PBDriver
                         while (enm.MoveNext())
                         {
                             j++;
-                            if (((IHTMLElement)(enm.Current)).innerText.Equals(value))
+                            // A blank or placeholder option has no innerText at all, so the
+                            // text is compared rather than asked for its Equals.
+                            if (enm.Current is IHTMLElement option && string.Equals(option.innerText, value))
                             {
                                 idex = j;
                                 temp = value;
@@ -1659,9 +1713,23 @@ namespace GingerCore.Drivers.PBDriver
                 int elemX = getelementXCordinate(element);
                 int elemY = getelementYCordinate(element);
 
-                if (!InteractiveDesktop.IsAvailable())
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
                 {
-                    return ClickBrowserPointWithWindowMessages(elemX + x, elemY + y);
+                    if (ClickBrowserPointWithWindowMessages(elemX + x, elemY + y, out string refusal))
+                    {
+                        return true;
+                    }
+                    if (!mouseIsUsable)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, refusal);
+                        return false;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("click the element", refusal, out _))
+                    {
+                        return false;
+                    }
                 }
 
                 winAPI.SendClickOnWinXYPoint(AEBrowser, elemX + x, elemY + y);
@@ -1678,14 +1746,20 @@ namespace GingerCore.Drivers.PBDriver
         /// cannot reach it.
         /// </summary>
         /// <remarks>
-        /// Reached only once the desktop has reported it cannot take physical input,
-        /// so every unlocked run still goes through the mouse exactly as before. The
-        /// mouse route reports nothing back and this method used to answer true
-        /// regardless, so behind a lock screen a click that landed on nothing was
-        /// recorded as a step that passed and the failure only surfaced later, in
-        /// whichever step expected the dialog it never opened.
+        /// Reached behind a lock screen, and on an unlocked desktop only when the
+        /// agent asked for the quiet route, so a default run still goes through the
+        /// mouse exactly as before. The mouse route reports nothing back and this
+        /// method used to answer true regardless, so behind a lock screen a click that
+        /// landed on nothing was recorded as a step that passed and the failure only
+        /// surfaced later, in whichever step expected the dialog it never opened.
         /// </remarks>
-        private bool ClickBrowserPointWithWindowMessages(int browserX, int browserY)
+        /// <param name="refusal">
+        /// Why the point could not be reached, handed back rather than logged here so
+        /// the caller reports it where it decides what to do about it. Announcing a
+        /// fallback in this method would put it a call away from the mouse it falls
+        /// back to, which is the one place the desktop has to be re-checked.
+        /// </param>
+        private bool ClickBrowserPointWithWindowMessages(int browserX, int browserY, out string refusal)
         {
             // Offset from the browser's own rectangle, which is the origin the mouse
             // route measures from, so both aim at the same pixel.
@@ -1697,11 +1771,9 @@ namespace GingerCore.Drivers.PBDriver
             DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
                 DesktopActionMapper.ForPoint(AEBrowser, DesktopOperation.Click, screenX, screenY));
 
-            if (!engineResult.Success)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, DesktopActionMapper.DescribeUnreachablePoint(
-                    DesktopOperation.Click, screenX, screenY, engineResult));
-            }
+            refusal = engineResult.Success
+                ? null
+                : DesktopActionMapper.DescribeUnreachablePoint(DesktopOperation.Click, screenX, screenY, engineResult);
 
             return engineResult.Success;
         }

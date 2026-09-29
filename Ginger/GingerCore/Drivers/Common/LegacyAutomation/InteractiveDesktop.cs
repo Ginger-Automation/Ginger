@@ -59,6 +59,13 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         private const int WTSSessionInfoEx = 25;
         private const int WTSInfoExLevel1 = 1;
         private const int WTS_SESSIONSTATE_LOCK = 0;
+
+        /// <summary>
+        /// Stands for "not read yet", and cannot collide with a real session because
+        /// Windows numbers them from zero.
+        /// </summary>
+        private const int UnknownSessionId = -1;
+
         private static readonly IntPtr WTS_CURRENT_SERVER_HANDLE = IntPtr.Zero;
 
         /// <summary>
@@ -91,6 +98,13 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
         [DllImport("wtsapi32.dll")]
         private static extern void WTSFreeMemory(IntPtr memory);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ProcessIdToSessionId(uint processId, out uint sessionId);
+
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentProcessId();
 
         /// <summary>
         /// Leading fields of WTSINFOEX. The four bytes after <c>Level</c> are the
@@ -132,6 +146,94 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         }
 
         /// <summary>
+        /// Describes an agent's choice in the run log, so a run that failed overnight
+        /// says which route its steps were taking.
+        /// </summary>
+        public static void ReportInputPreference(bool nonIntrusiveInput, string agentDescription)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, agentDescription + " will send input "
+                    + (nonIntrusiveInput
+                        ? "non-intrusively: clicks and keystrokes go through window messages where the control accepts them, and the mouse and keyboard are the last resort"
+                        : "directly: clicks and keystrokes go through the mouse and keyboard, which takes the foreground window"));
+            }
+            catch (Exception)
+            {
+                // Logging must never be the reason an action fails.
+            }
+        }
+
+        /// <summary>
+        /// Whether a step should try the window-message route before reaching for the
+        /// mouse and keyboard.
+        /// </summary>
+        /// <remarks>
+        /// True in two unrelated situations, which is why it is asked as one question.
+        /// Behind a lock screen physical input reaches nothing, so there is no choice
+        /// to make and no risk in making it. On a desktop that can take input it is
+        /// the operator's request, and the caller is expected to keep the mouse behind
+        /// this as the last resort rather than treat the quiet route as the only one.
+        ///
+        /// The preference arrives as an argument rather than being read from state
+        /// held here, because it belongs to one agent and not to the process. Two
+        /// agents that disagree are not in conflict: each step picks its own route,
+        /// and a PowerBuilder agent asking for window messages is no reason for a
+        /// Windows agent in the same process to stop using the mouse.
+        /// </remarks>
+        public static bool PreferWindowMessages(bool physicalInputWorks, bool nonIntrusiveInput)
+        {
+            return !physicalInputWorks || nonIntrusiveInput;
+        }
+
+        /// <summary>
+        /// Notes that a window-message route declined, and answers whether the mouse
+        /// and keyboard are still there to take over.
+        /// </summary>
+        /// <param name="operation">
+        /// What the step was trying to do, as a verb phrase, so it reads as written
+        /// in both the fallback note and the refusal.
+        /// </param>
+        /// <param name="refusal">
+        /// Why the step cannot go ahead, phrased for the run report, when this
+        /// returns false.
+        /// </param>
+        /// <remarks>
+        /// The note and the question are one call because they were two, and five of
+        /// the thirteen routes that announced a fallback went on to use the mouse
+        /// without ever asking whether it was still there. Answering both at once is
+        /// what makes that impossible rather than merely discouraged: a route added
+        /// later cannot announce the fallback and skip the question, because there is
+        /// no longer a way to do the first without the second.
+        ///
+        /// The answer taken when the action started is too old to reuse here. The
+        /// attempt that just failed took time, and a screen locked inside it leaves
+        /// the mouse moving where nobody can see, throwing nothing and reporting
+        /// nothing - which is how a step that did nothing comes to be recorded as one
+        /// that worked.
+        ///
+        /// The refusal is logged as well as handed back, because several of the
+        /// routes that need it return void and have nowhere to put it.
+        /// </remarks>
+        public static bool TryFallBackToPhysicalInput(string operation, string windowMessageResult, out string refusal)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Window messages could not " + operation
+                + ", so the mouse and keyboard are being used as the last resort. " + windowMessageResult);
+
+            if (IsAvailable())
+            {
+                refusal = null;
+                return true;
+            }
+
+            refusal = "Ginger could not " + operation + " because the screen was locked after the action started ("
+                + DescribeSession() + "). The mouse and keyboard reach nothing there, so the step is reported"
+                + " as failed rather than as one that worked.";
+            Reporter.ToLog(eLogLevel.ERROR, refusal);
+            return false;
+        }
+
+        /// <summary>
         /// The probe itself, without the logging, so <see cref="DescribeSession"/> can
         /// report the state without counting as a state change.
         /// </summary>
@@ -159,17 +261,26 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
             try
             {
-                // Asked first because it is the only one of the three that is always
-                // conclusive. Neither holding a handle nor reading the desktop name
-                // proves input lands on the application: a process in the user's own
-                // session can open the secure desktop on some configurations, and
-                // OpenInputDesktop can answer Default while the lock screen is up.
-                if (IsSessionLocked())
+                // The name is read first only because it is the cheaper of the two and
+                // settles the question outright when it names a secure desktop: input
+                // provably does not land on the application there. The order carries
+                // no meaning beyond cost - a step runs when the session is unlocked
+                // and the desktop is an ordinary one, and asking in either order gives
+                // that same answer.
+                //
+                // What the name cannot do is prove the converse, which is why the
+                // session is still asked whenever the name comes back ordinary: a
+                // locked workstation has been seen calling its input desktop Default,
+                // and a process in the user's own session can open the secure desktop
+                // on some configurations. Terminal services is the reading that
+                // decides, and it costs a round trip to its service, so it is worth
+                // skipping in the one case something cheaper has already settled.
+                if (IsSecureDesktop(InputDesktopName()))
                 {
                     return false;
                 }
 
-                return !IsSecureDesktop(InputDesktopName());
+                return !IsSessionLocked();
             }
             catch (Exception)
             {
@@ -226,6 +337,15 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         private static SessionLockState ReadSessionLockState()
         {
             int sessionId = CurrentSessionId();
+            if (sessionId == UnknownSessionId)
+            {
+                // Without knowing which session to ask about there is nothing to read,
+                // and the answer could not be checked against the right session even
+                // if there were. Reported as unavailable rather than unreadable: this
+                // is a machine that would not say, not a buffer read at wrong offsets.
+                return SessionLockState.Unavailable;
+            }
+
             bool answered;
             IntPtr buffer;
             int bytesReturned;
@@ -410,10 +530,64 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
         }
 
+        /// <summary>
+        /// The session this process belongs to, remembered after the first reading.
+        /// </summary>
+        /// <remarks>
+        /// A process cannot move between sessions while it runs, so this is asked
+        /// once. It used to be read from a <see cref="Process"/> object built fresh
+        /// on every probe, which cost several milliseconds - more than the terminal
+        /// services query it was only there to address - for an answer that could
+        /// never have changed. A reading that fails is not remembered, so a machine
+        /// that cannot answer yet is asked again rather than being written off.
+        /// </remarks>
+        private static int mCachedSessionId = UnknownSessionId;
+
         private static int CurrentSessionId()
         {
-            using Process current = Process.GetCurrentProcess();
-            return current.SessionId;
+            int cached = Volatile.Read(ref mCachedSessionId);
+            if (cached != UnknownSessionId)
+            {
+                return cached;
+            }
+
+            int resolved = ReadSessionIdFromWindows();
+            if (resolved != UnknownSessionId)
+            {
+                Volatile.Write(ref mCachedSessionId, resolved);
+            }
+
+            return resolved;
+        }
+
+        /// <summary>
+        /// Asks Windows directly first, since that is a field read inside the kernel
+        /// rather than the handle and object a <see cref="Process"/> would build.
+        /// </summary>
+        private static int ReadSessionIdFromWindows()
+        {
+            try
+            {
+                if (ProcessIdToSessionId(GetCurrentProcessId(), out uint sessionId))
+                {
+                    return (int)sessionId;
+                }
+            }
+            catch (Exception)
+            {
+                // Falls through to the managed reading, which is slower but does not
+                // depend on the export being present.
+            }
+
+            try
+            {
+                using Process current = Process.GetCurrentProcess();
+                return current.SessionId;
+            }
+            catch (Exception)
+            {
+                return UnknownSessionId;
+            }
         }
     }
 }

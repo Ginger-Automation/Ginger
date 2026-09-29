@@ -43,6 +43,18 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
         public LayerResult TryExecute(DesktopActionContext context)
         {
+            // The desktop is asked again here, and only here, because this is the one
+            // route that cannot tell whether it worked. The answer on the context was
+            // taken when the action started; a screen locked in the time the quieter
+            // layers took to decline would leave the call below moving a cursor
+            // nobody can see, throwing nothing and reporting a click the application
+            // never received. Skipping instead lets the engine say the action failed,
+            // which is the one thing a locked screen must never turn into a pass.
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                return LayerResult.Skip("The screen was locked after the action started, so the mouse reaches nothing");
+            }
+
             try
             {
                 mWinApi.SendClick((UIAuto.AutomationElement)context.AutomationElement);
