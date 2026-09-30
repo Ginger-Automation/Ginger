@@ -83,6 +83,10 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr GetParent(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsChild(IntPtr hWndParent, IntPtr hWnd);
+
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetGUIThreadInfo(uint idThread, ref GUITHREADINFO lpgui);
@@ -111,12 +115,20 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         }
 
         /// <summary>
-        /// Returns the focused child HWND inside the same thread as
-        /// <paramref name="topLevelHwnd"/>, or <see cref="IntPtr.Zero"/> when the
-        /// focus cannot be narrowed to a child. A key message posted to a frame
-        /// returns success while doing nothing, so the caller must treat
-        /// <see cref="IntPtr.Zero"/> as a failure rather than falling back.
+        /// Returns the focused child HWND inside <paramref name="topLevelHwnd"/>, or
+        /// <see cref="IntPtr.Zero"/> when the focus cannot be narrowed to a child. A
+        /// key message posted to a frame returns success while doing nothing, so the
+        /// caller must treat <see cref="IntPtr.Zero"/> as a failure rather than
+        /// falling back.
         /// </summary>
+        /// <remarks>
+        /// The focus is read per thread, not per window, and one UI thread commonly
+        /// owns several top-level windows - a main frame and a modeless dialog being
+        /// the ordinary case. The thread's focus lives in whichever of them is active,
+        /// so the window asked about has to be confirmed as an ancestor of the answer.
+        /// Without that check a step that located window A by title typed into a field
+        /// of window B and reported the keys as sent.
+        /// </remarks>
         public static IntPtr ResolveFocusedChild(IntPtr topLevelHwnd)
         {
             if (topLevelHwnd == IntPtr.Zero)
@@ -131,12 +143,23 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
 
             GUITHREADINFO info = new GUITHREADINFO { cbSize = (uint)Marshal.SizeOf(typeof(GUITHREADINFO)) };
-            if (GetGUIThreadInfo(threadId, ref info) && Win32Native.IsChildWindow(info.hwndFocus))
+            if (GetGUIThreadInfo(threadId, ref info)
+                && Win32Native.IsChildWindow(info.hwndFocus)
+                && BelongsTo(topLevelHwnd, info.hwndFocus))
             {
                 return info.hwndFocus;
             }
 
             return Win32Native.IsChildWindow(topLevelHwnd) ? topLevelHwnd : IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Whether <paramref name="candidate"/> is <paramref name="topLevelHwnd"/>
+        /// itself or sits somewhere beneath it.
+        /// </summary>
+        private static bool BelongsTo(IntPtr topLevelHwnd, IntPtr candidate)
+        {
+            return candidate == topLevelHwnd || IsChild(topLevelHwnd, candidate);
         }
 
         /// <summary>
@@ -262,6 +285,18 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
             return SendMessageTimeout(hwnd, message, wParam, IntPtr.Zero,
                 SMTO_BLOCK | SMTO_ABORTIFHUNG, timeout, out _) != IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Sends one message and records in <paramref name="anyDelivered"/> whether
+        /// the window took it, so a sequence that stops partway knows how much of
+        /// itself already arrived.
+        /// </summary>
+        private static bool Deliver(IntPtr hwnd, int message, IntPtr wParam, uint timeout, ref bool anyDelivered)
+        {
+            bool delivered = Deliver(hwnd, message, wParam, timeout);
+            anyDelivered |= delivered;
+            return delivered;
         }
 
         /// <summary>
@@ -410,7 +445,19 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// where the step meant to put it.
         /// </remarks>
         public static bool TrySendNotation(IntPtr hwnd, string value, int timeoutMs, out string failure)
+            => TrySendNotation(hwnd, value, timeoutMs, out failure, out _);
+
+        /// <param name="partiallyDelivered">
+        /// Whether any of the value reached the window before it stopped taking
+        /// messages, when this returns false. A caller with the keyboard behind it
+        /// must not retry there: the window is still holding what arrived, so sending
+        /// the value again leaves a second copy of that prefix in the control and
+        /// presses any Enter or Tab in it twice.
+        /// </param>
+        public static bool TrySendNotation(IntPtr hwnd, string value, int timeoutMs, out string failure, out bool partiallyDelivered)
         {
+            partiallyDelivered = false;
+
             if (!TryParseNotation(value, out List<KeyStroke> strokes, out failure))
             {
                 return false;
@@ -423,12 +470,15 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
 
             uint timeout = NormalizeTimeout(timeoutMs);
+            bool anyDelivered = false;
             foreach (KeyStroke stroke in strokes)
             {
-                if (!SendStroke(hwnd, stroke, timeout))
+                if (!SendStroke(hwnd, stroke, timeout, ref anyDelivered))
                 {
-                    failure = "window " + hwnd.ToInt64() + " did not accept all of the keys, so it may have taken"
-                        + " only part of the value";
+                    partiallyDelivered = anyDelivered;
+                    failure = anyDelivered
+                        ? "window " + hwnd.ToInt64() + " took part of the value and then stopped accepting keys"
+                        : "window " + hwnd.ToInt64() + " did not accept the keys";
                     return false;
                 }
             }
@@ -441,22 +491,27 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// going down, the character it translates to where it makes one, then the
         /// key coming up.
         /// </summary>
+        /// <param name="anyDelivered">
+        /// Set once any message has been taken. One key press is several messages and
+        /// a control that reads keys itself can act on the first of them, so what
+        /// arrived has to be counted per message rather than per keystroke.
+        /// </param>
         /// <remarks>
         /// The translation step is the one that is easy to leave out and impossible
         /// to do without. A standard edit control acts on the character, not on the
         /// key, so an Enter delivered as a key press alone reaches it and does
         /// nothing.
         /// </remarks>
-        private static bool SendStroke(IntPtr hwnd, KeyStroke stroke, uint timeout)
+        private static bool SendStroke(IntPtr hwnd, KeyStroke stroke, uint timeout, ref bool anyDelivered)
         {
             if (stroke.VirtualKey == 0)
             {
-                return Deliver(hwnd, WM_CHAR, (IntPtr)stroke.Character, timeout);
+                return Deliver(hwnd, WM_CHAR, (IntPtr)stroke.Character, timeout, ref anyDelivered);
             }
 
-            return Deliver(hwnd, WM_KEYDOWN, (IntPtr)stroke.VirtualKey, timeout)
-                && (stroke.Character == '\0' || Deliver(hwnd, WM_CHAR, (IntPtr)stroke.Character, timeout))
-                && Deliver(hwnd, WM_KEYUP, (IntPtr)stroke.VirtualKey, timeout);
+            return Deliver(hwnd, WM_KEYDOWN, (IntPtr)stroke.VirtualKey, timeout, ref anyDelivered)
+                && (stroke.Character == '\0' || Deliver(hwnd, WM_CHAR, (IntPtr)stroke.Character, timeout, ref anyDelivered))
+                && Deliver(hwnd, WM_KEYUP, (IntPtr)stroke.VirtualKey, timeout, ref anyDelivered);
         }
 
         /// <summary>

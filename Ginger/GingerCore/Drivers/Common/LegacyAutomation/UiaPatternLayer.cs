@@ -66,7 +66,7 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "UIA pattern layer failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "UIA pattern layer failed", ex);
                 return LayerResult.Fail(Name, ex.Message);
             }
 

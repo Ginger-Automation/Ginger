@@ -24,7 +24,12 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 {
     public static class DesktopActionMapper
     {
-        public static DesktopActionContext FromElement(UIAuto.AutomationElement element, DesktopOperation operation, string value, bool allowPhysicalInput)
+        /// <param name="preferWindowMessages">
+        /// The agent's non-intrusive setting. Carried on the context rather than read
+        /// where it is needed, because it belongs to one agent and the layers are
+        /// shared by all of them.
+        /// </param>
+        public static DesktopActionContext FromElement(UIAuto.AutomationElement element, DesktopOperation operation, string value, bool allowPhysicalInput, bool preferWindowMessages = false)
         {
             // Physical input stays available as the engine's last resort, because
             // some controls - a grid cell with no Invoke pattern, no accessible
@@ -42,7 +47,8 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                 AutomationElement = element,
                 Value = value,
                 AllowPhysicalInput = allowPhysicalInput && desktopCanTakePhysicalInput,
-                DesktopCanTakePhysicalInput = desktopCanTakePhysicalInput
+                DesktopCanTakePhysicalInput = desktopCanTakePhysicalInput,
+                PreferWindowMessages = preferWindowMessages
             };
 
             if (element != null)
@@ -87,10 +93,15 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// Physical input is withheld rather than offered as a last resort: this is
         /// built only where the mouse has already been ruled out, and leaving it on is
         /// what tells the layers to hand the click back to it.
+        ///
+        /// Ruled out for two unrelated reasons, though, and the layers have to be told
+        /// which. A locked screen is visible to them already; an operator who asked for
+        /// window messages is not, and while that preference stopped here every layer
+        /// saw a working mouse and handed the click straight back to it.
         /// </remarks>
-        public static DesktopActionContext ForPoint(UIAuto.AutomationElement element, DesktopOperation operation, int screenX, int screenY)
+        public static DesktopActionContext ForPoint(UIAuto.AutomationElement element, DesktopOperation operation, int screenX, int screenY, bool preferWindowMessages = false)
         {
-            DesktopActionContext context = FromElement(element, operation, null, allowPhysicalInput: false);
+            DesktopActionContext context = FromElement(element, operation, null, allowPhysicalInput: false, preferWindowMessages);
 
             context.HasTargetPoint = true;
             context.TargetScreenX = screenX;

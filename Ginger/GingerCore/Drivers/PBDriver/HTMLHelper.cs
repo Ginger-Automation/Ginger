@@ -1298,9 +1298,21 @@ namespace GingerCore.Drivers.PBDriver
                 bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
                 if (PreferWindowMessages(keyboardIsUsable))
                 {
-                    if (WindowMessageKeystrokes.TrySend(AEBrowser, keys, out string failure))
+                    if (WindowMessageKeystrokes.TrySend(AEBrowser, keys, out string failure, out bool partiallyDelivered))
                     {
                         return true;
+                    }
+
+                    if (partiallyDelivered)
+                    {
+                        // The keyboard would retype the whole value, and the field is
+                        // already holding the part that arrived, so the step is failed
+                        // rather than left with the prefix typed twice.
+                        Reporter.ToLog(eLogLevel.ERROR, "Could not send all of these keys to the browser: " + failure
+                            + ". Sending them again through the keyboard would leave a second copy of the part that"
+                            + " already arrived, so the step is reported as failed. Check the field before running"
+                            + " it again.");
+                        return false;
                     }
 
                     if (!keyboardIsUsable)
@@ -1769,7 +1781,7 @@ namespace GingerCore.Drivers.PBDriver
             int screenY = bounds.Y + browserY;
 
             DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
-                DesktopActionMapper.ForPoint(AEBrowser, DesktopOperation.Click, screenX, screenY));
+                DesktopActionMapper.ForPoint(AEBrowser, DesktopOperation.Click, screenX, screenY, NonIntrusiveInput));
 
             refusal = engineResult.Success
                 ? null

@@ -50,6 +50,12 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// Why it could not be delivered, phrased to read inside a longer sentence,
         /// when this returns false.
         /// </param>
+        /// <param name="partiallyDelivered">
+        /// Whether part of the value reached the element before the failure. A caller
+        /// holding the keyboard in reserve must fail the step rather than use it
+        /// there, because the element keeps what arrived and typing the value again
+        /// appends a second copy of that prefix.
+        /// </param>
         /// <remarks>
         /// A control with a window of its own is addressed directly, which is what
         /// makes this work with the screen locked: no focus is needed and no click
@@ -57,12 +63,12 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// window currently holds the keyboard, since a key message sent to a frame
         /// is accepted and then ignored.
         /// </remarks>
-        public static bool TrySend(UIAuto.AutomationElement element, string value, out string failure)
+        public static bool TrySend(UIAuto.AutomationElement element, string value, out string failure, out bool partiallyDelivered)
         {
             IntPtr handle = TryGetNativeHandle(element);
             IntPtr target = Win32Native.IsChildWindow(handle) ? handle : Win32KeyMessages.ResolveFocusedChild(handle);
 
-            return Win32KeyMessages.TrySendNotation(target, value, TimeoutMs, out failure);
+            return Win32KeyMessages.TrySendNotation(target, value, TimeoutMs, out failure, out partiallyDelivered);
         }
 
         private static IntPtr TryGetNativeHandle(UIAuto.AutomationElement element)

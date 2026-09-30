@@ -121,6 +121,15 @@ namespace GingerCoreTest.Misc
             Assert.IsTrue(result.Success);
             Assert.AreEqual("Win32", result.UsedLayer);
             StringAssert.Contains(result.ExecutionInfo, "BM_CLICK");
+
+            // The message answering says only that the button's window procedure ran.
+            // What says the button was activated is the notification it sends its
+            // parent afterwards, which is what an application's click handler runs
+            // off, so that is what the click is proved by here.
+            Assert.IsTrue(host.PumpUntil(() => host.ButtonActivationCount > 0),
+                "The button has to tell the frame it was clicked, not merely take the message");
+            Assert.AreEqual(host.ButtonHwnd, host.LastActivatedControl,
+                "The notification has to come from the button that was aimed at");
         }
 
         [TestMethod]
@@ -1597,9 +1606,11 @@ namespace GingerCoreTest.Misc
 
             foreach (string value in new[] { "^a", "+{TAB}", "%{F4}", "^(ab)", "{ENTER", "{NOTAKEY}", "abc}" })
             {
-                Assert.IsFalse(Win32KeyMessages.TrySendNotation(host.EditHwnd, value, 2000, out string refusal),
+                Assert.IsFalse(Win32KeyMessages.TrySendNotation(host.EditHwnd, value, 2000, out string refusal, out bool partiallyDelivered),
                     "'" + value + "' cannot be delivered as window messages");
                 Assert.IsFalse(string.IsNullOrWhiteSpace(refusal), "A refusal has to say what got in the way");
+                Assert.IsFalse(partiallyDelivered,
+                    "Nothing was sent, so the keyboard is still free to carry the whole value");
             }
 
             Assert.AreEqual(string.Empty, Win32Native.GetControlText(host.EditHwnd, 2000),
@@ -1619,6 +1630,65 @@ namespace GingerCoreTest.Misc
         {
             Assert.IsFalse(Win32KeyMessages.TrySendNotation(IntPtr.Zero, "Pune", 2000, out string failure));
             StringAssert.Contains(failure, "no window");
+        }
+
+        /// <summary>
+        /// A window that took part of a value before it stopped answering has to say
+        /// so, not merely that it failed.
+        /// </summary>
+        /// <remarks>
+        /// Every caller keeps the keyboard behind this route, and the keyboard types
+        /// the value it was given rather than the part still missing. Reported as a
+        /// plain failure, an application that went busy after "ab" of "abc" left the
+        /// field holding "ababc", and a value ending in {ENTER} or {TAB} pressed that
+        /// key a second time. The flag is what lets the caller fail the step instead.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_ReportsThatPartOfTheValueArrivedBeforeTheWindowStopped()
+        {
+            using StallsPartwayWindow window = new StallsPartwayWindow(acceptBeforeStalling: 2);
+
+            Assert.IsFalse(Win32KeyMessages.TrySendNotation(window.Handle, "abc", 200, out string failure, out bool partiallyDelivered));
+            Assert.IsTrue(partiallyDelivered, "Two characters were taken, so the window is holding 'ab'");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(failure), "A failure has to say what got in the way");
+        }
+
+        /// <summary>
+        /// One key press is several messages, and the first of them arriving is
+        /// already enough to leave the control changed.
+        /// </summary>
+        /// <remarks>
+        /// Counting whole keystrokes instead misses exactly this. A value opening
+        /// with {ENTER} whose key-down landed and whose character did not has still
+        /// been acted on by a control that reads keys itself - a DataWindow commits
+        /// on the key - and the keyboard would then press Enter a second time.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_CountsAKeyPressThatArrivedWithoutItsCharacter()
+        {
+            using StallsPartwayWindow window = new StallsPartwayWindow(acceptBeforeStalling: 0);
+
+            Assert.IsFalse(Win32KeyMessages.TrySendNotation(window.Handle, "{ENTER}", 200, out _, out bool partiallyDelivered));
+            Assert.IsTrue(partiallyDelivered,
+                "The key went down before the character was refused, so the press itself arrived");
+        }
+
+        /// <summary>
+        /// A window that took nothing must not be reported as holding part of the
+        /// value.
+        /// </summary>
+        /// <remarks>
+        /// The other half of the same decision, and the more costly one to get wrong:
+        /// this is the ordinary failure the keyboard exists to pick up, so calling it
+        /// a partial delivery would fail steps that the fallback would have carried.
+        /// </remarks>
+        [TestMethod]
+        public void SendNotation_DoesNotCallAnUndeliveredValueAPartialOne()
+        {
+            using UnresponsiveWindow window = new UnresponsiveWindow();
+
+            Assert.IsFalse(Win32KeyMessages.TrySendNotation(window.Handle, "abc", 200, out _, out bool partiallyDelivered));
+            Assert.IsFalse(partiallyDelivered, "Nothing arrived, so the whole value can still be sent another way");
         }
     }
 }

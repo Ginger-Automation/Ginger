@@ -147,13 +147,17 @@ namespace GingerCore.Drivers.PBDriver.DesktopAutomation
                         return WriteCell(cell, cellId, context.Value ?? string.Empty);
 
                     case DesktopOperation.Click:
-                        cell.accSelect(SELFLAG_TAKEFOCUS | SELFLAG_TAKESELECTION, cellId);
-                        return LayerResult.Ok(Name, "Click via IAccessible.accSelect on the targeted DataWindow cell");
+                        if (!string.IsNullOrEmpty(cell.get_accDefaultAction(cellId)))
+                        {
+                            cell.accDoDefaultAction(cellId);
+                            return LayerResult.Ok(Name, "Click via IAccessible.accDoDefaultAction on the targeted DataWindow cell");
+                        }
+                        return LayerResult.Skip("DataWindow cell exposes no default action; leaving the click to the later layers");
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "DataWindow MSAA layer failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "DataWindow MSAA layer failed", ex);
                 return LayerResult.Fail(Name, ex.Message);
             }
 
@@ -171,11 +175,12 @@ namespace GingerCore.Drivers.PBDriver.DesktopAutomation
         /// only thing that has ever set those cells is the physical fallback, which
         /// is this same gesture driven by the real mouse and keyboard.
         ///
-        /// So this runs only where that cannot: behind a lock screen. While the mouse
-        /// can still reach the machine the value is left to it, exactly as before,
-        /// because a message click is acknowledged once the window takes it and
-        /// standing that in for input that works today would trade a route that is
-        /// known to write the cell for one that only reports it did.
+        /// So this runs only where that cannot: behind a lock screen, or where the
+        /// operator asked for window messages. While the mouse can still reach the
+        /// machine and nobody has asked otherwise the value is left to it, exactly as
+        /// before, because a message click is acknowledged once the window takes it
+        /// and standing that in for input that works today would trade a route that
+        /// is known to write the cell for one that only reports it did.
         ///
         /// The typing is confirmed by reading the cell back. The messages are queued
         /// rather than delivered in line, so nothing about sending them says the
@@ -183,7 +188,7 @@ namespace GingerCore.Drivers.PBDriver.DesktopAutomation
         /// </remarks>
         private LayerResult TrySetValueByTyping(DesktopActionContext context, IntPtr dataWindow, string accessibleFailure)
         {
-            if (context.DesktopCanTakePhysicalInput)
+            if (context.DesktopCanTakePhysicalInput && !context.PreferWindowMessages)
             {
                 return LayerResult.Skip(accessibleFailure + " Leaving the value to the mouse and keyboard.");
             }

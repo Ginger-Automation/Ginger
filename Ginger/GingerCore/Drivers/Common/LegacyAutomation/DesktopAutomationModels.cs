@@ -84,6 +84,21 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         public bool DesktopCanTakePhysicalInput { get; set; }
 
         /// <summary>
+        /// Whether the operator asked this agent to work through window messages, so
+        /// a layer that would otherwise stand aside for a working mouse should go
+        /// ahead instead.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="DesktopCanTakePhysicalInput"/> answers whether the mouse
+        /// reaches the application; this answers whether it should be used. The two
+        /// were the same question while the only reason to send messages was a locked
+        /// screen, and collapsing them left the non-intrusive setting with no effect
+        /// at all on an unlocked desktop: every layer saw a working mouse, stood
+        /// aside for it, and the run took over the screen exactly as before.
+        /// </remarks>
+        public bool PreferWindowMessages { get; set; }
+
+        /// <summary>
         /// Centre of the target in screen coordinates, when the target reports a
         /// rectangle. This is the same point the physical mouse would have been sent
         /// to, which lets a layer aim at a control that exposes no pattern, no

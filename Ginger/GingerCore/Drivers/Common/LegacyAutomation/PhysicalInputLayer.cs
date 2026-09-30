@@ -57,12 +57,21 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
             try
             {
-                mWinApi.SendClick((UIAuto.AutomationElement)context.AutomationElement);
+                // Windows reports how many events it inserted, and a click it refused
+                // inserts none. Reported as a failure rather than swallowed, because
+                // this is the last layer: nothing runs after it to notice that the
+                // click the engine just called a success never left this process.
+                if (!mWinApi.SendClick((UIAuto.AutomationElement)context.AutomationElement))
+                {
+                    return LayerResult.Fail(Name, "Windows did not accept the mouse events, so the click never"
+                        + " reached the application. Another process is blocking input, or it is running at a"
+                        + " higher integrity level than Ginger.");
+                }
                 return LayerResult.Ok(Name, "Click via Mouse event");
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Physical input layer failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Physical input layer failed", ex);
                 return LayerResult.Fail(Name, ex.Message);
             }
         }

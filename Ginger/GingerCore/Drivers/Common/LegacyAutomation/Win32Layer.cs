@@ -81,8 +81,11 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                         // a click would change what every one of them does on an
                         // ordinary unlocked desktop. Behind a lock screen the mouse
                         // reaches nothing, and this is the only way such a target can
-                        // still be clicked.
-                        if (context.DesktopCanTakePhysicalInput)
+                        // still be clicked. An operator who asked for window messages
+                        // has said the same thing about a desktop that is not locked,
+                        // which is the one case where a working mouse is not a reason
+                        // to stand aside.
+                        if (context.DesktopCanTakePhysicalInput && !context.PreferWindowMessages)
                         {
                             return LayerResult.Skip("HWND is not an enabled button control; leaving the click to physical input");
                         }
@@ -104,7 +107,8 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                         // No BM_CLICK equivalent to try first: that message activates a
                         // button once and carries no notion of a double click, so the
                         // point is the only thing to aim at here.
-                        if (context.AllowPhysicalInput || context.DesktopCanTakePhysicalInput)
+                        if (context.AllowPhysicalInput
+                            || (context.DesktopCanTakePhysicalInput && !context.PreferWindowMessages))
                         {
                             return LayerResult.Skip("Leaving the double click to physical input");
                         }
@@ -141,7 +145,7 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Win32 layer failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Win32 layer failed", ex);
                 return LayerResult.Fail(Name, ex.Message);
             }
 

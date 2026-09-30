@@ -74,7 +74,7 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "MSAA layer failed", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "MSAA layer failed", ex);
                 return LayerResult.Fail(Name, ex.Message);
             }
 

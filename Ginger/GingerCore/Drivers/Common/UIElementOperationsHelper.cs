@@ -66,9 +66,9 @@ namespace GingerCore.Drivers.Common
         /// Runs the operation through the desktop automation chain. Physical input is
         /// never enabled here because these operations never moved the real mouse.
         /// </summary>
-        private static ActionResult ExecuteDesktopAction(UIAuto.AutomationElement automationElement, DesktopOperation operation, string value)
+        private ActionResult ExecuteDesktopAction(UIAuto.AutomationElement automationElement, DesktopOperation operation, string value)
         {
-            DesktopActionContext context = DesktopActionMapper.FromElement(automationElement, operation, value, allowPhysicalInput: false);
+            DesktopActionContext context = DesktopActionMapper.FromElement(automationElement, operation, value, allowPhysicalInput: false, NonIntrusiveInput);
             return DesktopActionMapper.ToActionResult(DesktopAutomationEngine.Default.Execute(context));
         }
 
@@ -160,6 +160,10 @@ namespace GingerCore.Drivers.Common
         /// unlocked run behaves exactly as it did before. It also remains the last
         /// resort for the values messages cannot carry - anything using a modifier -
         /// and those fail outright only once it is unavailable too.
+        ///
+        /// The one failure it does not take over is a value the element accepted part
+        /// of. What arrived stays there, so typing the whole value again would leave a
+        /// second copy of that prefix behind and press any Enter or Tab in it twice.
         /// </remarks>
         public ActionResult SendKeys(UIAuto.AutomationElement automationElement, string value)
         {
@@ -169,9 +173,18 @@ namespace GingerCore.Drivers.Common
                 bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
                 if (PreferWindowMessages(keyboardIsUsable))
                 {
-                    if (WindowMessageKeystrokes.TrySend(automationElement, value, out string failure))
+                    if (WindowMessageKeystrokes.TrySend(automationElement, value, out string failure, out bool partiallyDelivered))
                     {
                         actionResult.executionInfo = "Successfully Sent keys";
+                        return actionResult;
+                    }
+
+                    if (partiallyDelivered)
+                    {
+                        actionResult.errorMessage = "Ginger could not send all of these keys: " + failure
+                            + ". The keyboard is not used to finish them, because the element is holding the part"
+                            + " that already arrived and sending the value again would leave a second copy of it"
+                            + " behind. Check the element before running the step again.";
                         return actionResult;
                     }
 
@@ -549,10 +562,10 @@ namespace GingerCore.Drivers.Common
         /// a lock screen that made a step which clicked nothing indistinguishable from
         /// one that worked.
         /// </remarks>
-        private static ActionResult ClickPoint(UIAuto.AutomationElement automationElement, DesktopOperation operation, int screenX, int screenY)
+        private ActionResult ClickPoint(UIAuto.AutomationElement automationElement, DesktopOperation operation, int screenX, int screenY)
         {
             DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
-                DesktopActionMapper.ForPoint(automationElement, operation, screenX, screenY));
+                DesktopActionMapper.ForPoint(automationElement, operation, screenX, screenY, NonIntrusiveInput));
 
             ActionResult actionResult = DesktopActionMapper.ToActionResult(engineResult);
             if (!engineResult.Success)
@@ -563,7 +576,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        private static ActionResult DoubleClickPoint(UIAuto.AutomationElement automationElement, Point target)
+        private ActionResult DoubleClickPoint(UIAuto.AutomationElement automationElement, Point target)
         {
             return ClickPoint(automationElement, DesktopOperation.DoubleClick, target.X, target.Y);
         }

@@ -41,7 +41,7 @@ namespace GingerCoreTest.Misc
         private const int EsAutoHScroll = 0x0080;
         private const int WmLButtonDblClk = 0x0203;
 
-        private readonly Form mForm;
+        private readonly NotificationCountingForm mForm;
         private readonly ClickCountingPanel mFacade;
         private bool mDisposed;
 
@@ -73,6 +73,21 @@ namespace GingerCoreTest.Misc
         /// the control, and only the latter makes it act on a double click.
         /// </summary>
         public int FacadeDoubleClickCount => mFacade.DoubleClickCount;
+
+        /// <summary>
+        /// How many times a control has told the frame it was clicked, and which one
+        /// sent the last of those notifications.
+        /// </summary>
+        /// <remarks>
+        /// The only evidence that a button was activated rather than merely handed a
+        /// message. BM_CLICK answering non-zero says the window procedure ran and
+        /// returned; the WM_COMMAND carrying BN_CLICKED that follows says it decided
+        /// the button was pressed, and that notification is what an application's own
+        /// click handler runs off.
+        /// </remarks>
+        public int ButtonActivationCount => mForm.ButtonActivationCount;
+
+        public IntPtr LastActivatedControl => mForm.LastActivatedControl;
 
         /// <summary>
         /// Client coordinates of the last click the facade received, so a test can prove
@@ -111,6 +126,36 @@ namespace GingerCoreTest.Misc
                 Thread.Sleep(1);
             }
             return reached();
+        }
+
+        /// <summary>
+        /// The frame the native children are parented to, which is where a button
+        /// sends word that it was clicked.
+        /// </summary>
+        private sealed class NotificationCountingForm : Form
+        {
+            private const int WmCommand = 0x0111;
+            private const int BnClicked = 0;
+
+            public int ButtonActivationCount { get; private set; }
+
+            public IntPtr LastActivatedControl { get; private set; }
+
+            protected override void WndProc(ref Message m)
+            {
+                // The sending control is in lParam and the notification code in the
+                // high half of wParam, which is what separates a click from the other
+                // things a control reports through the same message.
+                if (m.Msg == WmCommand
+                    && ((m.WParam.ToInt64() >> 16) & 0xFFFF) == BnClicked
+                    && m.LParam != IntPtr.Zero)
+                {
+                    ButtonActivationCount++;
+                    LastActivatedControl = m.LParam;
+                }
+
+                base.WndProc(ref m);
+            }
         }
 
         /// <summary>
@@ -158,7 +203,7 @@ namespace GingerCoreTest.Misc
 
         public PbLikeDesktopHost()
         {
-            mForm = new Form
+            mForm = new NotificationCountingForm
             {
                 Text = "PB-like host",
                 Width = 420,
@@ -369,5 +414,93 @@ namespace GingerCoreTest.Misc
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr GetModuleHandle(string moduleName);
+    }
+
+    /// <summary>
+    /// A window that takes the first few characters and then stops answering, which
+    /// is the application that goes busy partway through a value.
+    /// </summary>
+    /// <remarks>
+    /// The case <see cref="UnresponsiveWindow"/> cannot stand for: there the first
+    /// message already fails and the control is left exactly as it was, so the value
+    /// can safely be sent again by another route. Here the control genuinely holds a
+    /// prefix, and sending the value again is what puts a second copy of it in.
+    /// </remarks>
+    internal sealed class StallsPartwayWindow : IDisposable
+    {
+        private const int WmChar = 0x0102;
+        private const int WsPopup = unchecked((int)0x80000000);
+
+        private readonly ManualResetEventSlim mCreated = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim mRelease = new ManualResetEventSlim(false);
+        private readonly Thread mOwner;
+        private readonly int mAcceptBeforeStalling;
+        private int mAccepted;
+
+        public IntPtr Handle { get; private set; }
+
+        public StallsPartwayWindow(int acceptBeforeStalling)
+        {
+            mAcceptBeforeStalling = acceptBeforeStalling;
+            mOwner = new Thread(Own) { IsBackground = true };
+            mOwner.Start();
+            mCreated.Wait(5000);
+        }
+
+        private void Own()
+        {
+            Stalling window = new Stalling(this);
+            window.CreateHandle(new CreateParams
+            {
+                Caption = "ginger-stalls-partway",
+                Style = WsPopup,
+                Width = 120,
+                Height = 60
+            });
+            Handle = window.Handle;
+            mCreated.Set();
+
+            // Pumped rather than left alone, because the messages before the stall
+            // have to be taken for there to be a partial delivery at all.
+            while (!mRelease.IsSet)
+            {
+                Application.DoEvents();
+                Thread.Sleep(1);
+            }
+
+            window.DestroyHandle();
+        }
+
+        private sealed class Stalling : NativeWindow
+        {
+            private readonly StallsPartwayWindow mHost;
+
+            internal Stalling(StallsPartwayWindow host)
+            {
+                mHost = host;
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                // Held for good rather than merely slowed: the sender has to see this
+                // message time out while the ones before it went through, and a delay
+                // long enough to guarantee that on a loaded build agent is a delay the
+                // test would then wait out on every run.
+                if (m.Msg == WmChar && mHost.mAccepted++ >= mHost.mAcceptBeforeStalling)
+                {
+                    mHost.mRelease.Wait();
+                }
+
+                base.WndProc(ref m);
+            }
+        }
+
+        public void Dispose()
+        {
+            mRelease.Set();
+            mOwner.Join(5000);
+            mCreated.Dispose();
+            mRelease.Dispose();
+        }
     }
 }

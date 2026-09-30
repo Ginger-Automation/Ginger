@@ -2145,7 +2145,7 @@ namespace GingerCore.Drivers
         /// as a click that worked - and the step that followed failed instead, naming
         /// the element it could not find rather than the click that never happened.
         /// </remarks>
-        private static string ClickElementCentreWithWindowMessages(UIAuto.AutomationElement element)
+        private string ClickElementCentreWithWindowMessages(UIAuto.AutomationElement element)
         {
             var bounds = element.Current.BoundingRectangle;
             return ClickPointWithWindowMessages(element, DesktopOperation.Click,
@@ -2203,7 +2203,19 @@ namespace GingerCore.Drivers
 
             while (flag == false && iLoop < 20)
             {
-                SendKeysToControl(AE, Value);
+                // The validation below looks at a different element from the one being
+                // typed into, so it can report success for a reason of its own while
+                // the keys never arrived. Retrying would not help either: the send
+                // fails here for reasons that do not pass - a locked screen, a value
+                // holding a modifier, a control that took only part of it - and where
+                // part of it did arrive, sending it again is the one thing that must
+                // not happen.
+                string sendStatus = SendKeysToControl(AE, Value);
+                if (!sendStatus.Contains(KeysSentSuccessfully))
+                {
+                    return sendStatus;
+                }
+
                 if (DefineHandleAction == true)
                 {
                     LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, validationElementType, handleActionType);
@@ -2909,20 +2921,20 @@ namespace GingerCore.Drivers
         /// message click and a real one are not interchangeable for every control, and
         /// a passing run is not the place to discover that.
         /// </remarks>
-        private static string ClickPointWithWindowMessages(UIAuto.AutomationElement element, DesktopOperation operation, int screenX, int screenY)
+        private string ClickPointWithWindowMessages(UIAuto.AutomationElement element, DesktopOperation operation, int screenX, int screenY)
         {
             DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
-                DesktopActionMapper.ForPoint(element, operation, screenX, screenY));
+                DesktopActionMapper.ForPoint(element, operation, screenX, screenY, NonIntrusiveInput));
 
             return engineResult.Success
                 ? ClickedSuccessfully + " " + engineResult.ExecutionInfo
                 : DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
         }
 
-        private static bool TrySetValueViaDesktopEngine(UIAuto.AutomationElement element, string value, out string info)
+        private bool TrySetValueViaDesktopEngine(UIAuto.AutomationElement element, string value, out string info)
         {
             DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
-                DesktopActionMapper.FromElement(element, DesktopOperation.SetValue, value, allowPhysicalInput: false));
+                DesktopActionMapper.FromElement(element, DesktopOperation.SetValue, value, allowPhysicalInput: false, NonIntrusiveInput));
             if (engineResult.Success)
             {
                 info = engineResult.ExecutionInfo;
@@ -3003,6 +3015,33 @@ namespace GingerCore.Drivers
             }
 
             WinAPIAutomation.SendInputKeys(value);
+        }
+
+        /// <summary>
+        /// Whether the desktop can take keyboard input, logging what was left undone
+        /// when it cannot.
+        /// </summary>
+        /// <remarks>
+        /// This is the guard the keyboard routes cannot do without, because none of
+        /// them has a timeout to fall back on.
+        /// <see cref="WinAPIAutomation.SendKeysByLibrary"/> focuses the element and
+        /// calls SendWait, which takes no timeout and returns only once the synthesized
+        /// input has been processed. Behind a lock screen the desktop that would process
+        /// it is not the one this session owns, so the call does not come back on its own
+        /// schedule: the difference between a run that reports a locked machine and one
+        /// that has to be killed.
+        /// </remarks>
+        private static bool KeyboardIsUsableFor(string purpose)
+        {
+            if (InteractiveDesktop.IsAvailable())
+            {
+                return true;
+            }
+
+            Reporter.ToLog(eLogLevel.ERROR, "Ginger did not " + purpose + ", because the desktop cannot take"
+                + " physical input (" + InteractiveDesktop.DescribeSession() + "). Unlock the screen to run"
+                + " this step.");
+            return false;
         }
 
         private static IntPtr TryGetNativeHandle(UIAuto.AutomationElement element)
@@ -3303,8 +3342,11 @@ namespace GingerCore.Drivers
             bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
             if (PreferWindowMessages(keyboardIsUsable))
             {
-                string typedStatus = TypeIntoControlWithWindowMessages(element, value);
-                if (typedStatus.Contains(KeysSentSuccessfully) || !keyboardIsUsable)
+                string typedStatus = TypeIntoControlWithWindowMessages(element, value, out bool partiallyDelivered);
+
+                // A control that took part of the value keeps it, so the routes below
+                // would set the text on top of a prefix that is already there.
+                if (typedStatus.Contains(KeysSentSuccessfully) || partiallyDelivered || !keyboardIsUsable)
                 {
                     return typedStatus;
                 }
@@ -3347,10 +3389,17 @@ namespace GingerCore.Drivers
         /// because a window message leaves the target thread's key state alone and
         /// Ctrl+A would arrive as a plain A.
         /// </remarks>
-        private string TypeIntoControlWithWindowMessages(UIAuto.AutomationElement element, string value)
+        private string TypeIntoControlWithWindowMessages(UIAuto.AutomationElement element, string value, out bool partiallyDelivered)
         {
-            if (!WindowMessageKeystrokes.TrySend(element, value, out string failure))
+            if (!WindowMessageKeystrokes.TrySend(element, value, out string failure, out partiallyDelivered))
             {
+                if (partiallyDelivered)
+                {
+                    return "Ginger could not send all of these keys: " + failure + ". The value is not set again"
+                        + " by another route, because the control is holding the part that already arrived and"
+                        + " would end up with a second copy of it. Check the control before running the step again.";
+                }
+
                 return "Ginger could not send these keys. The desktop cannot take physical input ("
                     + InteractiveDesktop.DescribeSession() + "), and " + failure
                     + ". Unlock the screen for this step, or use an action on the element itself.";
@@ -3359,10 +3408,13 @@ namespace GingerCore.Drivers
             // A PowerBuilder DataWindow holds the keys in an editor that commits only
             // when focus leaves it, so there a value the application has not taken is
             // not a value that was set. Every other control already holds the text by
-            // the time the characters arrive, and failing those on a Tab that could
-            // not move marked steps as failed whose own validation then read the value
-            // back correctly. The Tab is still sent either way.
-            if (!SendCommitTabKey(element) && mPlatform == ePlatformType.PowerBuilder)
+            // the time the characters arrive, so the Tab buys them nothing and costs
+            // them the focus: it can fire a validation handler, or land as a tab
+            // character in a multiline edit, and where the focus does not move it
+            // falls through to a physical Tab aimed at whatever holds the foreground
+            // - the very input a non-intrusive run exists to avoid. The platform is
+            // therefore asked before the Tab is sent, not only before it is reported.
+            if (mPlatform == ePlatformType.PowerBuilder && !SendCommitTabKey(element))
             {
                 return "Ginger typed these keys but could not commit them: the screen was locked after the"
                     + " action started (" + InteractiveDesktop.DescribeSession() + "), so the Tab that makes"
@@ -3676,7 +3728,13 @@ namespace GingerCore.Drivers
                                             }
                                         }
                                     }
-                                    if (!CurrentElementTitle.Equals(value))
+                                    // The nudge and the Tab after it are all keyboard, so
+                                    // the desktop is asked once for the group rather than
+                                    // left to the first send to find out. The value is
+                                    // already selected above, so this only forgoes the
+                                    // confirmation rather than the step.
+                                    if (!CurrentElementTitle.Equals(value)
+                                        && KeyboardIsUsableFor("confirm the selected value with the arrow keys and Tab"))
                                     {
                                         if (FirstElement != null && value.Equals(FirstElement.Current.Name))
                                         {
@@ -3796,6 +3854,19 @@ namespace GingerCore.Drivers
                             else
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "In Send keys ::");
+
+                                // Typing the name is the last route left for this item,
+                                // so there is nothing to carry the step if the keyboard
+                                // cannot be used. Saying so beats selecting nothing and
+                                // reporting that the value was set.
+                                if (!InteractiveDesktop.IsAvailable())
+                                {
+                                    throw new Exception("Unable to select value. Value - " + element.Current.Name
+                                        + ". The item offers no selection pattern, so it can only be selected by"
+                                        + " typing its name, and the desktop cannot take physical input ("
+                                        + InteractiveDesktop.DescribeSession() + ").");
+                                }
+
                                 UIAuto.AutomationElement ParentElement = UIAuto.TreeWalker.ContentViewWalker.GetParent(element);
                                 winAPI.SendKeysByLibrary(ParentElement, element.Current.Name);
                                 string selItem = GetSelectedItem(ParentElement);
