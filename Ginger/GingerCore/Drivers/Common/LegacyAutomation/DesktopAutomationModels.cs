@@ -24,6 +24,20 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
     {
         Click,
         DoubleClick,
+
+        /// <remarks>
+        /// Served by window messages or by the mouse and nothing in between. Neither
+        /// UIA nor MSAA exposes a right click - there is no pattern for it and no
+        /// accessible action that means it - so unlike a left click this one has no
+        /// quiet route above the Win32 layer to fall through from.
+        /// </remarks>
+        RightClick,
+
+        /// <remarks>
+        /// Ctrl held for the duration of one click, which is how a list or tree is
+        /// told to add to its selection rather than replace it.
+        /// </remarks>
+        ControlClick,
         SetValue,
         GetValue
     }

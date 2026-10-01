@@ -126,9 +126,27 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         /// </remarks>
         public static string DescribeUnreachablePoint(DesktopOperation operation, int screenX, int screenY, DesktopEngineResult engineResult)
         {
-            return "Ginger could not " + (operation == DesktopOperation.DoubleClick ? "double click" : "click")
+            return "Ginger could not " + DescribeOperation(operation)
                 + " the point " + screenX + "," + screenY + " by window message ("
                 + InteractiveDesktop.DescribeSession() + "). " + engineResult?.ExecutionInfo;
+        }
+
+        /// <summary>
+        /// The operation as a verb phrase, so it reads inside the sentences above.
+        /// </summary>
+        private static string DescribeOperation(DesktopOperation operation)
+        {
+            switch (operation)
+            {
+                case DesktopOperation.DoubleClick:
+                    return "double click";
+                case DesktopOperation.RightClick:
+                    return "right click";
+                case DesktopOperation.ControlClick:
+                    return "Ctrl click";
+                default:
+                    return "click";
+            }
         }
 
         /// <summary>

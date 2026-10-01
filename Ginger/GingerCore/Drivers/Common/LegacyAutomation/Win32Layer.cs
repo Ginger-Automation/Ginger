@@ -127,6 +127,40 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
                         return LayerResult.Skip(DescribeRefusedPoint(context, doubleClickOwner, doubleClickOutcome));
 
+                    // Right click and Ctrl click share this shape because neither has
+                    // anything to try before the point: BM_CLICK presses a button with
+                    // the left button and carries no notion of which button or which
+                    // modifier, so the coordinates are all there is to aim at.
+                    case DesktopOperation.RightClick:
+                    case DesktopOperation.ControlClick:
+                        bool isRightClick = context.Operation == DesktopOperation.RightClick;
+                        if (context.AllowPhysicalInput
+                            || (context.DesktopCanTakePhysicalInput && !context.PreferWindowMessages))
+                        {
+                            return LayerResult.Skip("Leaving the " + (isRightClick ? "right click" : "Ctrl click")
+                                + " to physical input");
+                        }
+                        if (!context.HasTargetPoint)
+                        {
+                            return LayerResult.Skip("The target reports no rectangle to aim a "
+                                + (isRightClick ? "right click" : "Ctrl click") + " at");
+                        }
+
+                        IntPtr buttonClickOwner = context.PointOwnerWindowHandle != IntPtr.Zero ? context.PointOwnerWindowHandle : hwnd;
+                        PointClickOutcome buttonClickOutcome = isRightClick
+                            ? Win32Native.RightClickAtScreenPoint(
+                                buttonClickOwner, context.TargetScreenX, context.TargetScreenY, context.TimeoutMs)
+                            : Win32Native.ControlClickAtScreenPoint(
+                                buttonClickOwner, context.TargetScreenX, context.TargetScreenY, context.TimeoutMs);
+                        if (buttonClickOutcome == PointClickOutcome.Delivered)
+                        {
+                            return LayerResult.Ok(Name, isRightClick
+                                ? "RightClick via WM_RBUTTONDOWN/UP at the target point"
+                                : "ControlClick via WM_LBUTTONDOWN/UP with MK_CONTROL at the target point");
+                        }
+
+                        return LayerResult.Skip(DescribeRefusedPoint(context, buttonClickOwner, buttonClickOutcome));
+
                     case DesktopOperation.SetValue:
                         if (Win32Native.SetControlText(hwnd, context.Value ?? string.Empty, context.TimeoutMs))
                         {

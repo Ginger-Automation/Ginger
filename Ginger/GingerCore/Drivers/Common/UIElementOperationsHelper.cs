@@ -598,13 +598,44 @@ namespace GingerCore.Drivers.Common
                     xy = xCoordinate + "," + yCoordinate;
                 }
 
-                winAPI.SendRightClick(automationElement, xy);
-                actionResult.executionInfo = "Successfully double clicked the element";
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    // The no-coordinate case is the small inset the mouse path uses for
+                    // a right click, not the centre a left click would take, so both
+                    // routes open the menu over the same part of the control.
+                    Point target = string.IsNullOrEmpty(xy)
+                        ? new Point(automationElement.Current.BoundingRectangle.X + 10,
+                            automationElement.Current.BoundingRectangle.Y + 5)
+                        : new Point(automationElement.Current.BoundingRectangle.X + xCoordinate,
+                            automationElement.Current.BoundingRectangle.Y + yCoordinate);
+
+                    ActionResult messageResult = ClickPoint(automationElement, DesktopOperation.RightClick, target.X, target.Y);
+                    if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                    {
+                        return messageResult;
+                    }
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("right click the element", messageResult.errorMessage, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
+
+                if (!winAPI.SendRightClick(automationElement, xy))
+                {
+                    actionResult.errorMessage = "Windows did not accept the mouse events, so the right click never"
+                        + " reached the application. Another process is blocking input, or it is running at a"
+                        + " higher integrity level than Ginger.";
+                    return actionResult;
+                }
+
+                actionResult.executionInfo = "Successfully right clicked the element";
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in docule click Element", ex);
-                actionResult.errorMessage = "Failed to Double click the element";
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in right click Element", ex);
+                actionResult.errorMessage = "Failed to right click the element";
             }
             return actionResult;
         }

@@ -39,7 +39,10 @@ namespace GingerCoreTest.Misc
         private const int WsVisible = 0x10000000;
         private const int WsTabStop = 0x00010000;
         private const int EsAutoHScroll = 0x0080;
+        private const int WmLButtonDown = 0x0201;
         private const int WmLButtonDblClk = 0x0203;
+        private const int WmRButtonUp = 0x0205;
+        private const int MkControl = 0x0008;
 
         private readonly NotificationCountingForm mForm;
         private readonly ClickCountingPanel mFacade;
@@ -73,6 +76,19 @@ namespace GingerCoreTest.Misc
         /// the control, and only the latter makes it act on a double click.
         /// </summary>
         public int FacadeDoubleClickCount => mFacade.DoubleClickCount;
+
+        /// <summary>
+        /// How many right clicks the facade has received, counted apart from the left
+        /// ones because a control answers the two buttons differently and a test that
+        /// pooled them could not tell which one arrived.
+        /// </summary>
+        public int FacadeRightClickCount => mFacade.RightClickCount;
+
+        /// <summary>
+        /// Whether the last click the facade received carried the Ctrl modifier, which
+        /// is what separates extending a selection from replacing it.
+        /// </summary>
+        public bool FacadeLastClickHadControl => mFacade.LastClickHadControl;
 
         /// <summary>
         /// How many times a control has told the frame it was clicked, and which one
@@ -177,6 +193,19 @@ namespace GingerCoreTest.Misc
 
             public int DoubleClickCount { get; private set; }
 
+            public int RightClickCount { get; private set; }
+
+            /// <summary>
+            /// Whether the last left press said Ctrl was held.
+            /// </summary>
+            /// <remarks>
+            /// Read off the message's own wParam rather than from <c>ModifierKeys</c>,
+            /// which reports the real keyboard and would answer the same whether or not
+            /// the modifier was ever sent - so a test built on it would pass on an
+            /// implementation that dropped the modifier entirely.
+            /// </remarks>
+            public bool LastClickHadControl { get; private set; }
+
             protected override void OnMouseDown(MouseEventArgs e)
             {
                 if (e.Button == MouseButtons.Left)
@@ -196,6 +225,17 @@ namespace GingerCoreTest.Misc
                 if (m.Msg == WmLButtonDblClk)
                 {
                     DoubleClickCount++;
+                }
+                else if (m.Msg == WmLButtonDown)
+                {
+                    LastClickHadControl = (m.WParam.ToInt64() & MkControl) == MkControl;
+                }
+                else if (m.Msg == WmRButtonUp)
+                {
+                    // The release rather than the press, because that is the message a
+                    // real right click finishes on and the one DefWindowProc turns into
+                    // the context menu.
+                    RightClickCount++;
                 }
                 base.WndProc(ref m);
             }

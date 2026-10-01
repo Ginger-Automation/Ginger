@@ -131,7 +131,13 @@ namespace GingerCore.Drivers.Common
         /// </summary>
         public abstract string ClickOnXYPoint(object element, string value);
 
-        public abstract void DoRightClick(object element, string XY = "");
+        /// <summary>
+        /// Right clicks a control, returning what happened. Reports a status for the
+        /// same reason <see cref="ClickOnXYPoint"/> does: the click can reach nothing,
+        /// and while this returned void the driver had no way to tell, so the action
+        /// was recorded as passed whether or not a menu ever opened.
+        /// </summary>
+        public abstract string DoRightClick(object element, string XY = "");
 
         public abstract string DoDoubleClick(object element, string XY = "");
 

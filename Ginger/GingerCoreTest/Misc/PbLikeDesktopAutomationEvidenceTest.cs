@@ -1118,6 +1118,187 @@ namespace GingerCoreTest.Misc
         }
 
         /// <summary>
+        /// A right click has to arrive as a right click, which is the only way a
+        /// context menu opens behind a lock screen.
+        /// </summary>
+        /// <remarks>
+        /// Asserts the right-button message rather than that some press arrived: a
+        /// left click reaches the same control at the same point and opens nothing, so
+        /// a test counting presses alone would pass on an implementation that sent the
+        /// wrong button.
+        /// </remarks>
+        [TestMethod]
+        public void MessageRightClick_DeliversARightClickRatherThanSomeOtherButton()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            DesktopActionContext context = host.CreateFacadePointContext(DesktopOperation.RightClick, allowPhysicalInput: false);
+            LayerResult result = new Win32Layer().TryExecute(context);
+
+            Assert.AreEqual(LayerExecutionStatus.Succeeded, result.Status, result.Message);
+            Assert.IsTrue(host.PumpUntil(() => host.FacadeRightClickCount == 1),
+                "the facade had to receive one right click; got " + host.FacadeRightClickCount);
+            Assert.AreEqual(0, host.FacadeClickCount, "a right click must not arrive as a left one");
+        }
+
+        /// <summary>
+        /// While the mouse can still reach the target it keeps the right click, so
+        /// every unlocked default run behaves exactly as it does today.
+        /// </summary>
+        [TestMethod]
+        public void MessageRightClick_LeavesItToTheMouseWhileThatIsStillUsable()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            DesktopActionContext context = host.CreateFacadePointContext(DesktopOperation.RightClick, allowPhysicalInput: true);
+            LayerResult result = new Win32Layer().TryExecute(context);
+
+            Assert.AreEqual(LayerExecutionStatus.Skipped, result.Status, result.Message);
+            Assert.AreEqual(0, host.FacadeRightClickCount, "the message path must not right click behind the mouse's back");
+        }
+
+        /// <summary>
+        /// A right click aimed outside the control has to be refused rather than
+        /// reported, for the same reason the other buttons are.
+        /// </summary>
+        [TestMethod]
+        public void MessageRightClick_RefusesATargetPointOutsideTheControl()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            DesktopActionContext context = host.CreateFacadePointContext(DesktopOperation.RightClick, allowPhysicalInput: false);
+            context.TargetScreenX = host.FacadeTopLeft.X + host.FacadeWidth + 50;
+            context.TargetScreenY = host.FacadeTopLeft.Y + host.FacadeHeight + 50;
+
+            LayerResult result = new Win32Layer().TryExecute(context);
+
+            Assert.AreEqual(LayerExecutionStatus.Skipped, result.Status, result.Message);
+            Assert.AreEqual(0, host.FacadeRightClickCount, "a point outside the control must not be right clicked");
+        }
+
+        /// <summary>
+        /// Extending a selection means a click that says Ctrl was held, and the
+        /// modifier has to reach the control for it to add rather than replace.
+        /// </summary>
+        /// <remarks>
+        /// The alternative was holding the real Ctrl key around the click, which sets
+        /// it for the whole machine and stays down if the click in between throws.
+        /// Carrying it in the message is what makes a multi-select step safe to run on
+        /// a shared desktop - and the modifier arriving is the whole of that, so it is
+        /// what gets asserted rather than merely that a click landed.
+        /// </remarks>
+        [TestMethod]
+        public void MessageControlClick_CarriesTheModifierInTheMessageRatherThanOnTheKeyboard()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            DesktopActionContext context = host.CreateFacadePointContext(DesktopOperation.ControlClick, allowPhysicalInput: false);
+            LayerResult result = new Win32Layer().TryExecute(context);
+
+            Assert.AreEqual(LayerExecutionStatus.Succeeded, result.Status, result.Message);
+            Assert.IsTrue(host.PumpUntil(() => host.FacadeClickCount == 1),
+                "the click has to land; got " + host.FacadeClickCount);
+            Assert.IsTrue(host.FacadeLastClickHadControl,
+                "without the modifier the control replaces its selection instead of extending it");
+        }
+
+        /// <summary>
+        /// An ordinary click must not carry Ctrl, or every single-select step would
+        /// start extending the selection instead of setting it.
+        /// </summary>
+        [TestMethod]
+        public void MessageClick_DoesNotCarryTheModifierAnOrdinaryClickNeverHad()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            DesktopActionContext context = host.CreateFacadePointContext(DesktopOperation.Click, allowPhysicalInput: false);
+            LayerResult result = new Win32Layer().TryExecute(context);
+
+            Assert.AreEqual(LayerExecutionStatus.Succeeded, result.Status, result.Message);
+            Assert.IsTrue(host.PumpUntil(() => host.FacadeClickCount == 1));
+            Assert.IsFalse(host.FacadeLastClickHadControl, "a plain click has to arrive plain");
+        }
+
+        /// <summary>
+        /// The case the agent setting exists for: an unlocked desktop where the run was
+        /// asked to keep off the mouse anyway.
+        /// </summary>
+        /// <remarks>
+        /// Every other gate test here pairs "the mouse is unusable" with "use
+        /// messages", so an implementation that only ever read the desktop state would
+        /// pass all of them and ignore the setting completely - which is what the
+        /// ordinary click did until this was added. Here the desktop says the mouse
+        /// works and the setting says not to use it, and the messages still have to go
+        /// out: that combination is the whole feature.
+        /// </remarks>
+        [TestMethod]
+        public void Win32_HonoursTheQuietSettingOnADesktopThatCouldStillTakeTheMouse()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            foreach (DesktopOperation operation in new[]
+            {
+                DesktopOperation.Click,
+                DesktopOperation.DoubleClick,
+                DesktopOperation.RightClick,
+                DesktopOperation.ControlClick
+            })
+            {
+                DesktopActionContext context = host.CreateFacadePointContext(operation, allowPhysicalInput: false);
+                context.DesktopCanTakePhysicalInput = true;
+                context.PreferWindowMessages = true;
+
+                int leftBefore = host.FacadeClickCount;
+                int doubleBefore = host.FacadeDoubleClickCount;
+                int rightBefore = host.FacadeRightClickCount;
+
+                LayerResult result = new Win32Layer().TryExecute(context);
+
+                Assert.AreEqual(LayerExecutionStatus.Succeeded, result.Status,
+                    operation + " was left to the mouse despite the agent asking for the quiet route: " + result.Message);
+
+                // Counted as a change rather than a total, since one operation is
+                // several messages and the exact number is the transport's business.
+                Assert.IsTrue(
+                    host.PumpUntil(() => host.FacadeClickCount > leftBefore
+                        || host.FacadeDoubleClickCount > doubleBefore
+                        || host.FacadeRightClickCount > rightBefore),
+                    operation + " was reported as sent but never reached the control");
+            }
+        }
+
+        /// <summary>
+        /// The other half of that setting: left off, an unlocked run keeps the mouse
+        /// exactly as it always did.
+        /// </summary>
+        [TestMethod]
+        public void Win32_StandsAsideOnAnUnlockedDesktopWhenTheQuietSettingIsOff()
+        {
+            using PbLikeDesktopHost host = new PbLikeDesktopHost();
+
+            foreach (DesktopOperation operation in new[]
+            {
+                DesktopOperation.Click,
+                DesktopOperation.DoubleClick,
+                DesktopOperation.RightClick,
+                DesktopOperation.ControlClick
+            })
+            {
+                DesktopActionContext context = host.CreateFacadePointContext(operation, allowPhysicalInput: false);
+                context.DesktopCanTakePhysicalInput = true;
+                context.PreferWindowMessages = false;
+
+                LayerResult result = new Win32Layer().TryExecute(context);
+
+                Assert.AreEqual(LayerExecutionStatus.Skipped, result.Status, operation + " was not left to the mouse");
+            }
+
+            Assert.AreEqual(0, host.FacadeClickCount, "nothing may be delivered while the mouse is still the route");
+            Assert.AreEqual(0, host.FacadeDoubleClickCount);
+            Assert.AreEqual(0, host.FacadeRightClickCount);
+        }
+
+        /// <summary>
         /// The locked-run failure itself: a coordinate click on a button has to come
         /// back promptly instead of running to its timeout.
         /// </summary>

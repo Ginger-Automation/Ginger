@@ -88,7 +88,25 @@ namespace GingerCore.Drivers.PBDriver
         [UserConfiguredDescription("Applitool Server Url")]
         public String ApplitoolsServerUrl { get; set; }
 
+        /// <summary>
+        /// Whether this agent's input should go through window messages and accessibility
+        /// patterns rather than the mouse, the keyboard and the foreground window.
+        /// </summary>
         /// <remarks>
+        /// Every action this driver dispatches honours it, apart from drag and drop,
+        /// which refuses rather than taking the mouse behind the operator's back: the
+        /// gesture exists only as real pointer movement and no message reproduces it.
+        /// Window switching also still raises windows, because that is what the action
+        /// is for rather than a side effect of it.
+        ///
+        /// Where a control accepts no message - some owner-drawn PowerBuilder controls
+        /// do not - the run falls back to the mouse and records that it did, so a flow
+        /// still completes on an unlocked machine and the operator can see which step
+        /// was not quiet. Behind a lock screen there is nothing to fall back to and the
+        /// step fails with the reason. Both are named in the description: someone who
+        /// reads "non-intrusive" and then watches the pointer move has no way to tell a
+        /// gap from a fault.
+        ///
         /// Declared last, after the settings that were here before it. Agents saved by
         /// an earlier build have no value stored for it, and adding it among the
         /// existing ones moved the settings below it down a row - which is how a
@@ -98,7 +116,7 @@ namespace GingerCore.Drivers.PBDriver
         /// </remarks>
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Non-Intrusive Input Mode || Use window messages for clicks and keystrokes so the run does not take over the mouse, keyboard and foreground window. Default is false - validate your flows before enabling")]
+        [UserConfiguredDescription("Non-Intrusive Input Mode || Clicks, right-clicks, double-clicks, clicks by X,Y, keystrokes, set-value, get-text, menus, tab selection, scrolling, expanding, tree and list selection, hover and element lookup all go through window messages and accessibility patterns, so a run does not take over the mouse, keyboard or foreground window and keeps working on a locked screen. Drag-and-drop is not supported and fails with an explanation. Switch Window still raises windows, since that is what it is for. A control that accepts no message falls back to the mouse and says so, or fails with the reason if the screen is locked. Default is false - validate your flows before enabling")]
         public bool NonIntrusiveInputMode { get; set; }
 
         public override ePomElementCategory? PomCategory
@@ -613,7 +631,16 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.RightClick:
-                        mUIAutomationHelper.DoRightClick(AE, actPBC.ValueForDriver);
+                        status = mUIAutomationHelper.DoRightClick(AE, actPBC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actPBC.Error = status;
+                        }
+                        else
+                        {
+                            actPBC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActPBControl.eControlAction.DoubleClick:

@@ -41,7 +41,11 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         private const int WM_LBUTTONDOWN = 0x0201;
         private const int WM_LBUTTONUP = 0x0202;
         private const int WM_LBUTTONDBLCLK = 0x0203;
+        private const int WM_RBUTTONDOWN = 0x0204;
+        private const int WM_RBUTTONUP = 0x0205;
         private const int MK_LBUTTON = 0x0001;
+        private const int MK_RBUTTON = 0x0002;
+        private const int MK_CONTROL = 0x0008;
         private const uint CWP_SKIPINVISIBLE = 0x0001;
         private const uint CWP_SKIPDISABLED = 0x0002;
         private const uint CWP_SKIPTRANSPARENT = 0x0004;
@@ -211,6 +215,57 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             bool queued = PostPress(target, position)
                 && PostMessage(target, WM_LBUTTONDBLCLK, new IntPtr(MK_LBUTTON), position)
                 && PostMessage(target, WM_LBUTTONUP, IntPtr.Zero, position);
+
+            return ConfirmThreadIsPumping(target, queued, timeoutMs);
+        }
+
+        /// <summary>
+        /// Right clicks a point inside a control by sending the button messages the
+        /// mouse would have produced, for the same targets and the same reasons as
+        /// <see cref="ClickAtScreenPoint"/>.
+        /// </summary>
+        /// <remarks>
+        /// Only the two button messages are sent, with no WM_CONTEXTMENU behind them.
+        /// That message is what DefWindowProc raises in answer to the release, so
+        /// sending it as well would open the context menu a second time on every
+        /// control that leaves the default handling in place - which is most of them.
+        /// A control that swallows the release without calling DefWindowProc shows no
+        /// menu, and that is the control's own behaviour rather than something to
+        /// correct from here: the real mouse produces nothing more than this either.
+        /// </remarks>
+        public static PointClickOutcome RightClickAtScreenPoint(IntPtr hwnd, int screenX, int screenY, int timeoutMs)
+        {
+            if (!TryResolveClientPoint(hwnd, screenX, screenY, out IntPtr target, out IntPtr position))
+            {
+                return PointClickOutcome.PointNotOwned;
+            }
+
+            bool queued = PostMessage(target, WM_RBUTTONDOWN, new IntPtr(MK_RBUTTON), position)
+                && PostMessage(target, WM_RBUTTONUP, IntPtr.Zero, position);
+
+            return ConfirmThreadIsPumping(target, queued, timeoutMs);
+        }
+
+        /// <summary>
+        /// Clicks a point with Ctrl held, which is how a list or tree is told to add to
+        /// its selection rather than replace it.
+        /// </summary>
+        /// <remarks>
+        /// The modifier rides in the message rather than being pressed. Holding the
+        /// real Ctrl key sets it for whoever is at the machine as much as for the
+        /// target, and leaves it stuck down if the click between the press and the
+        /// release throws. Here it is a bit in wParam, so it applies to this one click
+        /// and to nothing else.
+        /// </remarks>
+        public static PointClickOutcome ControlClickAtScreenPoint(IntPtr hwnd, int screenX, int screenY, int timeoutMs)
+        {
+            if (!TryResolveClientPoint(hwnd, screenX, screenY, out IntPtr target, out IntPtr position))
+            {
+                return PointClickOutcome.PointNotOwned;
+            }
+
+            bool queued = PostMessage(target, WM_LBUTTONDOWN, new IntPtr(MK_LBUTTON | MK_CONTROL), position)
+                && PostMessage(target, WM_LBUTTONUP, new IntPtr(MK_CONTROL), position);
 
             return ConfirmThreadIsPumping(target, queued, timeoutMs);
         }

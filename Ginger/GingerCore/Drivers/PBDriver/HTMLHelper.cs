@@ -1773,6 +1773,11 @@ namespace GingerCore.Drivers.PBDriver
         /// </param>
         private bool ClickBrowserPointWithWindowMessages(int browserX, int browserY, out string refusal)
         {
+            return ClickBrowserPointWithWindowMessages(DesktopOperation.Click, browserX, browserY, out refusal);
+        }
+
+        private bool ClickBrowserPointWithWindowMessages(DesktopOperation operation, int browserX, int browserY, out string refusal)
+        {
             // Offset from the browser's own rectangle, which is the origin the mouse
             // route measures from, so both aim at the same pixel.
             System.Drawing.Rectangle bounds = (System.Drawing.Rectangle)
@@ -1781,11 +1786,11 @@ namespace GingerCore.Drivers.PBDriver
             int screenY = bounds.Y + browserY;
 
             DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
-                DesktopActionMapper.ForPoint(AEBrowser, DesktopOperation.Click, screenX, screenY, NonIntrusiveInput));
+                DesktopActionMapper.ForPoint(AEBrowser, operation, screenX, screenY, NonIntrusiveInput));
 
             refusal = engineResult.Success
                 ? null
-                : DesktopActionMapper.DescribeUnreachablePoint(DesktopOperation.Click, screenX, screenY, engineResult);
+                : DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
 
             return engineResult.Success;
         }
@@ -1811,6 +1816,28 @@ namespace GingerCore.Drivers.PBDriver
             try
             {
                 element.scrollIntoView();
+
+                if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+                {
+                    // A hover is not a click and no window message carries one: moving
+                    // the real cursor over the element is how the page gets told, which
+                    // takes the pointer and does nothing at all behind a lock screen.
+                    // Dispatching the events that move would have raised tells the
+                    // page's own handlers the same thing without either cost.
+                    string eventResult = FireSpecialEvent(element, "mouseover,mouseenter");
+                    if (!eventResult.StartsWith("Error"))
+                    {
+                        return true;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("hover over the element", eventResult,
+                        out string refusal))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, refusal);
+                        return false;
+                    }
+                }
+
                 winAPI.MoveMousetoXYPoint(AEBrowser, getelementXCordinate(element) + x, getelementYCordinate(element) + y);
                 return true;
             }
@@ -1858,12 +1885,31 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.DEBUG, "elementX::" + x);
                 y = getelementYCordinate(element) + y;
                 Reporter.ToLog(eLogLevel.DEBUG, "elementY::" + y);
-                winAPI.SendRightClick(AEBrowser, x + "," + y);
-                return true;
+
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    if (ClickBrowserPointWithWindowMessages(DesktopOperation.RightClick, x, y, out string refusal))
+                    {
+                        return true;
+                    }
+                    if (!mouseIsUsable)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, refusal);
+                        return false;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("right click the element", refusal, out _))
+                    {
+                        return false;
+                    }
+                }
+
+                return winAPI.SendRightClick(AEBrowser, x + "," + y);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
