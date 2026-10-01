@@ -26,6 +26,9 @@
     <Compile Include="Misc\RESTTest.cs" />
     <Compile Include="Misc\SourceControlUnitTest.cs" />
     <Compile Include="Misc\OcrTest.cs" />
+    <Compile Include="Misc\DesktopAutomationEngineTest.cs" />
+    <Compile Include="Misc\PbLikeDesktopHost.cs" />
+    <Compile Include="Misc\PbLikeDesktopAutomationEvidenceTest.cs" />
     <Compile Include="Misc\UnixShellTest.cs" />
     <Compile Include="Misc\UsedVariablesTest.cs" />
     <Compile Include="Misc\ValueExpressionTest.cs" />
@@ -86,6 +89,9 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.3" />
     <PackageReference Include="System.Text.Json" Version="10.0.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="UIAComWrapperNetstandard" Version="1.0.1">
+      <Aliases>UIAComWrapperNetstandard</Aliases>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />

@@ -106,6 +106,37 @@ namespace GingerCore.Drivers.WindowsLib
         [UserConfiguredDescription("Applitool Server Url")]
         public String ApplitoolsServerUrl { get; set; }
 
+        /// <summary>
+        /// Whether this agent's input should go through window messages and accessibility
+        /// patterns rather than the mouse, the keyboard and the foreground window.
+        /// </summary>
+        /// <remarks>
+        /// Shares the coverage worked out for the PowerBuilder agent, since both drive
+        /// their elements through <c>UIAComWrapperHelper</c>, and extends it to the
+        /// <c>UIElementOperationsHelper</c> routes this driver uses on its own. Every
+        /// action honours it apart from drag and drop, which refuses rather than taking
+        /// the mouse behind the operator's back, and window switching, which still
+        /// raises windows because that is what the action is for.
+        ///
+        /// Where a control accepts no message the run falls back to the mouse and
+        /// records that it did, so a flow still completes on an unlocked machine and
+        /// the operator can see which step was not quiet. Behind a lock screen there is
+        /// nothing to fall back to and the step fails with the reason. Both are named
+        /// in the description: someone who reads "non-intrusive" and then watches the
+        /// pointer move has no way to tell a gap from a fault.
+        ///
+        /// Declared last, after the settings that were here before it. Agents saved by
+        /// an earlier build have no value stored for it, and adding it among the
+        /// existing ones moved the settings below it down a row - which is how a
+        /// Windows agent came to hold the word "false" in its ImplicitWait and refused
+        /// to start at all. Anything added later belongs below this, for the same
+        /// reason.
+        /// </remarks>
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Non-Intrusive Input Mode || Clicks, right-clicks, double-clicks, clicks by X,Y, keystrokes, set-value, get-text, menus, tab selection, scrolling, expanding, tree and list selection and element lookup all go through window messages and accessibility patterns, so a run does not take over the mouse, keyboard or foreground window and keeps working on a locked screen. Drag-and-drop is not supported and fails with an explanation. Switch Window still raises windows, since that is what it is for. A control that accepts no message falls back to the mouse and says so, or fails with the reason if the screen is locked. Default is false - validate your flows before enabling")]
+        public bool NonIntrusiveInputMode { get; set; }
+
         public override ePomElementCategory? PomCategory
         {
             get
@@ -143,13 +174,30 @@ namespace GingerCore.Drivers.WindowsLib
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
                     ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.Windows;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).NonIntrusiveInput = NonIntrusiveInputMode;
 
-                    mUIElementOperationsHelper = new UIElementOperationsHelper();
+                    mUIElementOperationsHelper = new UIElementOperationsHelper
+                    {
+                        NonIntrusiveInput = NonIntrusiveInputMode
+                    };
 
                     break;
 
             }
             mUIAutomationHelper.ImplicitWait = mImplicitWait;
+
+            GingerCore.Drivers.Common.LegacyAutomation.InteractiveDesktop.ReportInputPreference(NonIntrusiveInputMode, "The Windows agent");
+
+            // Written once at start so a run that failed overnight carries the
+            // evidence of the session it ran in, rather than only the symptoms.
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Ginger desktop environment: " + GingerCore.Drivers.Common.LegacyAutomation.InteractiveDesktop.DescribeSession());
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Desktop environment details could not be logged", ex);
+            }
         }
 
         public override void UpdateContext(Context context)
@@ -885,9 +933,13 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch (Exception e)
+            // Rethrown rather than handled, so the runner reports it. "throw e"
+            // would restart the stack trace here and hide the line that actually
+            // failed, which is the only clue a run leaves for a step that broke
+            // somewhere deep in the automation helper.
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -913,8 +965,18 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.SendKeys:
-                        mUIAutomationHelper.SendKeysToControl(AE, actWC.ValueForDriver);
-                        actWC.ExInfo = actWC.ValueForDriver + " set";
+                        string keysStatus = mUIAutomationHelper.SendKeysToControl(AE, actWC.ValueForDriver);
+                        if (!keysStatus.Contains("Keys Sent Successfully"))
+                        {
+                            actWC.Error = keysStatus;
+                        }
+                        else
+                        {
+                            // Deliberately the wording this step has always reported.
+                            // Which route carried the keys goes to the log instead, so
+                            // a flow validating this text keeps seeing what it expects.
+                            actWC.ExInfo = actWC.ValueForDriver + " set";
+                        }
                         break;
 
                     case ActWindowsControl.eControlAction.GetValue:
@@ -954,15 +1016,42 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.ClickXY:
-                        mUIAutomationHelper.ClickOnXYPoint(AE, actWC.ValueForDriver);
+                        status = mUIAutomationHelper.ClickOnXYPoint(AE, actWC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.RightClick:
-                        mUIAutomationHelper.DoRightClick(AE, actWC.ValueForDriver);
+                        status = mUIAutomationHelper.DoRightClick(AE, actWC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.DoubleClick:
-                        mUIAutomationHelper.DoDoubleClick(AE, actWC.ValueForDriver);
+                        status = mUIAutomationHelper.DoDoubleClick(AE, actWC.ValueForDriver);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.Maximize:
@@ -1077,9 +1166,9 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -1116,9 +1205,9 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 

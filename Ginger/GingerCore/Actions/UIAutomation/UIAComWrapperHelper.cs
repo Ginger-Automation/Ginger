@@ -24,6 +24,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
@@ -63,7 +64,40 @@ namespace GingerCore.Drivers
         private int loadwaitSeconds;
         private WinAPIAutomation winAPI = new WinAPIAutomation();
         public Dictionary<string, UIAuto.AutomationElement[]> MainDict = [];
+
+        /// <summary>
+        /// Whether the agent that owns this helper asked for its clicks and keystrokes
+        /// to go through window messages ahead of the mouse and keyboard.
+        /// </summary>
+        /// <remarks>
+        /// Held per helper rather than per process because each agent gets its own,
+        /// and the Windows, PowerBuilder and Java drivers share this class. Held in
+        /// one place it would mean the last agent to start decided how every other
+        /// agent's steps were delivered.
+        /// </remarks>
+        public bool NonIntrusiveInput { get; set; }
+
+        /// <summary>
+        /// The browser-widget helper this one drives. It is given this agent's input
+        /// preference when it is built, since it is reached through this class and
+        /// has no other way to learn which agent it is working for.
+        /// </summary>
         public HTMLHelper HTMLhelperObj { get; set; }
+
+        /// <summary>
+        /// Whether a step should try the window-message route before reaching for the
+        /// mouse and keyboard, for the agent this helper belongs to.
+        /// </summary>
+        /// <remarks>
+        /// Exists to supply the owning agent's preference, which is the one part of
+        /// the question a call site cannot be trusted to remember: a route added later
+        /// can ask correctly and still pass the wrong agent's answer, or none, and
+        /// nothing would catch it. Whether the desktop takes input is deliberately not
+        /// supplied here - it costs a probe, so the caller passes the answer it
+        /// already has rather than paying for a second one it cannot see.
+        /// </remarks>
+        private bool PreferWindowMessages(bool physicalInputWorks) =>
+            InteractiveDesktop.PreferWindowMessages(physicalInputWorks, NonIntrusiveInput);
 
         List<string> ImportentProperties = [];
 
@@ -942,7 +976,6 @@ namespace GingerCore.Drivers
 
                         case eLocateBy.ByXY:
                             double xx = 0, yy = 0;
-                            bool statusFlag;
                             string[] str = locateValue.Split(',');
                             xx = Convert.ToDouble(str[0]);
                             yy = Convert.ToDouble(str[1]);
@@ -950,11 +983,7 @@ namespace GingerCore.Drivers
                             yy = yy + Convert.ToInt32(CurrentWindow.Current.BoundingRectangle.Y);
                             System.Drawing.Point point = new System.Drawing.Point((int)xx, (int)yy);
                             //SwitchWindow("NoTitleWindow");  //What is this?
-                            statusFlag = WinAPIAutomation.SetForeGroundWindow(CurrentWindow.Current.ProcessId);
-                            if (statusFlag == false)
-                            {
-                                WinAPIAutomation.ShowWindow(CurrentWindow);
-                            }
+                            RaiseWindowForPointLookup();
                             element = UIAuto.AutomationElement.FromPoint(point);
                             break;
                         default:
@@ -1169,18 +1198,13 @@ namespace GingerCore.Drivers
                     return GetElementsListFromCollection(AECollection);
                 case eLocateBy.ByXY:
                     double xx = 0, yy = 0;
-                    bool statusFlag;
                     string[] str = LocValueCalculated.Split(',');
                     xx = Convert.ToDouble(str[0]);
                     yy = Convert.ToDouble(str[1]);
                     xx = xx + Convert.ToInt32(CurrentWindow.Current.BoundingRectangle.X);
                     yy = yy + Convert.ToInt32(CurrentWindow.Current.BoundingRectangle.Y);
                     System.Drawing.Point point = new System.Drawing.Point((int)xx, (int)yy);
-                    statusFlag = WinAPIAutomation.SetForeGroundWindow(CurrentWindow.Current.ProcessId);
-                    if (statusFlag == false)
-                    {
-                        WinAPIAutomation.ShowWindow(CurrentWindow);
-                    }
+                    RaiseWindowForPointLookup();
                     List<UIAuto.AutomationElement> AEXYList = null;
                     //FIXIME
                     UIAuto.AutomationElement AE2 = UIAuto.AutomationElement.FromPoint(point);
@@ -1897,11 +1921,39 @@ namespace GingerCore.Drivers
                 return ex.Message;
             }
         }
+        /// <remarks>
+        /// The one action with no quiet route. A drag is a press, a path and a release
+        /// that the source and target read as one gesture through the system's own drag
+        /// loop, and no window message reproduces it: a control told the button went
+        /// down here and up there never sees a drag. So where the quiet route was asked
+        /// for, this says so and stops.
+        ///
+        /// Taking the mouse anyway would be the worse answer. The flag exists because
+        /// the run shares a machine, and a drag is the longest and most disruptive
+        /// gesture there is to have taken from under someone - several seconds of the
+        /// pointer being dragged across their screen.
+        /// </remarks>
         public override void DragAndDrop(object obj, ActUIElement act)
         {
             //ActPBControl actPB = (ActPBControl)act;
             ActUIElement actUIDragAndDrop = act;
             UIAuto.AutomationElement SourceElement = (UIAuto.AutomationElement)obj;
+
+            if (NonIntrusiveInput)
+            {
+                act.Error = "Drag and drop is not supported in Non-Intrusive Input Mode. The gesture only exists"
+                    + " as real mouse movement, so it cannot be sent as window messages. Turn the mode off on the"
+                    + " agent to run this step, or replace it with the action the drag performs.";
+                return;
+            }
+
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                act.Error = "Drag and drop needs the real mouse, and the desktop cannot take physical input ("
+                    + InteractiveDesktop.DescribeSession() + "). Unlike the other actions there is no"
+                    + " window-message route behind this one to fall back to.";
+                return;
+            }
 
             UIAuto.AutomationElement TargetElement = (UIAuto.AutomationElement)FindElementByLocator(actUIDragAndDrop.TargetLocateBy, actUIDragAndDrop.TargetLocateValueForDriver);
             if (TargetElement == null)
@@ -2077,11 +2129,45 @@ namespace GingerCore.Drivers
                     break;
 
                 case ActUIElement.eElementAction.MouseClick:
+                    bool mouseIsUsableForClick = InteractiveDesktop.IsAvailable();
+                    if (PreferWindowMessages(mouseIsUsableForClick))
+                    {
+                        result = ClickElementCentreWithWindowMessages(element);
+                        if (result.Contains(ClickedSuccessfully) || !mouseIsUsableForClick)
+                        {
+                            break;
+                        }
+                        if (!InteractiveDesktop.TryFallBackToPhysicalInput("click the element", result, out string clickRefusal))
+                        {
+                            result = clickRefusal;
+                            break;
+                        }
+                    }
+
                     winAPI.SendClick(element);
                     result = "Clicked Successfully by Mouse Click";
                     break;
             }
             return result;
+        }
+
+        /// <summary>
+        /// Clicks the middle of the element by window message, for use where the mouse
+        /// cannot reach it.
+        /// </summary>
+        /// <remarks>
+        /// Aims at the same pixel <see cref="WinAPIAutomation.SendClick"/> does, so a
+        /// step behaves the same whichever route served it. The mouse route reported
+        /// "Clicked Successfully by Mouse Click" whatever happened, so behind a lock
+        /// screen a click that landed nowhere was still handed to the validation step
+        /// as a click that worked - and the step that followed failed instead, naming
+        /// the element it could not find rather than the click that never happened.
+        /// </remarks>
+        private string ClickElementCentreWithWindowMessages(UIAuto.AutomationElement element)
+        {
+            var bounds = element.Current.BoundingRectangle;
+            return ClickPointWithWindowMessages(element, DesktopOperation.Click,
+                bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
         }
 
         public override string SendKeysAndValidateHandler(object obj, ActUIElement act)
@@ -2135,7 +2221,19 @@ namespace GingerCore.Drivers
 
             while (flag == false && iLoop < 20)
             {
-                SendKeysToControl(AE, Value);
+                // The validation below looks at a different element from the one being
+                // typed into, so it can report success for a reason of its own while
+                // the keys never arrived. Retrying would not help either: the send
+                // fails here for reasons that do not pass - a locked screen, a value
+                // holding a modifier, a control that took only part of it - and where
+                // part of it did arrive, sending it again is the one thing that must
+                // not happen.
+                string sendStatus = SendKeysToControl(AE, Value);
+                if (!sendStatus.Contains(KeysSentSuccessfully))
+                {
+                    return sendStatus;
+                }
+
                 if (DefineHandleAction == true)
                 {
                     LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, validationElementType, handleActionType);
@@ -2759,17 +2857,7 @@ namespace GingerCore.Drivers
 
                 if (!asyncFlag)// Regular Click
                 {
-                    string status = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
-                    if (!status.Contains("Clicked Successfully"))
-                    {
-                        status = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
-                        if (!status.Contains("Clicked Successfully"))
-                        {
-                            winAPI.SendClick(element);
-                            status = "Clicked Successfully using Mouse event";
-                        }
-                    }
-                    return status;
+                    return ClickElementWithDesktopEngine(element, allowPhysicalInput: true);
                 }
                 else// Async Click
                 {
@@ -2778,17 +2866,8 @@ namespace GingerCore.Drivers
                     {
                         try
                         {
-                            status = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
-                            if (!status.Contains("Clicked Successfully"))
-                            {
-                                status = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
-                                if (!status.Contains("Clicked Successfully"))
-                                {
-                                    winAPI.SendClick(element);
-                                    status = "Clicked Successfully using Mouse event";
-                                    clickTriggeredFlag = true;
-                                }
-                            }
+                            status = ClickElementWithDesktopEngine(element, allowPhysicalInput: true);
+                            clickTriggeredFlag = status.Contains("Clicked Successfully");
                         }
                         catch (Exception ex)
                         {
@@ -2827,38 +2906,611 @@ namespace GingerCore.Drivers
             }
         }
 
-        public override void ClickOnXYPoint(object obj, string clickPoint)
+        /// <remarks>
+        /// Not static, so the agent's non-intrusive setting can be passed on. While it
+        /// was, the ordinary click - the one most steps in a suite are - was the only
+        /// input route that never asked for the setting, and a run with it switched on
+        /// still took the mouse for every click the UIA patterns could not serve.
+        /// </remarks>
+        private string ClickElementWithDesktopEngine(UIAuto.AutomationElement element, bool allowPhysicalInput)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.Click, null, allowPhysicalInput, NonIntrusiveInput));
+            if (engineResult.Success)
+            {
+                return "Clicked Successfully. " + engineResult.ExecutionInfo;
+            }
+
+            // The attempt log names the layer that declined and why. Dropping it left
+            // a failed click reporting only that everything was tried, which is not
+            // enough to tell a missing pattern from a target no window owns.
+            return string.IsNullOrEmpty(engineResult.ExecutionInfo)
+                ? engineResult.ErrorMessage
+                : engineResult.ErrorMessage + " Techniques tried: " + engineResult.ExecutionInfo;
+        }
+
+        /// <summary>
+        /// The marker the drivers test for. Coordinate clicks report through the same
+        /// wording as every other click path so the existing checks keep working.
+        /// </summary>
+        private const string ClickedSuccessfully = "Clicked Successfully.";
+
+        /// <summary>
+        /// Clicks or double clicks a screen point by window message, for use where the
+        /// mouse cannot reach it.
+        /// </summary>
+        /// <remarks>
+        /// Reached only once the desktop has reported that it cannot take physical
+        /// input, so the mouse still serves every unlocked run exactly as before: a
+        /// message click and a real one are not interchangeable for every control, and
+        /// a passing run is not the place to discover that.
+        /// </remarks>
+        private string ClickPointWithWindowMessages(UIAuto.AutomationElement element, DesktopOperation operation, int screenX, int screenY)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
+                DesktopActionMapper.ForPoint(element, operation, screenX, screenY, NonIntrusiveInput));
+
+            return engineResult.Success
+                ? ClickedSuccessfully + " " + engineResult.ExecutionInfo
+                : DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
+        }
+
+        /// <summary>
+        /// Clicks an element through the layered engine where the quiet route is in
+        /// play, and with the mouse otherwise.
+        /// </summary>
+        /// <remarks>
+        /// Stands in for <see cref="WinAPIAutomation.SendClick"/> at the menu and
+        /// expand routes. That method raises the target's window and moves the real
+        /// cursor to the element's centre, so a run that had asked for the quiet route
+        /// still took the screen for every menu it opened, and behind a lock screen it
+        /// clicked nothing while reporting nothing.
+        /// </remarks>
+        /// <param name="raiseWindow">
+        /// Whether the mouse route should pull the application to the foreground first,
+        /// which it has to for the click to land on the window being driven. Passed
+        /// through unchanged; the quiet route raises nothing.
+        /// </param>
+        /// <returns>
+        /// False only where the click was not delivered and there was nothing further
+        /// to try.
+        /// </returns>
+        private bool ClickElementQuietly(UIAuto.AutomationElement element, string what, bool raiseWindow = true)
+        {
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                string status = ClickElementWithDesktopEngine(element, allowPhysicalInput: false);
+                if (status.Contains(ClickedSuccessfully))
+                {
+                    return true;
+                }
+                if (!mouseIsUsable)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, status);
+                    return false;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput(what, status, out _))
+                {
+                    return false;
+                }
+            }
+
+            return winAPI.SendClick(element, raiseWindow);
+        }
+
+        /// <summary>
+        /// Brings the window being driven to the front before an element is looked up
+        /// by coordinates, so the point lands on it rather than on whatever is covering
+        /// it. Does nothing where the quiet route is in play.
+        /// </summary>
+        /// <remarks>
+        /// Finding an element is not supposed to change anything, and this is the one
+        /// place in the locator that did: a ByXY step pulled the application forward
+        /// and took the screen from whoever was at the machine, before any action had
+        /// run. The hit test reads what is on screen either way, so skipping it costs
+        /// only the certainty of which window answers - and a point under another
+        /// window now resolves to that window, which the step goes on to report rather
+        /// than quietly acting on the wrong one.
+        ///
+        /// Window switching is left alone: raising a window is the whole point of that
+        /// action, not a side effect of it.
+        /// </remarks>
+        private void RaiseWindowForPointLookup()
+        {
+            if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+            {
+                return;
+            }
+
+            if (!WinAPIAutomation.SetForeGroundWindow(CurrentWindow.Current.ProcessId))
+            {
+                WinAPIAutomation.ShowWindow(CurrentWindow);
+            }
+        }
+
+        /// <summary>
+        /// Adds a tree or list node to the current selection rather than replacing it.
+        /// </summary>
+        /// <remarks>
+        /// The selection pattern comes first because it says exactly that and needs no
+        /// input at all. Where it is missing the selection is extended the way the
+        /// mouse does it, by clicking with Ctrl held: on the quiet route the modifier
+        /// rides in the message, so it applies to this one click and to nothing else.
+        ///
+        /// The physical route is last and holds the real key, which is why the release
+        /// is in a finally. A click that throws in between used to leave Ctrl down for
+        /// the machine, turning every keystroke after it - in the run and for whoever
+        /// was at the desk - into a shortcut.
+        /// </remarks>
+        private void AddNodeToSelection(UIAuto.AutomationElement node, object selectionItemPattern, bool canSelectMultiple)
+        {
+            if (selectionItemPattern != null && canSelectMultiple)
+            {
+                ((UIAuto.SelectionItemPattern)selectionItemPattern).AddToSelection();
+                return;
+            }
+
+            UIAuto.AutomationElement target = NodeClickTarget(node);
+
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                ResolveClickPoint(target, string.Empty, out int x, out int y);
+                string status = ClickPointWithWindowMessages(target, DesktopOperation.ControlClick, x, y);
+                if (status.Contains(ClickedSuccessfully))
+                {
+                    return;
+                }
+                if (!mouseIsUsable)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, status);
+                    return;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("add the node to the selection", status, out _))
+                {
+                    return;
+                }
+            }
+
+            WinAPIAutomation.HoldControlKeyOfKeyboard();
+            try
+            {
+                winAPI.SendClick(target);
+            }
+            finally
+            {
+                WinAPIAutomation.ReleaseControlKeyOfKeyboard();
+            }
+        }
+
+        /// <summary>
+        /// Where a node's click should land: on its text child where it has one, since
+        /// a tree item's own rectangle can run the width of the control and its centre
+        /// then falls on empty row rather than on the label.
+        /// </summary>
+        private static UIAuto.AutomationElement NodeClickTarget(UIAuto.AutomationElement node)
+        {
+            UIAuto.AutomationElement nodeText = node.FindFirst(
+                Interop.UIAutomationClient.TreeScope.TreeScope_Children,
+                new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
+
+            return nodeText ?? node;
+        }
+
+        /// <summary>
+        /// Clicks a screen point that one of the control-specific routes worked out for
+        /// itself - a tab's label, a scrollbar's arrow, a drop-down's button - by
+        /// window message where that route is in play and with the mouse otherwise.
+        /// </summary>
+        /// <remarks>
+        /// Stands in for <see cref="WinAPIAutomation.SendClickOnXYPoint"/> at the sites
+        /// that had nothing but it. That method raises the target's window and moves
+        /// the real cursor, so these steps took the screen even on a run that had asked
+        /// for the quiet route, and behind a lock screen they clicked nothing and
+        /// reported nothing about it.
+        /// </remarks>
+        /// <param name="what">
+        /// What the click was for, phrased to read inside a sentence about falling back
+        /// to the mouse.
+        /// </param>
+        /// <returns>
+        /// False only where the click was not delivered and there was nothing further
+        /// to try. A run with the mouse available ends at it and so always answers true.
+        /// </returns>
+        private bool ClickScreenPoint(UIAuto.AutomationElement element, int screenX, int screenY, string what)
+        {
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                string status = ClickPointWithWindowMessages(element, DesktopOperation.Click, screenX, screenY);
+                if (status.Contains(ClickedSuccessfully))
+                {
+                    return true;
+                }
+                if (!mouseIsUsable)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, status);
+                    return false;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput(what, status, out _))
+                {
+                    return false;
+                }
+            }
+
+            winAPI.SendClickOnXYPoint(element, screenX, screenY);
+            return true;
+        }
+
+        private bool TrySetValueViaDesktopEngine(UIAuto.AutomationElement element, string value, out string info)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.SetValue, value, allowPhysicalInput: false, NonIntrusiveInput));
+            if (engineResult.Success)
+            {
+                info = engineResult.ExecutionInfo;
+                return true;
+            }
+
+            info = engineResult.ErrorMessage;
+            return false;
+        }
+
+        /// <summary>
+        /// Writes text into a control, by window message where that route can carry it
+        /// and with the foreground window and the keyboard otherwise.
+        /// </summary>
+        /// <remarks>
+        /// Stands in for <see cref="WinAPIAutomation.SetElementText"/> at the set-value
+        /// routes that had nothing but it. That method raises the window and types, so
+        /// it writes nothing behind a lock screen and types over whatever the person at
+        /// the machine is doing on an unlocked one - and it reports neither, which is
+        /// how a locked run recorded a value as set over a field that still held its
+        /// old text.
+        /// </remarks>
+        /// <returns>
+        /// False only where the text was not written and there was nothing further to
+        /// try. A run with the mouse and keyboard available ends at them and so always
+        /// answers true.
+        /// </returns>
+        private bool SetControlText(UIAuto.AutomationElement element, string value)
+        {
+            // Gated, unlike the edit-box route above, because the controls that reach
+            // here are the ones where writing the text and typing it are not the same
+            // act. Typing into a combo box runs its auto-complete and moves its
+            // selection; WM_SETTEXT puts the characters in and leaves the selection
+            // where it was, and reads back as a success either way. So a default
+            // unlocked run keeps typing exactly as it does today, and the quiet route
+            // is taken only where it was asked for or where nothing else is left.
+            if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+            {
+                if (TrySetValueViaDesktopEngine(element, value, out string setValueInfo))
+                {
+                    return true;
+                }
+
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("set the value", setValueInfo, out _))
+                {
+                    return false;
+                }
+            }
+
+            winAPI.SetElementText(element, value);
+            return true;
+        }
+
+        private static string GetValueViaDesktopEngine(UIAuto.AutomationElement element)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.GetValue, null, allowPhysicalInput: false));
+            return engineResult.Success ? engineResult.OutputValue : null;
+        }
+
+        /// <summary>
+        /// PowerBuilder set-value paths use a trailing Tab to force the control to
+        /// commit. Where the window-message route is in play this sends VK_TAB to the
+        /// element's focused child, which needs neither focus nor an unlocked desktop,
+        /// and reaches for the keyboard when that moves nothing.
+        /// </summary>
+        /// <remarks>
+        /// The message route runs behind a lock screen, where the keyboard reaches
+        /// nothing, and on an unlocked desktop only when the agent asked for it: the
+        /// keyboard types into whatever holds focus, so it has to pull the application
+        /// to the foreground and takes the machine away from whoever is using it.
+        /// Either way the keyboard still runs behind a Tab that did not move.
+        /// </remarks>
+        /// <returns>
+        /// False only where the value was left uncommitted with nothing further to
+        /// try, which is the screen having been locked after the step began. An
+        /// unlocked run always ends at the keyboard below and so always answers true,
+        /// which is why the callers that turn this into a failure cannot affect one.
+        /// </returns>
+        private bool SendCommitTabKey(UIAuto.AutomationElement element)
+        {
+            if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+            {
+                IntPtr focus = Win32KeyMessages.ResolveFocusedChild(TryGetNativeHandle(element));
+                if (focus != IntPtr.Zero && Win32KeyMessages.SendTab(focus, 2000))
+                {
+                    return true;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("commit the value with a Tab",
+                    "the focus did not move off the field", out _))
+                {
+                    return false;
+                }
+            }
+
+            WinAPIAutomation.SendTabKey();
+            return true;
+        }
+
+        /// <summary>
+        /// Sends a plain Unicode string as WM_CHAR window messages, falling back to
+        /// the keyboard when the element resolves to no child HWND.
+        /// </summary>
+        private void SendTypedKeys(UIAuto.AutomationElement element, string value)
+        {
+            if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+            {
+                IntPtr focus = Win32KeyMessages.ResolveFocusedChild(TryGetNativeHandle(element));
+                if (focus != IntPtr.Zero && Win32KeyMessages.SendChars(focus, value, 2000))
+                {
+                    return;
+                }
+
+                // The value is deliberately left out of the log, since set-value steps
+                // carry passwords and other secrets.
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("type the value",
+                    "no child window accepted the characters", out _))
+                {
+                    return;
+                }
+            }
+
+            WinAPIAutomation.SendInputKeys(value);
+        }
+
+        /// <summary>
+        /// Sends a Send Keys value - <c>{DOWN}</c>, <c>{ENTER}</c> and the like - to
+        /// the element, by window message where that route is in play and with the
+        /// keyboard otherwise.
+        /// </summary>
+        /// <remarks>
+        /// Replaces <see cref="WinAPIAutomation.SendKeysByLibrary"/> at the call sites
+        /// where the keys are a nudge rather than a value. That method focuses the
+        /// element and calls <c>SendKeys.SendWait</c>, which presses the keys for the
+        /// whole machine: behind a lock screen the focus call reaches nothing and the
+        /// keys go nowhere, and on an unlocked desktop they land in whatever the
+        /// person at the keyboard is doing.
+        /// </remarks>
+        /// <returns>
+        /// False only where the keys were not delivered and there was nothing further
+        /// to try. An unlocked run reaches the keyboard below and so answers true.
+        /// </returns>
+        private bool SendNotationKeys(UIAuto.AutomationElement element, string value)
+        {
+            if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+            {
+                if (WindowMessageKeystrokes.TrySend(element, value, out string failure, out bool partiallyDelivered))
+                {
+                    return true;
+                }
+
+                // A partly delivered sequence rules the keyboard out: the control is
+                // holding what arrived, so pressing the whole sequence again would
+                // repeat that part of it.
+                if (partiallyDelivered)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Ginger could not send " + value + " to the element: "
+                        + failure + ". Part of it arrived, so it was not retried with the keyboard.");
+                    return false;
+                }
+
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("send " + value + " to the element", failure, out _))
+                {
+                    return false;
+                }
+            }
+
+            winAPI.SendKeysByLibrary(element, value);
+            return true;
+        }
+
+        /// <summary>
+        /// Whether the desktop can take keyboard input, logging what was left undone
+        /// when it cannot.
+        /// </summary>
+        /// <remarks>
+        /// This is the guard the keyboard routes cannot do without, because none of
+        /// them has a timeout to fall back on.
+        /// <see cref="WinAPIAutomation.SendKeysByLibrary"/> focuses the element and
+        /// calls SendWait, which takes no timeout and returns only once the synthesized
+        /// input has been processed. Behind a lock screen the desktop that would process
+        /// it is not the one this session owns, so the call does not come back on its own
+        /// schedule: the difference between a run that reports a locked machine and one
+        /// that has to be killed.
+        /// </remarks>
+        private static bool KeyboardIsUsableFor(string purpose)
+        {
+            if (InteractiveDesktop.IsAvailable())
+            {
+                return true;
+            }
+
+            Reporter.ToLog(eLogLevel.ERROR, "Ginger did not " + purpose + ", because the desktop cannot take"
+                + " physical input (" + InteractiveDesktop.DescribeSession() + "). Unlock the screen to run"
+                + " this step.");
+            return false;
+        }
+
+        private static IntPtr TryGetNativeHandle(UIAuto.AutomationElement element)
+        {
+            if (element == null)
+            {
+                return IntPtr.Zero;
+            }
+            try
+            {
+                return new IntPtr(Convert.ToInt64(element.Current.NativeWindowHandle));
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
+        }
+
+        public override string ClickOnXYPoint(object obj, string clickPoint)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string[] coordinates = clickPoint.Split(',');
             int x = AE.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
             int y = AE.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
 
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                string status = ClickPointWithWindowMessages(AE, DesktopOperation.Click, x, y);
+                if (status.Contains(ClickedSuccessfully) || !mouseIsUsable)
+                {
+                    return status;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("click the point " + x + "," + y, status, out string refusal))
+                {
+                    return refusal;
+                }
+            }
+
             winAPI.SendClickOnXYPoint(AE, x, y);
+            return ClickedSuccessfully;
         }
 
-        public override void DoRightClick(object obj, string XY = "")
+        public override string DoRightClick(object obj, string XY = "")
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
-            winAPI.SendRightClick(AE, XY);
+
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                ResolveRightClickPoint(AE, XY, out int x, out int y);
+                string status = ClickPointWithWindowMessages(AE, DesktopOperation.RightClick, x, y);
+                if (status.Contains(ClickedSuccessfully) || !mouseIsUsable)
+                {
+                    return status;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("right click the element", status, out string refusal))
+                {
+                    return refusal;
+                }
+            }
+
+            if (!winAPI.SendRightClick(AE, XY))
+            {
+                return "Windows did not accept the mouse events, so the right click never reached the"
+                    + " application. Another process is blocking input, or it is running at a higher"
+                    + " integrity level than Ginger.";
+            }
+
+            return ClickedSuccessfully;
         }
 
-        public override void DoDoubleClick(object obj, string XY = "")
+        /// <summary>
+        /// Where a right click lands: the given offset inside the element, or a point
+        /// just inside its top left corner when none was given.
+        /// </summary>
+        /// <remarks>
+        /// The no-offset case is not the centre that <see cref="ResolveClickPoint"/>
+        /// aims at. It mirrors <see cref="WinAPIAutomation.SendRightClick"/>, which has
+        /// always used a small fixed inset, so the message route opens the menu over the
+        /// same part of the control the mouse route did. A right click that landed
+        /// somewhere else would open a different menu, or none, and look like the
+        /// message route failing rather than aiming elsewhere.
+        /// </remarks>
+        private static void ResolveRightClickPoint(UIAuto.AutomationElement element, string XY, out int x, out int y)
+        {
+            var bounds = element.Current.BoundingRectangle;
+
+            if (!string.IsNullOrEmpty(XY) && XY.IndexOf(',') > 0)
+            {
+                string[] coordinates = XY.Split(',');
+                x = (int)bounds.X + Int32.Parse(coordinates[0]);
+                y = (int)bounds.Y + Int32.Parse(coordinates[1]);
+                return;
+            }
+
+            x = (int)bounds.X + 10;
+            y = (int)bounds.Y + 5;
+        }
+
+        public override string DoDoubleClick(object obj, string XY = "")
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
+
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                ResolveClickPoint(element, XY, out int x, out int y);
+                string status = ClickPointWithWindowMessages(element, DesktopOperation.DoubleClick, x, y);
+                if (status.Contains(ClickedSuccessfully) || !mouseIsUsable)
+                {
+                    return status;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("double click the element", status, out string refusal))
+                {
+                    return refusal;
+                }
+            }
+
             winAPI.SendDoubleClick(element, XY);
+            return ClickedSuccessfully;
+        }
+
+        /// <summary>
+        /// Where a coordinate click lands: the given offset inside the element, or its
+        /// centre when no offset was given.
+        /// </summary>
+        /// <remarks>
+        /// Mirrors the rule the mouse path applies in
+        /// <see cref="WinAPIAutomation.SendDoubleClick"/>, so the two routes aim at the
+        /// same pixel and a step behaves the same whichever one served it.
+        /// </remarks>
+        private static void ResolveClickPoint(UIAuto.AutomationElement element, string XY, out int x, out int y)
+        {
+            var bounds = element.Current.BoundingRectangle;
+
+            if (!string.IsNullOrEmpty(XY) && XY.IndexOf(',') > 0)
+            {
+                string[] coordinates = XY.Split(',');
+                x = (int)bounds.X + Int32.Parse(coordinates[0]);
+                y = (int)bounds.Y + Int32.Parse(coordinates[1]);
+                return;
+            }
+
+            x = (int)(bounds.X + bounds.Width / 2);
+            y = (int)(bounds.Y + bounds.Height / 2);
         }
 
         public override void ClickMenuElement(Act act)
         {
             System.Drawing.Point currentPosition = System.Windows.Forms.Cursor.Position;
-            System.Drawing.Point newPosition = new System.Drawing.Point(1, 1);
-            if (CurrentWindow.Current.BoundingRectangle != null)
+
+            // The cursor is parked just inside the window so the menu opens under it
+            // rather than wherever it was left. Skipped where the quiet route is in
+            // play: the clicks below do not go through the pointer there, and moving it
+            // would take it from whoever is at the machine for no gain.
+            bool usingMouse = !PreferWindowMessages(InteractiveDesktop.IsAvailable());
+            if (usingMouse)
             {
-                newPosition.X = CurrentWindow.Current.BoundingRectangle.X + 7;
-                newPosition.Y = CurrentWindow.Current.BoundingRectangle.Y + 7;
+                System.Drawing.Point newPosition = new System.Drawing.Point(1, 1);
+                if (CurrentWindow.Current.BoundingRectangle != null)
+                {
+                    newPosition.X = CurrentWindow.Current.BoundingRectangle.X + 7;
+                    newPosition.Y = CurrentWindow.Current.BoundingRectangle.Y + 7;
+                }
+                System.Windows.Forms.Cursor.Position = newPosition;
             }
-            System.Windows.Forms.Cursor.Position = newPosition;
+
             string str = act.LocateValueCalculated;
             string[] locateValues = str.Split('|');
             int j = 0;
@@ -2895,7 +3547,13 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            winAPI.SendClick(menuElement);  // clicking on main menu .. expanding it .. taking this action outof loop
+            // clicking on main menu .. expanding it .. taking this action outof loop.
+            // A click that got nowhere is left to run on rather than reported here: the
+            // sub-menu search below finds nothing, falls back to ClickMenuElementByXY,
+            // and that is where the failure is raised. Stopping at this point would
+            // give up before the fallback that opens the menu for most of the screens
+            // this action is used on.
+            ClickElementQuietly(menuElement, "open the menu");
             i++;
             try
             {
@@ -2929,9 +3587,13 @@ namespace GingerCore.Drivers
                         return;
                     }
                     menuElement = tempAE;
-                    winAPI.SendClick(menuElement, false);
+                    ClickElementQuietly(menuElement, "click the sub menu item", raiseWindow: false);
                 }
-                System.Windows.Forms.Cursor.Position = currentPosition;
+
+                if (usingMouse)
+                {
+                    System.Windows.Forms.Cursor.Position = currentPosition;
+                }
             }
             catch (Exception e)
             {
@@ -2959,7 +3621,7 @@ namespace GingerCore.Drivers
             CollapseControlElement(rootElement);
             x = menuElement.Current.BoundingRectangle.X + (menuElement.Current.BoundingRectangle.Width / 2);
             y = menuElement.Current.BoundingRectangle.Y + (menuElement.Current.BoundingRectangle.Height / 2);
-            winAPI.SendClick(rootElement);
+            ClickElementQuietly(rootElement, "open the menu");
             str = "True";
             Thread.Sleep(100);
             for (; i < locateValues.Length && (Convert.ToBoolean(str)); i++)
@@ -2976,7 +3638,7 @@ namespace GingerCore.Drivers
                             if (menuElement.Current.IsEnabled)
                             {
                                 str = "True";
-                                winAPI.SendClick(menuElement);
+                                ClickElementQuietly(menuElement, "click the menu item");
                                 Reporter.ToLog(eLogLevel.DEBUG, "***** Got Menu element  :  " + menuElement.Current.Name + "  Now changing the X");
                                 if (menuElement != null && i == (locateValues.Length - 1))
                                 {
@@ -3039,7 +3701,7 @@ namespace GingerCore.Drivers
 
 
 
-        public override void SendKeysToControl(object obj, string value)
+        public override string SendKeysToControl(object obj, string value)
         {
             Boolean IsSpecialCharExist = false;
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
@@ -3048,6 +3710,24 @@ namespace GingerCore.Drivers
             {
                 IsSpecialCharExist = true;
             }
+
+            bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(keyboardIsUsable))
+            {
+                string typedStatus = TypeIntoControlWithWindowMessages(element, value, out bool partiallyDelivered);
+
+                // A control that took part of the value keeps it, so the routes below
+                // would set the text on top of a prefix that is already there.
+                if (typedStatus.Contains(KeysSentSuccessfully) || partiallyDelivered || !keyboardIsUsable)
+                {
+                    return typedStatus;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("send these keys", typedStatus, out string refusal))
+                {
+                    return refusal;
+                }
+            }
+
             if (IsSpecialCharExist)
             {
                 winAPI.SetElementTextWithFocus(element, value);
@@ -3056,6 +3736,70 @@ namespace GingerCore.Drivers
             {
                 winAPI.SetElementText(element, value);
             }
+
+            return KeysSentSuccessfully;
+        }
+
+        /// <summary>
+        /// The marker the drivers test for. Keys report through one wording whichever
+        /// route carried them, so the existing checks keep working.
+        /// </summary>
+        private const string KeysSentSuccessfully = "Keys Sent Successfully.";
+
+        /// <summary>
+        /// Types into a control by window message, for use where the keyboard cannot
+        /// reach it.
+        /// </summary>
+        /// <remarks>
+        /// The keys go to the control's own window rather than to whatever holds
+        /// focus, which is what lets this work at all behind a lock screen: the
+        /// keyboard path first clicks the control to focus it, and that click lands
+        /// nowhere once the desktop stops taking physical input.
+        ///
+        /// Named keys travel as well as literal text, so a value ending in {ENTER} or
+        /// {TAB} runs here rather than being turned away. A modifier still cannot,
+        /// because a window message leaves the target thread's key state alone and
+        /// Ctrl+A would arrive as a plain A.
+        /// </remarks>
+        private string TypeIntoControlWithWindowMessages(UIAuto.AutomationElement element, string value, out bool partiallyDelivered)
+        {
+            if (!WindowMessageKeystrokes.TrySend(element, value, out string failure, out partiallyDelivered))
+            {
+                if (partiallyDelivered)
+                {
+                    return "Ginger could not send all of these keys: " + failure + ". The value is not set again"
+                        + " by another route, because the control is holding the part that already arrived and"
+                        + " would end up with a second copy of it. Check the control before running the step again.";
+                }
+
+                return "Ginger could not send these keys. The desktop cannot take physical input ("
+                    + InteractiveDesktop.DescribeSession() + "), and " + failure
+                    + ". Unlock the screen for this step, or use an action on the element itself.";
+            }
+
+            // A PowerBuilder DataWindow holds the keys in an editor that commits only
+            // when focus leaves it, so there a value the application has not taken is
+            // not a value that was set. Every other control already holds the text by
+            // the time the characters arrive, so the Tab buys them nothing and costs
+            // them the focus: it can fire a validation handler, or land as a tab
+            // character in a multiline edit, and where the focus does not move it
+            // falls through to a physical Tab aimed at whatever holds the foreground
+            // - the very input a non-intrusive run exists to avoid. The platform is
+            // therefore asked before the Tab is sent, not only before it is reported.
+            if (mPlatform == ePlatformType.PowerBuilder && !SendCommitTabKey(element))
+            {
+                return "Ginger typed these keys but could not commit them: the screen was locked after the"
+                    + " action started (" + InteractiveDesktop.DescribeSession() + "), so the Tab that makes"
+                    + " the application take the value had nowhere to go.";
+            }
+
+            // States what happened rather than why. The route also runs on a desktop
+            // that could have taken physical input, so naming the locked one
+            // unconditionally produced a line that contradicted the session
+            // description printed beside it.
+            Reporter.ToLog(eLogLevel.DEBUG, "Typed by window message rather than through the keyboard ("
+                + InteractiveDesktop.DescribeSession() + ")");
+            return KeysSentSuccessfully;
         }
 
         public override void SelectControlByIndex(object obj, string value)
@@ -3104,7 +3848,23 @@ namespace GingerCore.Drivers
 
             while (startPoint < endPoint && !taskFinished)
             {
-                winAPI.SendClickOnXYPoint(element, startPoint, y1);
+                // Asked per step rather than once before the loop. The scan can run
+                // for several seconds across a wide tab strip, which is long enough
+                // for the screen to be locked part way through, and every click after
+                // that would land nowhere while the scan walked on to report the tab
+                // simply was not there.
+                if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+                {
+                    // The scan reads the result of each click off the tab that becomes
+                    // current, so the status is not needed here: a click that got
+                    // nowhere simply leaves the tab unchanged and the scan moves on.
+                    ClickPointWithWindowMessages(element, DesktopOperation.Click, startPoint, y1);
+                }
+                else
+                {
+                    winAPI.SendClickOnXYPoint(element, startPoint, y1);
+                }
+
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
                 if (currentAE != childAE)
                 {
@@ -3160,11 +3920,48 @@ namespace GingerCore.Drivers
                 switch (controlType)
                 {
                     case "Edit Box":   // Windows         sfd            
-                        element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
-                        ((UIAuto.ValuePattern)vp).SetValue(value);
-                        break;
                     case "text":
                     case "edit":
+                        if (TrySetValueViaDesktopEngine(element, value, out string setValueInfo))
+                        {
+                            if (mPlatform == ePlatformType.PowerBuilder && element.Current.IsKeyboardFocusable
+                                && !SendCommitTabKey(element))
+                            {
+                                throw new Exception("The value was written but not committed. Value - " + value
+                                    + ". The screen was locked after the action started ("
+                                    + InteractiveDesktop.DescribeSession() + ").");
+                            }
+                            break;
+                        }
+                        // The fallback pulls the window to the foreground and types with
+                        // the real keyboard, so it writes nothing at all where physical
+                        // input cannot land. It returned quietly when it did nothing,
+                        // which is how a locked run recorded the value as set over a
+                        // field that still held its old text.
+                        if (mPlatform == ePlatformType.PowerBuilder
+                            && InteractiveDesktop.TryFallBackToPhysicalInput("set the value", setValueInfo, out _))
+                        {
+                            winAPI.SetElementText(element, value);
+                            break;
+                        }
+
+                        if (mPlatform != ePlatformType.PowerBuilder)
+                        {
+                            // Where a Windows text or edit control went before these
+                            // three types shared one case. A control that reports
+                            // itself as text but is really a drop-down has no value to
+                            // set, and picking the item is the only way to set it.
+                            // Merging the cases left those steps with nothing to try
+                            // and turned them into failures. It raises its own error
+                            // when the element is not one of those either, so nothing
+                            // passes on the strength of having been attempted.
+                            SetCombobValueByUIA(element, value);
+                            break;
+                        }
+
+                        throw new Exception(string.IsNullOrEmpty(setValueInfo)
+                            ? "Element doesn't support UIAuto.ValuePattern.Pattern, make sure locator is finding the correct element"
+                            : setValueInfo);
                     case "list view":
                         if (mPlatform == ePlatformType.PowerBuilder)
                         {
@@ -3178,7 +3975,12 @@ namespace GingerCore.Drivers
                                     element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                     ((UIAuto.ValuePattern)vp).SetValue(value);
 
-                                    WinAPIAutomation.SendTabKey();
+                                    if (!SendCommitTabKey(element))
+                                    {
+                                        throw new Exception("The value was written but not committed. Value - " + value
+                                            + ". The screen was locked after the action started ("
+                                            + InteractiveDesktop.DescribeSession() + ").");
+                                    }
                                 }
                                 else
                                 {
@@ -3191,24 +3993,28 @@ namespace GingerCore.Drivers
                                     }
                                     else
                                     {
-                                        //TODO: one day try to work without win apu and moving the cursor
-                                        //something like below, didn't work
-                                        // It did fine the edit text box but value disappear...
-                                        //element.SetFocus();
-                                        //Thread.Sleep(1);
-                                        //UIAuto.AutomationElement parentElement2 = UIAuto.TreeWalker.ContentViewWalker.GetParent(element);
-                                        //// Find The PB Edit box which is created after click cell
-                                        //UIAuto.PropertyCondition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, "10"); 
-                                        //UIAuto.AutomationElement AEEditBox = parentElement2.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
-
-                                        winAPI.SetElementText(element, value);
+                                        if (!SetControlText(element, value))
+                                        {
+                                            throw new Exception("Unable to set value. Value - " + value
+                                                + ". The control offers no value pattern and no window accepted the"
+                                                + " text (" + InteractiveDesktop.DescribeSession() + ").");
+                                        }
                                         element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                     }
                                 }
                             }
                             catch (Exception e)
                             {
-                                winAPI.SetElementText(element, value);
+                                // The recovery below writes the text by window message
+                                // where that route can carry it, and types with the real
+                                // keyboard otherwise. Swallowing the failure into a route
+                                // that reaches nothing is how a locked run recorded the
+                                // value as set over a field that still held its old text,
+                                // so where neither delivers it the original failure stands.
+                                if (!SetControlText(element, value))
+                                {
+                                    throw;
+                                }
                                 element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                 Reporter.ToLog(eLogLevel.DEBUG, "Error in SetControlValue", e);
                             }
@@ -3240,7 +4046,12 @@ namespace GingerCore.Drivers
                                 element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                 ((UIAuto.ValuePattern)vp).SetValue(value);
 
-                                WinAPIAutomation.SendTabKey();
+                                if (!SendCommitTabKey(element))
+                                {
+                                    throw new Exception("The value was written but not committed. Value - " + value
+                                        + ". The screen was locked after the action started ("
+                                        + InteractiveDesktop.DescribeSession() + ").");
+                                }
                             }
                             else
                             {
@@ -3256,7 +4067,14 @@ namespace GingerCore.Drivers
                                     {
                                         CurrentElementTitle = CurrentSelectedElemet.Current.Name;
                                     }
-                                    winAPI.SendClickOnXYPoint(element, (element.Current.BoundingRectangle.X + 2), (element.Current.BoundingRectangle.Y + 2));
+                                    // Opens the drop-down so its items can be read. A
+                                    // click that got nowhere needs no status here: the
+                                    // list comes up empty below and the step fails on
+                                    // that, which is the same answer either way.
+                                    ClickScreenPoint(element,
+                                        element.Current.BoundingRectangle.X + 2,
+                                        element.Current.BoundingRectangle.Y + 2,
+                                        "open the drop-down list");
                                     UIAuto.AutomationElementCollection AECollection = element.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.ProcessIdProperty, CurrentWindow.Current.ProcessId));
                                     UIAuto.AutomationElement childElement = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, new UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, value));
                                     if (childElement == null)
@@ -3288,24 +4106,38 @@ namespace GingerCore.Drivers
                                             }
                                             else
                                             {
-                                                winAPI.SetElementText(element, value);
-
+                                                if (!SetControlText(element, value))
+                                                {
+                                                    throw new Exception("Unable to set value. Value - " + value
+                                                        + ". The item offers no selection pattern and no window"
+                                                        + " accepted the text ("
+                                                        + InteractiveDesktop.DescribeSession() + ").");
+                                                }
                                             }
                                         }
                                     }
-                                    if (!CurrentElementTitle.Equals(value))
+                                    // The nudge and the Tab after it go by window message
+                                    // where that route is in play. Where it is not they
+                                    // are all keyboard, so the desktop is asked once for
+                                    // the group rather than left to the first send to
+                                    // find out. The value is already selected above, so
+                                    // this only forgoes the confirmation rather than the
+                                    // step.
+                                    if (!CurrentElementTitle.Equals(value)
+                                        && (PreferWindowMessages(InteractiveDesktop.IsAvailable())
+                                            || KeyboardIsUsableFor("confirm the selected value with the arrow keys and Tab")))
                                     {
                                         if (FirstElement != null && value.Equals(FirstElement.Current.Name))
                                         {
-                                            winAPI.SendKeysByLibrary(childElement, "{DOWN}");
-                                            winAPI.SendKeysByLibrary(childElement, "{UP}");
+                                            SendNotationKeys(childElement, "{DOWN}");
+                                            SendNotationKeys(childElement, "{UP}");
                                         }
                                         else
                                         {
-                                            winAPI.SendKeysByLibrary(childElement, "{UP}");
-                                            winAPI.SendKeysByLibrary(childElement, "{DOWN}");
+                                            SendNotationKeys(childElement, "{UP}");
+                                            SendNotationKeys(childElement, "{DOWN}");
                                         }
-                                        WinAPIAutomation.SendTabKey();
+                                        SendCommitTabKey(childElement);
                                     }
                                 }
                                 catch (System.NullReferenceException)
@@ -3314,7 +4146,13 @@ namespace GingerCore.Drivers
                                 }
                                 catch (Exception e)
                                 {
-                                    winAPI.SetElementText(element, value);
+                                    // Same reasoning as the list view recovery above: a
+                                    // route that reaches nothing must not be allowed to
+                                    // turn the original failure into a pass.
+                                    if (!SetControlText(element, value))
+                                    {
+                                        throw;
+                                    }
                                     Reporter.ToLog(eLogLevel.DEBUG, "Error in SetControlValue", e);
                                 }
                             }
@@ -3413,13 +4251,26 @@ namespace GingerCore.Drivers
                             else
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "In Send keys ::");
+
                                 UIAuto.AutomationElement ParentElement = UIAuto.TreeWalker.ContentViewWalker.GetParent(element);
-                                winAPI.SendKeysByLibrary(ParentElement, element.Current.Name);
+
+                                // Typing the name is the last route left for this item,
+                                // so there is nothing to carry the step if neither window
+                                // messages nor the keyboard deliver it. Saying so beats
+                                // selecting nothing and reporting that the value was set.
+                                if (!SendNotationKeys(ParentElement, element.Current.Name))
+                                {
+                                    throw new Exception("Unable to select value. Value - " + element.Current.Name
+                                        + ". The item offers no selection pattern, so it can only be selected by"
+                                        + " typing its name, and the name could not be delivered ("
+                                        + InteractiveDesktop.DescribeSession() + ").");
+                                }
+
                                 string selItem = GetSelectedItem(ParentElement);
                                 if (selItem != element.Current.Name)
                                 {
                                     Reporter.ToLog(eLogLevel.DEBUG, "In Send keys ENTER. Current Selected Item is" + selItem);
-                                    winAPI.SendKeysByLibrary(ParentElement, "{ENTER}");
+                                    SendNotationKeys(ParentElement, "{ENTER}");
                                 }
 
                             }
@@ -3430,7 +4281,7 @@ namespace GingerCore.Drivers
                     case "pane":
                         if (element.Current.ClassName.Contains("SysDateTimePick32"))
                         {
-                            WinAPIAutomation.SendInputKeys(value);
+                            SendTypedKeys(element, value);
                         }
                         //Tab Control handling for PB
                         else if (element.Current.ClassName == "PBTabControl32_100")
@@ -3459,14 +4310,15 @@ namespace GingerCore.Drivers
                         break;
 
                     case "document":
-                        winAPI.SetElementText(element, value);
-
-                        break;
-
                     // TODO:Find a better way to handle this.
                     //To handle document objects in CSM having blank control type
                     case "":
-                        winAPI.SetElementText(element, value);
+                        if (!SetControlText(element, value))
+                        {
+                            throw new Exception("Unable to set value. Value - " + value
+                                + ". No window accepted the text ("
+                                + InteractiveDesktop.DescribeSession() + ").");
+                        }
 
                         break;
 
@@ -3716,26 +4568,7 @@ namespace GingerCore.Drivers
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Inside Add to selection All");
 
-                        if (sip != null && isMultiSelect)
-                        {
-                            ((UIAuto.SelectionItemPattern)sip).AddToSelection();
-                        }
-                        else
-                        {
-                            WinAPIAutomation.HoldControlKeyOfKeyboard();
-                            UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
-                            if (nodeText != null)
-                            {
-                                winAPI.SendClick(nodeText);
-                            }
-                            else
-                            {
-                                winAPI.SendClick(node);
-                            }
-
-                            WinAPIAutomation.ReleaseControlKeyOfKeyboard();
-                        }
-
+                        AddNodeToSelection(node, sip, isMultiSelect);
                     }
                 }
                 else if (node.Current.Name.Contains(childToSelect))
@@ -3775,41 +4608,14 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
-                                if (nodeText != null)
-                                {
-                                    winAPI.SendClick(nodeText);
-                                }
-                                else
-                                {
-                                    winAPI.SendClick(node);
-                                }
+                                ClickElementQuietly(NodeClickTarget(node), "select the node");
                             }
                             return true;
                         }
                         else
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, "Inside Add to Selection Multi");
-                            if (sip != null && isMultiSelect)
-                            {
-                                ((UIAuto.SelectionItemPattern)sip).AddToSelection();
-                            }
-                            else
-                            {
-                                WinAPIAutomation.HoldControlKeyOfKeyboard();
-                                UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
-                                if (nodeText != null)
-                                {
-                                    winAPI.SendClick(nodeText);
-                                }
-                                else
-                                {
-                                    winAPI.SendClick(node);
-                                }
-
-                                WinAPIAutomation.ReleaseControlKeyOfKeyboard();
-                            }
-
+                            AddNodeToSelection(node, sip, isMultiSelect);
                         }
                     }
                 }
@@ -3863,7 +4669,7 @@ namespace GingerCore.Drivers
                         x1 = Convert.ToInt32(element.Current.BoundingRectangle.Right - 5);
                         y1 = Convert.ToInt32(element.Current.BoundingRectangle.Right - 5);
 
-                        winAPI.SendClickOnXYPoint(element, x1, y1);
+                        ClickScreenPoint(element, x1, y1, "scroll the data area down");
                     }
                     break;
                 case "treeview":
@@ -3922,7 +4728,7 @@ namespace GingerCore.Drivers
                         y1 = Convert.ToInt32(element.Current.BoundingRectangle.Right + 5);
 
 
-                        winAPI.SendClickOnXYPoint(element, x1, y1);
+                        ClickScreenPoint(element, x1, y1, "scroll the data area up");
                     }
                     break;
                 case "treeview":
@@ -4081,6 +4887,35 @@ namespace GingerCore.Drivers
 
             try
             {
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    // The legacy read below is a right-click + Copy, which takes the
+                    // foreground window and the clipboard from whoever is using the
+                    // machine, and reads nothing at all on a locked desktop. Try the
+                    // layered engine (UIA ValuePattern / MSAA / Win32 WM_GETTEXT)
+                    // instead and only fall through when none of them can read the
+                    // control.
+                    val = GetValueViaDesktopEngine(element);
+                    if (!string.IsNullOrEmpty(val))
+                    {
+                        return val;
+                    }
+
+                    // A layer can report a clean read and still hand back nothing,
+                    // which is a different answer from "this control is empty" and
+                    // used to be returned as though it were - shadowing the legacy
+                    // read that would have found the text. Behind a lock screen there
+                    // is nothing better to offer, so the empty answer stands rather
+                    // than grabbing a foreground window and a clipboard that the
+                    // route cannot reach anyway.
+                    if (!mouseIsUsable)
+                    {
+                        return string.Empty;
+                    }
+                    val = string.Empty;
+                }
+
                 if (element.Current.IsOffscreen == false)
                 {
                     ClearClipboardText();
@@ -4174,6 +5009,26 @@ namespace GingerCore.Drivers
                 {
                     return val;
                 }
+                if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+                {
+                    // The legacy path below pokes the child control with the physical
+                    // mouse (SendClickOnXYPoint) and keyboard (SendTabKey), which takes
+                    // the foreground window and reaches the control not at all on a
+                    // locked desktop. Read the value straight from the element through
+                    // the layered engine instead and only fall through when it comes
+                    // up empty.
+                    string engineValue = GetValueViaDesktopEngine(element);
+                    if (!string.IsNullOrEmpty(engineValue))
+                    {
+                        return engineValue;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("read the value from the child control",
+                        "the layered read came up empty", out _))
+                    {
+                        return string.Empty;
+                    }
+                }
                 double xCoordinate = ((element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width / 2));
                 double yCoordinate = ((element.Current.BoundingRectangle.Y + element.Current.BoundingRectangle.Height / 2));
                 element.SetFocus();
@@ -4233,6 +5088,10 @@ namespace GingerCore.Drivers
                 {
                     elementValue = GetElementValueByTextpattern(element);
                 }
+                if (string.IsNullOrEmpty(elementValue))
+                {
+                    elementValue = GetValueViaDesktopEngine(element);
+                }
                 if (string.IsNullOrEmpty(elementValue) && General.CompareStringsIgnoreCase(ControlType, ""))
                 {
                     elementValue = GetControlValueFromChildControl(element);
@@ -4246,6 +5105,10 @@ namespace GingerCore.Drivers
                 if (string.IsNullOrEmpty(value) && mPlatform.Equals(ePlatformType.PowerBuilder))
                 {
                     value = GetControlValueFromChildControl(element);
+                }
+                if (string.IsNullOrEmpty(value))
+                {
+                    value = GetValueViaDesktopEngine(element);
                 }
                 if (string.IsNullOrEmpty(value))
                 {
@@ -4509,7 +5372,7 @@ namespace GingerCore.Drivers
             }
             else
             {
-                winAPI.SendClick(element);
+                ClickElementQuietly(element, "expand the element");
             }
         }
 
@@ -5117,7 +5980,7 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string result = "";
             SHDocVw.InternetExplorer internetExplorer = winAPI.GetIEFromAutomationelement(AE);
-            HTMLhelperObj = new HTMLHelper(internetExplorer, AE);
+            HTMLhelperObj = new HTMLHelper(internetExplorer, AE, NonIntrusiveInput);
             result = internetExplorer == null ? "false" : "true";
             return result;
         }
@@ -5636,9 +6499,7 @@ namespace GingerCore.Drivers
                         getColumnOnScreen(tableElement, targetColumnTitle);
                         targetXPoint = MainDict[targetColumnTitle][0].Current.BoundingRectangle.X + 5;
 
-                        winAPI.SendClickOnXYPoint(tableElement, targetXPoint, sourceYPoint);
-                        WinAPIAutomation.SendInputKeys(value);
-                        WinAPIAutomation.SendTabKey();
+                        SetCellTextAtPoint(tableElement, targetXPoint, sourceYPoint, value);
                         return;
                     }
                     sourceYPoint = sourceYPoint + 5;
@@ -5649,6 +6510,65 @@ namespace GingerCore.Drivers
                 }
             } while (pageDown != null);
             throw new Exception("Given Value " + whereColumnValue + " is not present in column " + whereColumnTitle);
+        }
+
+        /// <summary>
+        /// Writes a value into the grid cell drawn at a screen point, through the
+        /// layered engine where it can and the mouse and keyboard where it cannot.
+        /// </summary>
+        /// <remarks>
+        /// The keyboard route is a real click followed by real keystrokes, so behind
+        /// a lock screen the click lands nowhere, the keys go to whatever the input
+        /// desktop thinks is focused, and neither reports that it did nothing - the
+        /// cell keeps its old value and the step passes. Resolving the cell from the
+        /// point and handing it to the engine reaches the same cell through the
+        /// DataWindow's own accessible object instead, and that route verifies the
+        /// write by reading it back.
+        ///
+        /// The mouse and keyboard stay as the last resort, so a machine that can take
+        /// them behaves exactly as it did before.
+        /// </remarks>
+        private void SetCellTextAtPoint(UIAuto.AutomationElement tableElement, int screenX, int screenY, string value)
+        {
+            bool inputIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(inputIsUsable))
+            {
+                string info = "the cell at " + screenX + "," + screenY + " could not be resolved from its point";
+                UIAuto.AutomationElement cell = ElementFromPoint(screenX, screenY);
+
+                if (cell != null && TrySetValueViaDesktopEngine(cell, value, out info))
+                {
+                    return;
+                }
+
+                if (!inputIsUsable)
+                {
+                    throw new Exception("Unable to set value. Value - " + value + ". The desktop cannot take"
+                        + " physical input (" + InteractiveDesktop.DescribeSession() + "), and " + info);
+                }
+
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("set the grid cell text", info, out string refusal))
+                {
+                    throw new Exception("Unable to set value. Value - " + value + ". " + refusal);
+                }
+            }
+
+            winAPI.SendClickOnXYPoint(tableElement, screenX, screenY);
+            WinAPIAutomation.SendInputKeys(value);
+            WinAPIAutomation.SendTabKey();
+        }
+
+        private static UIAuto.AutomationElement ElementFromPoint(int screenX, int screenY)
+        {
+            try
+            {
+                return UIAuto.AutomationElement.FromPoint(new System.Drawing.Point(screenX, screenY));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Resolving the grid cell from its screen point", ex);
+                return null;
+            }
         }
 
         /// <summary>
@@ -5908,8 +6828,21 @@ namespace GingerCore.Drivers
             switch (actGrid.ControlAction)
             {
                 case ActTableElement.eTableAction.SetValue:
-                    SetControlValue(element, actGrid.ValueForDriver);
-                    actGrid.ExInfo = actGrid.ValueForDriver + " set";
+                    // SetControlValue throws when nothing could write the value, and
+                    // returns the read-back prefixed with False for the one failure it
+                    // does not throw for: a masked or date cell whose contents did not
+                    // match afterwards. Both were discarded here, so the step reported
+                    // the value as set whatever had happened to the cell.
+                    string setStatus = SetControlValue(element, actGrid.ValueForDriver);
+                    if (setStatus != null && setStatus.StartsWith("False", StringComparison.Ordinal))
+                    {
+                        actGrid.Error += "The cell did not accept '" + actGrid.ValueForDriver
+                            + "' and still reads '" + setStatus["False".Length..] + "'.";
+                    }
+                    else
+                    {
+                        actGrid.ExInfo = actGrid.ValueForDriver + " set";
+                    }
                     break;
 
                 case ActTableElement.eTableAction.GetValue:
@@ -5941,11 +6874,29 @@ namespace GingerCore.Drivers
 
                     break;
                 case ActTableElement.eTableAction.ClickXY:
-                    ClickOnXYPoint(element, actGrid.ValueForDriver);
+                    status = ClickOnXYPoint(element, actGrid.ValueForDriver);
+                    if (!status.Contains("Clicked Successfully"))
+                    {
+                        actGrid.Error += status;
+                    }
+                    else
+                    {
+                        actGrid.ExInfo += status;
+                    }
+
                     break;
 
                 case ActTableElement.eTableAction.DoubleClick:
-                    DoDoubleClick(element, actGrid.ValueForDriver);
+                    status = DoDoubleClick(element, actGrid.ValueForDriver);
+                    if (!status.Contains("Clicked Successfully"))
+                    {
+                        actGrid.Error += status;
+                    }
+                    else
+                    {
+                        actGrid.ExInfo += status;
+                    }
+
                     break;
 
                 case ActTableElement.eTableAction.SetText:
@@ -6652,7 +7603,6 @@ namespace GingerCore.Drivers
             UIAuto.AutomationProperty AP = GetAutomationPropertyForXpathProp(conditions[0].PropertyName);
             UIAuto.Condition cond = new UIAuto.PropertyCondition(AP, conditions[0].Value);
             //---
-            File.AppendAllText(@"C:\solutions\Log.txt", "In FindFirst");
             UIAuto.AutomationElement test = ((UIAuto.AutomationElement)EI.ElementObject);
             UIAuto.AutomationElement AE = test.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
             if (AE == null)
