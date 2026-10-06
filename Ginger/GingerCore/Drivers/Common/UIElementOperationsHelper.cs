@@ -19,6 +19,7 @@ extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.GingerOCR;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,33 @@ namespace GingerCore.Drivers.Common
 
         private WinAPIAutomation winAPI = new WinAPIAutomation();
         public bool taskFinished;
+
+        /// <summary>
+        /// Whether the agent that owns this helper asked for its clicks and keystrokes
+        /// to go through window messages ahead of the mouse and keyboard. Set by that
+        /// agent, so one agent's choice cannot change another's.
+        /// </summary>
+        public bool NonIntrusiveInput { get; set; }
+
+        /// <summary>
+        /// Whether a step should try the window-message route before reaching for the
+        /// mouse and keyboard, for the agent this helper belongs to. Exists to supply
+        /// that agent's preference, which a route added later can ask correctly and
+        /// still get wrong by passing another agent's answer, or none.
+        /// </summary>
+        private bool PreferWindowMessages(bool physicalInputWorks) =>
+            InteractiveDesktop.PreferWindowMessages(physicalInputWorks, NonIntrusiveInput);
+
+        /// <summary>
+        /// Runs the operation through the desktop automation chain. Physical input is
+        /// never enabled here because these operations never moved the real mouse.
+        /// </summary>
+        private ActionResult ExecuteDesktopAction(UIAuto.AutomationElement automationElement, DesktopOperation operation, string value)
+        {
+            DesktopActionContext context = DesktopActionMapper.FromElement(automationElement, operation, value, allowPhysicalInput: false, NonIntrusiveInput);
+            return DesktopActionMapper.ToActionResult(DesktopAutomationEngine.Default.Execute(context));
+        }
+
         public ActionResult ToggleElement(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();
@@ -87,29 +115,7 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult SetValue(UIAuto.AutomationElement automationElement, string value)
         {
-            ActionResult actionResult = new ActionResult();
-            object pattern;
-
-            try
-            {
-                automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out pattern);
-
-                if (pattern != null)
-                {
-                    ((UIAuto.ValuePattern)pattern).SetValue(value);
-                    actionResult.executionInfo = "Element Value set to " + value;
-                }
-                else
-                {
-                    actionResult.errorMessage = "Failed to set the value " + value;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Setting the value using value pattern", ex);
-                actionResult.errorMessage = "Failed to set the value " + value;
-            }
-            return actionResult;
+            return ExecuteDesktopAction(automationElement, DesktopOperation.SetValue, value);
         }
 
         public ActionResult SetText(UIAuto.AutomationElement automationElement, string value)
@@ -139,13 +145,65 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
+        /// <summary>
+        /// Sends keys to an element, by window message where that will reach it and
+        /// through the keyboard otherwise.
+        /// </summary>
+        /// <remarks>
+        /// The keyboard route focuses the element and then types at whatever the
+        /// input desktop believes is focused. Behind a lock screen neither half
+        /// happens and neither reports that it did not, so the keys went nowhere and
+        /// the step still recorded "Successfully Sent keys". Messages go to the
+        /// control's own window, which needs no focus and no unlocked desktop.
+        ///
+        /// The keyboard is still what runs on a machine that can take it, so an
+        /// unlocked run behaves exactly as it did before. It also remains the last
+        /// resort for the values messages cannot carry - anything using a modifier -
+        /// and those fail outright only once it is unavailable too.
+        ///
+        /// The one failure it does not take over is a value the element accepted part
+        /// of. What arrived stays there, so typing the whole value again would leave a
+        /// second copy of that prefix behind and press any Enter or Tab in it twice.
+        /// </remarks>
         public ActionResult SendKeys(UIAuto.AutomationElement automationElement, string value)
         {
             ActionResult actionResult = new ActionResult();
             try
             {
+                bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(keyboardIsUsable))
+                {
+                    if (WindowMessageKeystrokes.TrySend(automationElement, value, out string failure, out bool partiallyDelivered))
+                    {
+                        actionResult.executionInfo = "Successfully Sent keys";
+                        return actionResult;
+                    }
+
+                    if (partiallyDelivered)
+                    {
+                        actionResult.errorMessage = "Ginger could not send all of these keys: " + failure
+                            + ". The keyboard is not used to finish them, because the element is holding the part"
+                            + " that already arrived and sending the value again would leave a second copy of it"
+                            + " behind. Check the element before running the step again.";
+                        return actionResult;
+                    }
+
+                    if (!keyboardIsUsable)
+                    {
+                        actionResult.errorMessage = "Ginger could not send these keys. The desktop cannot take"
+                            + " physical input (" + InteractiveDesktop.DescribeSession() + "), and " + failure
+                            + ". Unlock the screen for this step, or use an action on the element itself.";
+                        return actionResult;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("send these keys", failure, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
+
                 winAPI.SendKeysByLibrary(automationElement, value);
-                //TODO: if value is not set using above then try winAPI.SetElementText(automationElement, value);
                 actionResult.executionInfo = "Successfully Sent keys";
             }
             catch (Exception ex)
@@ -299,23 +357,7 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult ClickElement(UIAuto.AutomationElement automationElement)
         {
-            ActionResult actionResult = new ActionResult();
-            Boolean clickTriggeredFlag = false;
-            try
-            {
-                actionResult = ClickUsingInvokePattern(automationElement, ref clickTriggeredFlag);
-                if (!string.IsNullOrEmpty(actionResult.errorMessage))
-                {
-                    clickTriggeredFlag = false;
-                    actionResult = ClickUsingLegacyPattern(automationElement, ref clickTriggeredFlag);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in ClickElement", ex);
-                actionResult.errorMessage = "Failed to click the element";
-            }
-            return actionResult;
+            return ExecuteDesktopAction(automationElement, DesktopOperation.Click, null);
         }
 
         public ActionResult DoubleClickElement(UIAuto.AutomationElement automationElement)
@@ -335,7 +377,23 @@ namespace GingerCore.Drivers.Common
                 }
                 if(!string.IsNullOrEmpty(actionResult.errorMessage))
                 {
-                    // 3) Fallback to mouse double-click
+                    // 3) Fallback to the mouse double-click, with the double-click
+                    // message ahead of it wherever the mouse cannot be used
+                    bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                    if (PreferWindowMessages(mouseIsUsable))
+                    {
+                        ActionResult messageResult = DoubleClickPoint(automationElement, ElementCentre(automationElement));
+                        if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                        {
+                            return messageResult;
+                        }
+                        if (!InteractiveDesktop.TryFallBackToPhysicalInput("double click the element", messageResult.errorMessage, out string refusal))
+                        {
+                            actionResult.errorMessage = refusal;
+                            return actionResult;
+                        }
+                    }
+
                     winAPI.DoubleSendClick(automationElement);
                     actionResult.executionInfo = "Successfully double-clicked the element";
                 }
@@ -356,6 +414,22 @@ namespace GingerCore.Drivers.Common
             ActionResult actionResult = new ActionResult();
             try
             {
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    Point centre = ElementCentre(automationElement);
+                    ActionResult messageResult = ClickPoint(automationElement, DesktopOperation.Click, centre.X, centre.Y);
+                    if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                    {
+                        return messageResult;
+                    }
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("click the element", messageResult.errorMessage, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
+
                 winAPI.SendClick(automationElement);
                 actionResult.executionInfo = "Successfully clicked the element";
             }
@@ -372,6 +446,21 @@ namespace GingerCore.Drivers.Common
             ActionResult actionResult = new ActionResult();
             try
             {
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    ActionResult messageResult = DoubleClickPoint(automationElement, ElementCentre(automationElement));
+                    if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                    {
+                        return messageResult;
+                    }
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("double click the element", messageResult.errorMessage, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
+
                 winAPI.DoubleSendClick(automationElement);
                 actionResult.executionInfo = "Successfully double-clicked the element";
             }
@@ -390,6 +479,21 @@ namespace GingerCore.Drivers.Common
             {
                 int x = automationElement.Current.BoundingRectangle.X + xCoordinate;
                 int y = automationElement.Current.BoundingRectangle.Y + yCoordinate;
+
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    ActionResult messageResult = ClickPoint(automationElement, DesktopOperation.Click, x, y);
+                    if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                    {
+                        return messageResult;
+                    }
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("click the point " + x + "," + y, messageResult.errorMessage, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
 
                 winAPI.SendClickOnXYPoint(automationElement, x, y);
                 actionResult.executionInfo = "Successfully clicked the element";
@@ -413,6 +517,28 @@ namespace GingerCore.Drivers.Common
                     xy = xCoordinate + "," + yCoordinate;
                 }
 
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    // Reuses the offset rule the mouse path applies, including the one
+                    // where a coordinate of zero means the centre instead.
+                    Point target = string.IsNullOrEmpty(xy)
+                        ? ElementCentre(automationElement)
+                        : new Point(automationElement.Current.BoundingRectangle.X + xCoordinate,
+                            automationElement.Current.BoundingRectangle.Y + yCoordinate);
+
+                    ActionResult messageResult = DoubleClickPoint(automationElement, target);
+                    if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                    {
+                        return messageResult;
+                    }
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("double click the element", messageResult.errorMessage, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
+
                 winAPI.SendDoubleClick(automationElement, xy);
                 actionResult.executionInfo = "Successfully double clicked the element";
             }
@@ -422,6 +548,43 @@ namespace GingerCore.Drivers.Common
                 actionResult.errorMessage = "Failed to Double click the element";
             }
             return actionResult;
+        }
+
+        /// <summary>
+        /// Clicks a screen point with window messages, for use where the mouse reaches
+        /// nothing.
+        /// </summary>
+        /// <remarks>
+        /// Reached only once the desktop has reported that it cannot take physical
+        /// input, so every unlocked run still goes through the mouse exactly as before.
+        /// Until this existed the mouse paths here reported success whatever happened,
+        /// because moving the cursor and pressing a button report nothing back - behind
+        /// a lock screen that made a step which clicked nothing indistinguishable from
+        /// one that worked.
+        /// </remarks>
+        private ActionResult ClickPoint(UIAuto.AutomationElement automationElement, DesktopOperation operation, int screenX, int screenY)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
+                DesktopActionMapper.ForPoint(automationElement, operation, screenX, screenY, NonIntrusiveInput));
+
+            ActionResult actionResult = DesktopActionMapper.ToActionResult(engineResult);
+            if (!engineResult.Success)
+            {
+                actionResult.errorMessage = DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
+            }
+
+            return actionResult;
+        }
+
+        private ActionResult DoubleClickPoint(UIAuto.AutomationElement automationElement, Point target)
+        {
+            return ClickPoint(automationElement, DesktopOperation.DoubleClick, target.X, target.Y);
+        }
+
+        private static Point ElementCentre(UIAuto.AutomationElement automationElement)
+        {
+            var bounds = automationElement.Current.BoundingRectangle;
+            return new Point((int)(bounds.X + bounds.Width / 2), (int)(bounds.Y + bounds.Height / 2));
         }
 
         public ActionResult RightClickElementUsingXY(UIAuto.AutomationElement automationElement, int xCoordinate, int yCoordinate)
@@ -435,13 +598,44 @@ namespace GingerCore.Drivers.Common
                     xy = xCoordinate + "," + yCoordinate;
                 }
 
-                winAPI.SendRightClick(automationElement, xy);
-                actionResult.executionInfo = "Successfully double clicked the element";
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    // The no-coordinate case is the small inset the mouse path uses for
+                    // a right click, not the centre a left click would take, so both
+                    // routes open the menu over the same part of the control.
+                    Point target = string.IsNullOrEmpty(xy)
+                        ? new Point(automationElement.Current.BoundingRectangle.X + 10,
+                            automationElement.Current.BoundingRectangle.Y + 5)
+                        : new Point(automationElement.Current.BoundingRectangle.X + xCoordinate,
+                            automationElement.Current.BoundingRectangle.Y + yCoordinate);
+
+                    ActionResult messageResult = ClickPoint(automationElement, DesktopOperation.RightClick, target.X, target.Y);
+                    if (string.IsNullOrEmpty(messageResult.errorMessage) || !mouseIsUsable)
+                    {
+                        return messageResult;
+                    }
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("right click the element", messageResult.errorMessage, out string refusal))
+                    {
+                        actionResult.errorMessage = refusal;
+                        return actionResult;
+                    }
+                }
+
+                if (!winAPI.SendRightClick(automationElement, xy))
+                {
+                    actionResult.errorMessage = "Windows did not accept the mouse events, so the right click never"
+                        + " reached the application. Another process is blocking input, or it is running at a"
+                        + " higher integrity level than Ginger.";
+                    return actionResult;
+                }
+
+                actionResult.executionInfo = "Successfully right clicked the element";
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in docule click Element", ex);
-                actionResult.errorMessage = "Failed to Double click the element";
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in right click Element", ex);
+                actionResult.errorMessage = "Failed to right click the element";
             }
             return actionResult;
         }
@@ -657,34 +851,19 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult GetValue(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
-            ActionResult actionResult = new ActionResult();
-            object valuePattern;
-            try
+            ActionResult actionResult = ExecuteDesktopAction(automationElement, DesktopOperation.GetValue, null);
+            if (!string.IsNullOrEmpty(actionResult.outputValue))
             {
-                //if(elementType==eElementType.CheckBox)
-                //{
-                //    object togglePattern;
-                //    automationElement.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out togglePattern);
-
-                //    ToggleState toggleState = ((UIAuto.TogglePattern)togglePattern).Current.ToggleState;
-                //    actionResult.outputValue = Convert.ToString(toggleState);
-                //}
-                //else
-                //{
-                actionResult = GetPropertyValue(automationElement, UIAuto.ValuePatternIdentifiers.ValueProperty);
-                if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
-                {
-                    actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty);
-                }
-                //}      
+                return actionResult;
             }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Get Value", ex);
-                actionResult.errorMessage = "Failed to Get the value";
-            }
-            return actionResult;
 
+            // The layers read ValuePattern, and MSAA only through a window handle. A
+            // control that draws its own text and has no handle of its own keeps the
+            // value on LegacyIAccessible instead, which this read asked for second
+            // before the layers existed and which none of them asks for at all. Behind
+            // a lock screen it is often the only one of the two that still answers.
+            ActionResult legacyResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty);
+            return string.IsNullOrEmpty(legacyResult.outputValue) ? actionResult : legacyResult;
         }
 
         public static ActionResult GetValueByOCR(UIAuto.AutomationElement automationElement)

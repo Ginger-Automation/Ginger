@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Drivers;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -127,6 +128,18 @@ namespace Ginger.Actions
             }
         }
 
+        /// <summary>
+        /// Opens every message about a screen that was locked when the step ran, so the
+        /// run report names the cause before it names the workaround.
+        /// </summary>
+        private const string LockedScreen = "The screen is locked, so keystrokes cannot be sent through the keyboard. ";
+
+        /// <summary>
+        /// How long the target window gets to accept each character. A window too busy
+        /// to take text is worth reporting rather than waiting behind.
+        /// </summary>
+        private const int TypingTimeoutMs = 2000;
+
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -151,7 +164,13 @@ namespace Ginger.Actions
                     IntPtr foregroundWindow = GetForegroundWindow();
                     if (foregroundWindow == IntPtr.Zero)
                     {
-                        Error = "No window is currently focused. Please focus the target window before sending keys.";
+                        // A locked screen is the usual reason there is no foreground
+                        // window, and without a window title there is nothing to type
+                        // into directly either, so this one can only be reported.
+                        Error = InteractiveDesktop.IsAvailable()
+                            ? "No window is currently focused. Please focus the target window before sending keys."
+                            : LockedScreen + "Set the window title on this action so the text can be typed into it directly, "
+                                + "unlock the screen for this step, or use an action on the element itself.";
                         return;
                     }
                     Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Sending keys");
@@ -231,6 +250,16 @@ namespace Ginger.Actions
                 }
             }
 
+            // Bringing a window to the front and typing at it both need a desktop that
+            // can receive input. Behind a lock screen neither reports that it did
+            // nothing, so the keys go nowhere and the action still passes. Typing into
+            // the window directly reaches it either way.
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                TypeIntoWindow(winhandle);
+                return;
+            }
+
             if (ISWindowFocusRequired)
             {
                 SetForegroundWindow(winhandle);
@@ -244,6 +273,39 @@ namespace Ginger.Actions
             {
                 SendKeys(ValueForDriver);
             }
+        }
+
+        /// <summary>
+        /// Sends the value to <paramref name="windowHandle"/> without going through
+        /// the keyboard, so the step still works while the screen is locked.
+        /// </summary>
+        /// <remarks>
+        /// Text and named keys both travel this way. A modifier does not, because a
+        /// window message leaves the target thread's key state alone and Ctrl+A would
+        /// arrive as a plain A, so a value carrying one is reported as a failure
+        /// rather than sent without it.
+        /// </remarks>
+        private void TypeIntoWindow(IntPtr windowHandle)
+        {
+            IntPtr focused = Win32KeyMessages.ResolveFocusedChild(windowHandle);
+            if (focused == IntPtr.Zero)
+            {
+                Error = LockedScreen + "The text was going to be typed into '" + LocateValueCalculated
+                    + "' directly instead, but nothing in that window is ready to receive text. "
+                    + "Add a step that puts the cursor in the field first, unlock the screen for this step, "
+                    + "or use an action on the element itself.";
+                return;
+            }
+
+            if (!Win32KeyMessages.TrySendNotation(focused, ValueForDriver, TypingTimeoutMs, out string failure))
+            {
+                Error = LockedScreen + "The keys were going to be sent to '" + LocateValueCalculated
+                    + "' directly instead, and " + failure + ". "
+                    + "Unlock the screen for this step, or use an action on the element itself.";
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, screen locked, typed into the window instead of using the keyboard");
         }
 
         internal void SendKeys(string text)

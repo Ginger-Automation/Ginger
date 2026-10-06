@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Drivers.Common;
+using GingerCore.Drivers.Common.LegacyAutomation;
 using HtmlAgilityPack;
 using mshtml;
 using SHDocVw;
@@ -59,6 +60,29 @@ namespace GingerCore.Drivers.PBDriver
         List<ElementInfo> frameElementsList = [];
         UIAuto.AutomationElement AEBrowser;
 
+        /// <summary>
+        /// Whether the agent this helper is working for asked for its clicks and
+        /// keystrokes to go through window messages ahead of the mouse and keyboard.
+        /// </summary>
+        /// <remarks>
+        /// Taken at construction and fixed thereafter. It is the owning helper's
+        /// answer, since this class is only ever reached through that one and both
+        /// the Windows and PowerBuilder drivers use it; having no setter is what
+        /// makes it impossible for the two to drift apart, which would show up as
+        /// this helper quietly using the mouse on a locked screen and reporting a
+        /// click that never landed.
+        /// </remarks>
+        public bool NonIntrusiveInput { get; }
+
+        /// <summary>
+        /// Whether a step should try the window-message route before reaching for the
+        /// mouse and keyboard, for the agent this helper is working for. Exists to
+        /// supply that agent's preference, which a route added later can ask correctly
+        /// and still get wrong by passing another agent's answer, or none.
+        /// </summary>
+        private bool PreferWindowMessages(bool physicalInputWorks) =>
+            InteractiveDesktop.PreferWindowMessages(physicalInputWorks, NonIntrusiveInput);
+
         public async Task<List<ElementInfo>> GetVisibleElement()
         {
             //List<ElementInfo> list = await GetElementList();
@@ -66,8 +90,9 @@ namespace GingerCore.Drivers.PBDriver
             return await GetElementList();
         }
 
-        public HTMLHelper(InternetExplorer IE, UIAuto.AutomationElement AE)
+        public HTMLHelper(InternetExplorer IE, UIAuto.AutomationElement AE, bool nonIntrusiveInput)
         {
+            NonIntrusiveInput = nonIntrusiveInput;
             browserObject = IE;
             AEBrowser = AE;
             dispHtmlDocument = (DispHTMLDocument)browserObject.Document;
@@ -1265,8 +1290,48 @@ namespace GingerCore.Drivers.PBDriver
                 }
 
                 ((IHTMLElement2)elem).focus();
-                //elem.getAttribute()                
-                System.Windows.Forms.SendKeys.SendWait(value + "{TAB}");
+
+                // Focusing the element is script rather than input, so it works with
+                // the screen locked. The keys are the only part that still wants a
+                // keyboard, and the browser's render window takes them as messages.
+                string keys = value + "{TAB}";
+                bool keyboardIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(keyboardIsUsable))
+                {
+                    if (WindowMessageKeystrokes.TrySend(AEBrowser, keys, out string failure, out bool partiallyDelivered))
+                    {
+                        return true;
+                    }
+
+                    if (partiallyDelivered)
+                    {
+                        // The keyboard would retype the whole value, and the field is
+                        // already holding the part that arrived, so the step is failed
+                        // rather than left with the prefix typed twice.
+                        Reporter.ToLog(eLogLevel.ERROR, "Could not send all of these keys to the browser: " + failure
+                            + ". Sending them again through the keyboard would leave a second copy of the part that"
+                            + " already arrived, so the step is reported as failed. Check the field before running"
+                            + " it again.");
+                        return false;
+                    }
+
+                    if (!keyboardIsUsable)
+                    {
+                        // The caller turns false into "Unable to Send Keys", which does
+                        // not say why, and this is the only place that knows.
+                        Reporter.ToLog(eLogLevel.ERROR, "Could not send keys to the browser. The desktop cannot"
+                            + " take physical input (" + InteractiveDesktop.DescribeSession() + "), and " + failure
+                            + ". Unlock the screen for this step, or use an action on the element itself.");
+                        return false;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("send these keys", failure, out _))
+                    {
+                        return false;
+                    }
+                }
+
+                System.Windows.Forms.SendKeys.SendWait(keys);
                 return true;
             }
             catch (Exception ex)
@@ -1562,7 +1627,9 @@ namespace GingerCore.Drivers.PBDriver
                         while (enm.MoveNext())
                         {
                             j++;
-                            if (((IHTMLElement)(enm.Current)).innerText.Equals(value))
+                            // A blank or placeholder option has no innerText at all, so the
+                            // text is compared rather than asked for its Equals.
+                            if (enm.Current is IHTMLElement option && string.Equals(option.innerText, value))
                             {
                                 idex = j;
                                 temp = value;
@@ -1657,6 +1724,26 @@ namespace GingerCore.Drivers.PBDriver
                 element.scrollIntoView();
                 int elemX = getelementXCordinate(element);
                 int elemY = getelementYCordinate(element);
+
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    if (ClickBrowserPointWithWindowMessages(elemX + x, elemY + y, out string refusal))
+                    {
+                        return true;
+                    }
+                    if (!mouseIsUsable)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, refusal);
+                        return false;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("click the element", refusal, out _))
+                    {
+                        return false;
+                    }
+                }
+
                 winAPI.SendClickOnWinXYPoint(AEBrowser, elemX + x, elemY + y);
                 return true;
             }
@@ -1666,6 +1753,48 @@ namespace GingerCore.Drivers.PBDriver
                 return false;
             }
         }
+        /// <summary>
+        /// Clicks a point in the browser by window message, for use where the mouse
+        /// cannot reach it.
+        /// </summary>
+        /// <remarks>
+        /// Reached behind a lock screen, and on an unlocked desktop only when the
+        /// agent asked for the quiet route, so a default run still goes through the
+        /// mouse exactly as before. The mouse route reports nothing back and this
+        /// method used to answer true regardless, so behind a lock screen a click that
+        /// landed on nothing was recorded as a step that passed and the failure only
+        /// surfaced later, in whichever step expected the dialog it never opened.
+        /// </remarks>
+        /// <param name="refusal">
+        /// Why the point could not be reached, handed back rather than logged here so
+        /// the caller reports it where it decides what to do about it. Announcing a
+        /// fallback in this method would put it a call away from the mouse it falls
+        /// back to, which is the one place the desktop has to be re-checked.
+        /// </param>
+        private bool ClickBrowserPointWithWindowMessages(int browserX, int browserY, out string refusal)
+        {
+            return ClickBrowserPointWithWindowMessages(DesktopOperation.Click, browserX, browserY, out refusal);
+        }
+
+        private bool ClickBrowserPointWithWindowMessages(DesktopOperation operation, int browserX, int browserY, out string refusal)
+        {
+            // Offset from the browser's own rectangle, which is the origin the mouse
+            // route measures from, so both aim at the same pixel.
+            System.Drawing.Rectangle bounds = (System.Drawing.Rectangle)
+                AEBrowser.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
+            int screenX = bounds.X + browserX;
+            int screenY = bounds.Y + browserY;
+
+            DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
+                DesktopActionMapper.ForPoint(AEBrowser, operation, screenX, screenY, NonIntrusiveInput));
+
+            refusal = engineResult.Success
+                ? null
+                : DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
+
+            return engineResult.Success;
+        }
+
         public bool MouseHover(IHTMLElement element, string val = "")
         {
             int x = 0;
@@ -1687,6 +1816,28 @@ namespace GingerCore.Drivers.PBDriver
             try
             {
                 element.scrollIntoView();
+
+                if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+                {
+                    // A hover is not a click and no window message carries one: moving
+                    // the real cursor over the element is how the page gets told, which
+                    // takes the pointer and does nothing at all behind a lock screen.
+                    // Dispatching the events that move would have raised tells the
+                    // page's own handlers the same thing without either cost.
+                    string eventResult = FireSpecialEvent(element, "mouseover,mouseenter");
+                    if (!eventResult.StartsWith("Error"))
+                    {
+                        return true;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("hover over the element", eventResult,
+                        out string refusal))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, refusal);
+                        return false;
+                    }
+                }
+
                 winAPI.MoveMousetoXYPoint(AEBrowser, getelementXCordinate(element) + x, getelementYCordinate(element) + y);
                 return true;
             }
@@ -1734,12 +1885,31 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.DEBUG, "elementX::" + x);
                 y = getelementYCordinate(element) + y;
                 Reporter.ToLog(eLogLevel.DEBUG, "elementY::" + y);
-                winAPI.SendRightClick(AEBrowser, x + "," + y);
-                return true;
+
+                bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+                if (PreferWindowMessages(mouseIsUsable))
+                {
+                    if (ClickBrowserPointWithWindowMessages(DesktopOperation.RightClick, x, y, out string refusal))
+                    {
+                        return true;
+                    }
+                    if (!mouseIsUsable)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, refusal);
+                        return false;
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("right click the element", refusal, out _))
+                    {
+                        return false;
+                    }
+                }
+
+                return winAPI.SendRightClick(AEBrowser, x + "," + y);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -2571,21 +2741,49 @@ namespace GingerCore.Drivers.PBDriver
             }
         }
 
+        // children and all hand back an IHTMLElementCollection, so the elements have to be
+        // read out of it; the collection itself has no IHTMLElement to query for, and the
+        // failed cast used to surface as "element not found" for every path step.
+        private static List<IHTMLElement> ChildElements(object collection)
+        {
+            List<IHTMLElement> elements = [];
+
+            if (collection is IHTMLElementCollection items)
+            {
+                foreach (object item in items)
+                {
+                    // A collection carries comment and text nodes too, and those have no
+                    // tag name for a path step to match against.
+                    if (item is IHTMLElement element)
+                    {
+                        elements.Add(element);
+                    }
+                }
+            }
+
+            return elements;
+        }
+
         public IHTMLElement GetChild(IHTMLElement el, DocNode node)
         {
             // Find corresponding child of the elemnt 
             // based on the name and position of the node
             int childPos = 0;
             int pos = 0;
-            List<IHTMLElement> elChilds = [(IHTMLElement)el.children];
+
             if (node.Name.StartsWith(".."))
             {
                 el = el.parentElement;
                 node.Name = node.Name[2..];
             }
+
+            // Read after the '..' step, so it searches the children of the parent that
+            // step selected rather than of the element it moved up from.
+            List<IHTMLElement> elChilds = ChildElements(el.children);
+
             if (node.Name.StartsWith("/"))
             {
-                elChilds.Add((IHTMLElement)el.all);
+                elChilds.AddRange(ChildElements(el.all));
                 node.Name = node.Name[1..];
             }
 
