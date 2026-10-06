@@ -457,7 +457,24 @@ namespace GingerCore
                             case "Int32":
                                 if (!string.IsNullOrEmpty(value))
                                 {
-                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                    // Read leniently, as the boolean case above already
+                                    // is. A stored value that does not fit its field
+                                    // used to throw out of here and leave the agent
+                                    // never started, so every action that followed
+                                    // failed on a driver that was not there - reported
+                                    // as a null reference naming neither the parameter
+                                    // at fault nor the agent it belonged to. One
+                                    // mistyped configuration field is not a reason to
+                                    // lose the run, and saying which one it is beats
+                                    // leaving it to be found by elimination.
+                                    if (int.TryParse(value, out int number))
+                                    {
+                                        Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, number);
+                                    }
+                                    else
+                                    {
+                                        Reporter.ToLog(eLogLevel.WARN, string.Format("The agent's '{0}' setting holds '{1}', which is not a whole number, so the driver keeps its own default. Correct it in the agent's configuration.", DCP.Parameter, value));
+                                    }
                                 }
                                 break;
                             default:

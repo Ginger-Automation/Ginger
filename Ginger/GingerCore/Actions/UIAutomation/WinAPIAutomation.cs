@@ -130,7 +130,18 @@ namespace GingerCore.Drivers
         }
 
 
-        internal static void ClickLeftMouseButton(int x, int y)
+        /// <summary>
+        /// Moves the cursor and presses the left button, reporting whether Windows
+        /// accepted all three events.
+        /// </summary>
+        /// <remarks>
+        /// SendInput answers with the number of events it inserted, and it inserts
+        /// none when another process has blocked input or when UIPI refuses a caller
+        /// running at a lower integrity level than the target. Discarding that count
+        /// made a click that was never delivered indistinguishable from one that was,
+        /// which is what let the physical fallback report success while doing nothing.
+        /// </remarks>
+        internal static bool ClickLeftMouseButton(int x, int y)
         {
             INPUT mouseInput = new INPUT
             {
@@ -142,17 +153,23 @@ namespace GingerCore.Drivers
 
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_MOVE | MouseEventFlags.MOUSEEVENTF_ABSOLUTE;
-            SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
+            uint moved = SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTDOWN;
-            SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
+            uint pressed = SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
 
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTUP;
-            SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
+            uint released = SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
 
+            return moved == 1 && pressed == 1 && released == 1;
         }
 
-        internal static void ClickRightMouseButton(int x, int y)
+        /// <returns>
+        /// Whether Windows inserted every event. It refuses them all while another
+        /// process holds a UIPI block or BlockInput, and a refusal that went unchecked
+        /// was reported as a right click the application never received.
+        /// </returns>
+        internal static bool ClickRightMouseButton(int x, int y)
         {
             INPUT mouseInput = new INPUT
             {
@@ -164,16 +181,18 @@ namespace GingerCore.Drivers
 
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_MOVE | MouseEventFlags.MOUSEEVENTF_ABSOLUTE;
-            SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
+            uint moved = SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
 
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
 
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_RIGHTDOWN;
-            SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
+            uint pressed = SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
             System.Threading.Thread.Sleep(100);
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_RIGHTUP;
-            SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
+            uint released = SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
             System.Threading.Thread.Sleep(100);
+
+            return moved == 1 && pressed == 1 && released == 1;
 
         }
 
@@ -366,7 +385,11 @@ namespace GingerCore.Drivers
         }
 
 
-        public void SendClick(UIAuto.AutomationElement element, bool flag = true)
+        /// <summary>
+        /// Clicks the centre of the element with the real mouse, reporting whether
+        /// Windows accepted the events.
+        /// </summary>
+        public bool SendClick(UIAuto.AutomationElement element, bool flag = true)
         {
             if (flag == true)
             {
@@ -378,9 +401,10 @@ namespace GingerCore.Drivers
             int x = element.Current.BoundingRectangle.X + (element.Current.BoundingRectangle.Width / 2);
             int y = element.Current.BoundingRectangle.Y + (element.Current.BoundingRectangle.Height / 2);
 
-            ClickLeftMouseButton(x, y);
+            bool clicked = ClickLeftMouseButton(x, y);
             System.Threading.Thread.Sleep(500);
             System.Windows.Forms.Cursor.Position = p;
+            return clicked;
         }
 
         public void DoubleSendClick(UIAuto.AutomationElement element, bool flag = true)
@@ -539,7 +563,7 @@ namespace GingerCore.Drivers
 
             System.Windows.Forms.Cursor.Position = p;
         }
-        public void SendRightClick(UIAuto.AutomationElement element, string XY = "")
+        public bool SendRightClick(UIAuto.AutomationElement element, string XY = "")
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
@@ -560,8 +584,9 @@ namespace GingerCore.Drivers
                 x = element.Current.BoundingRectangle.X + 10;
                 y = element.Current.BoundingRectangle.Y + 5;
             }
-            ClickRightMouseButton(x, y);
+            bool clicked = ClickRightMouseButton(x, y);
             System.Windows.Forms.Cursor.Position = p;
+            return clicked;
         }
 
         public void SetElementText(UIAuto.AutomationElement element, string value)
