@@ -179,7 +179,7 @@ jobs:
             -   name: Setup SSM KSP on windows latest 
                 if: ${{ github.event.inputs.SSLCert != 'No' }}
                 run: | 
-                 curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/keylockertools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o keylockertools-windows-x64.msi 
+                 curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/Keylockertools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o keylockertools-windows-x64.msi 
                     msiexec /i keylockertools-windows-x64.msi /quiet /qn 
                     smksp_registrar.exe list 
                     smctl.exe keypair ls 
