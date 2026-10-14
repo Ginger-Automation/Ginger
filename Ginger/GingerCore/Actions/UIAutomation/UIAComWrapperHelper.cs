@@ -3901,6 +3901,11 @@ namespace GingerCore.Drivers
 
         public override string SetControlValue(object obj, string value)
         {
+            if (obj is UIAuto.AutomationElement dataWindowEditor
+                && TrySetDataWindowEditorValue(dataWindowEditor, value, out string dataWindowResult))
+            {
+                return dataWindowResult;
+            }
 
             try
             {
@@ -5992,7 +5997,7 @@ namespace GingerCore.Drivers
                 ElementObject = obj,
                 WindowExplorer = WindowExplorer
             }; //Create small simple EI
-            string XPath = mXPathHelper.GetElementXpathAbsulote(EI);
+            string XPath = GetPlatformXPathHelper().GetElementXpathAbsulote(EI);
             return XPath;
 
         }
@@ -7190,38 +7195,67 @@ namespace GingerCore.Drivers
                 WindowExplorer = WindowExplorer,
                 ElementType = GetElementControlType(AE)
             };
-            EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
+            bool isPowerBuilder = mPlatform == ePlatformType.PowerBuilder;
+
+            EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, ReadElementInfoProperty(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
-            EI.BoundingRectangle = GetControlPropertyValue(EI.ElementObject, "BoundingRectangle");
-            EI.LocalizedControlType = GetControlPropertyValue(EI.ElementObject, "LocalizedControlType");
-            EI.AutomationId = GetControlPropertyValue(EI.ElementObject, "AutomationId");
-            EI.ClassName = GetControlPropertyValue(EI.ElementObject, "ClassName");
-            EI.ToggleState = GetControlPropertyValue(EI.ElementObject, "Interop.UIAutomationClient.ToggleState");
-            EI.Text = GetControlPropertyValue(EI.ElementObject, "Text");
+            EI.BoundingRectangle = ReadElementInfoProperty(EI.ElementObject, "BoundingRectangle");
+            EI.LocalizedControlType = ReadElementInfoProperty(EI.ElementObject, "LocalizedControlType");
+            EI.AutomationId = ReadElementInfoProperty(EI.ElementObject, "AutomationId");
+            EI.ClassName = ReadElementInfoProperty(EI.ElementObject, "ClassName");
+
+            // Windows POMs hold the values these two keys have always produced, and the POM
+            // delta compares them, so only PowerBuilder reads them under the keys the
+            // property switch recognises.
+            EI.ToggleState = ReadElementInfoProperty(EI.ElementObject, isPowerBuilder ? "ToggleState" : "Interop.UIAutomationClient.ToggleState");
+            EI.Text = ReadElementInfoProperty(EI.ElementObject, "Text");
 
             bool isPropertyValue;
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsKeyboardFocusable"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsKeyboardFocusable"), out isPropertyValue))
             {
                 EI.IsKeyboardFocusable = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsEnabled"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsEnabled"), out isPropertyValue))
             {
                 EI.IsEnabled = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsPassword"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsPassword"), out isPropertyValue))
             {
                 EI.IsPassword = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsOffscreen"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, isPowerBuilder ? "IsOffScreen" : "IsOffscreen"), out isPropertyValue))
             {
                 EI.IsOffscreen = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsSelected"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsSelected"), out isPropertyValue))
             {
                 EI.IsSelected = isPropertyValue;
             }
 
             return EI;
+        }
+
+        /// <summary>
+        /// Reads one property for the element details. For PowerBuilder a property that
+        /// cannot be read is left empty, so a single refusal from an accessibility proxy
+        /// does not lose the whole element.
+        /// </summary>
+        private string ReadElementInfoProperty(object element, string propertyName)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder)
+            {
+                return GetControlPropertyValue(element, propertyName);
+            }
+
+            try
+            {
+                return GetControlPropertyValue(element, propertyName);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read '" + propertyName + "' while building the element details", ex);
+                return string.Empty;
+            }
         }
 
         public override object GetElementFromCursor()
@@ -7235,7 +7269,9 @@ namespace GingerCore.Drivers
 
         public override object GetElementAtPoint(System.Drawing.Point point)
         {
+            LastElementFromPointMessage = string.Empty;
             object element = UIAuto.AutomationElement.FromPoint(point);
+            UIAuto.AutomationElement pointElement = element as UIAuto.AutomationElement;
 
             // check it is in current window - CurrentWindow if not return null
             // go to parent until CurrentWindow found then inside our window else return null
@@ -7265,7 +7301,53 @@ namespace GingerCore.Drivers
             }
 
             //not found in our current window
+            if (!taskFinished && mPlatform == ePlatformType.PowerBuilder)
+            {
+                LastElementFromPointMessage = DescribeElementOutsideCurrentWindow(pointElement);
+            }
             return null;
+        }
+
+        private string DescribeElementOutsideCurrentWindow(UIAuto.AutomationElement element)
+        {
+            try
+            {
+                if (element == null)
+                {
+                    return "No element was found under the mouse.";
+                }
+
+                if (CurrentWindow == null)
+                {
+                    return "No application window is selected; select the window and spy again.";
+                }
+
+                UIAuto.AutomationElement topLevelWindow = element;
+                UIAuto.AutomationElement parent = UIAuto.TreeWalker.RawViewWalker.GetParent(topLevelWindow);
+                for (int depth = 0; parent != null && parent != UIAuto.AutomationElement.RootElement && depth < 100; depth++)
+                {
+                    topLevelWindow = parent;
+                    parent = UIAuto.TreeWalker.RawViewWalker.GetParent(topLevelWindow);
+                }
+
+                string windowName = topLevelWindow.Current.Name;
+                string windowDescription = string.IsNullOrEmpty(windowName)
+                    ? "an untitled window of class '" + topLevelWindow.Current.ClassName + "'"
+                    : "window '" + windowName + "' (class '" + topLevelWindow.Current.ClassName + "')";
+
+                if (element.Current.ProcessId == CurrentWindow.Current.ProcessId)
+                {
+                    return "The element is in " + windowDescription + " of the same application, outside the selected window '"
+                        + CurrentWindowName + "'. If that window is in the window list, select it and spy again.";
+                }
+
+                return "The element belongs to another application, in " + windowDescription + ".";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not describe the element under the mouse", ex);
+                return "The element is not inside the selected window.";
+            }
         }
 
         public Bitmap WindowToBitmap(UIAuto.AutomationElement tempWindow)
@@ -7516,6 +7598,15 @@ namespace GingerCore.Drivers
 
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)
         {
+            return GetPlatformXPathHelper();
+        }
+
+        /// <summary>
+        /// The platform is assigned after construction, so the XPath mode is applied on use.
+        /// </summary>
+        private XPathHelper GetPlatformXPathHelper()
+        {
+            mXPathHelper.StrictXpathGeneration = mPlatform == ePlatformType.PowerBuilder;
             return mXPathHelper;
         }
 
@@ -7604,19 +7695,228 @@ namespace GingerCore.Drivers
             UIAuto.Condition cond = new UIAuto.PropertyCondition(AP, conditions[0].Value);
             //---
             UIAuto.AutomationElement test = ((UIAuto.AutomationElement)EI.ElementObject);
-            UIAuto.AutomationElement AE = test.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+            UIAuto.AutomationElement AE = FindFirstChild(test, cond, conditions);
+            if (AE == null && ShowDataWindowEditor(test, conditions))
+            {
+                for (int attempt = 0; AE == null && attempt < DataWindowEditorAttempts; attempt++)
+                {
+                    Thread.Sleep(100);
+                    AE = FindFirstChild(test, cond, conditions);
+                }
+            }
             if (AE == null)
             {
-                GetChildrenUsingRawWalker((UIAuto.AutomationElement)EI.ElementObject, conditions,
-                    out List<UIAuto.AutomationElement> listChildren, true);
-                if (listChildren.Count == 0)
-                {
-                    return null;
-                }
-                AE = listChildren[0];
+                return null;
             }
             UIAElementInfo RC = (UIAElementInfo)GetElementInfoFor(AE);
             return RC;
+        }
+
+        private UIAuto.AutomationElement FindFirstChild(UIAuto.AutomationElement parent, UIAuto.Condition cond, List<XpathPropertyCondition> conditions)
+        {
+            UIAuto.AutomationElement AE = parent.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+            if (AE == null)
+            {
+                GetChildrenUsingRawWalker(parent, conditions, out List<UIAuto.AutomationElement> listChildren, true);
+                AE = listChildren.Count == 0 ? null : listChildren[0];
+            }
+            return AE;
+        }
+
+        private const int DataWindowEditorAttempts = 10;
+
+        /// <summary>
+        /// Focuses a DataWindow so that its edit control is in the tree again.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow only has its edit control (a child window placed over the current cell)
+        /// while it has focus, so a locator spied while a cell was being edited finds nothing
+        /// once focus has moved on. The edit control has no name, so only conditions it can be
+        /// located by bring it back.
+        /// </remarks>
+        private bool ShowDataWindowEditor(UIAuto.AutomationElement parent, List<XpathPropertyCondition> conditions)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder || taskFinished)
+            {
+                return false;
+            }
+
+            string propertyName = conditions[0].PropertyName;
+            if (!General.CompareStringsIgnoreCase(propertyName, "AutomationId")
+                && !General.CompareStringsIgnoreCase(propertyName, "ClassName")
+                && !General.CompareStringsIgnoreCase(propertyName, "LocalizedControlType"))
+            {
+                return false;
+            }
+
+            try
+            {
+                if (!IsDataWindow(parent))
+                {
+                    return false;
+                }
+
+                parent.SetFocus();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not focus the DataWindow to bring back its edit control", ex);
+                return false;
+            }
+        }
+
+        private static bool IsDataWindow(UIAuto.AutomationElement element)
+        {
+            string className = element?.Current.ClassName;
+            return className != null && className.StartsWith("pbdw", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Sets the value of the edit control a DataWindow places over its current cell, and
+        /// reads it back from that cell.
+        /// </summary>
+        /// <returns>False when the element is not a DataWindow's edit control.</returns>
+        /// <remarks>
+        /// The generic routes do not reach the DataWindow: typing lands wherever the click put
+        /// the caret, text written with WM_SETTEXT is dropped when focus moves on, and writing
+        /// the cell under the edit control is overwritten by the edit control's old text on
+        /// commit. Reading the edit control back reports any of these as a success.
+        ///
+        /// Tab commits; moving the focus away does not. It is posted to the edit control itself
+        /// rather than typed, since a keyboard Tab goes to whichever application is in the
+        /// foreground, and rather than sent (see <see cref="Win32KeyMessages.PostTab"/>).
+        /// </remarks>
+        private bool TrySetDataWindowEditorValue(UIAuto.AutomationElement editor, string value, out string result)
+        {
+            result = null;
+            UIAuto.AutomationElement cell = GetDataWindowCellUnderEditor(editor);
+            if (cell == null)
+            {
+                return false;
+            }
+
+            IntPtr editorHandle = new IntPtr(editor.Current.NativeWindowHandle);
+            if (!Win32Native.ReplaceControlText(editorHandle, value, 2000))
+            {
+                throw new Exception("Unable to set value. Value - " + value + ". The DataWindow's edit control did not take the text.");
+            }
+            if (!Win32KeyMessages.PostTab(editorHandle))
+            {
+                throw new Exception("The value was written but not committed. Value - " + value
+                    + ". The DataWindow's edit control closed before Tab could be sent to it.");
+            }
+
+            string expected = (value ?? string.Empty).Replace(" ", "").Replace("-", "");
+            string cellValue = null;
+            for (int attempt = 0; attempt < 20; attempt++)
+            {
+                cellValue = GetControlValue(cell) ?? string.Empty;
+                if (cellValue.Replace(" ", "").Replace("-", "") == expected)
+                {
+                    result = "True";
+                    return true;
+                }
+                Thread.Sleep(100);
+            }
+
+            string rejection = GetApplicationDialogText(editor.Current.ProcessId);
+            if (rejection != null)
+            {
+                throw new Exception("Unable to set value. Value - " + value + ". PowerBuilder rejected it and is showing: " + rejection);
+            }
+            result = "False" + cellValue;
+            return true;
+        }
+
+        /// <summary>
+        /// The title and text of a message box the application has open, or null when it has none.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow rejects a value that fails a column's validation rule with a modal
+        /// "DataWindow Error" message box, and leaves the cell as it was. The box is left open:
+        /// the application expects the user to close it, and a flow may check it.
+        /// </remarks>
+        private static string GetApplicationDialogText(int processId)
+        {
+            try
+            {
+                UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
+                for (UIAuto.AutomationElement window = walker.GetFirstChild(UIAuto.AutomationElement.RootElement); window != null; window = walker.GetNextSibling(window))
+                {
+                    if (window.Current.ProcessId != processId || window.Current.ClassName != "#32770")
+                    {
+                        continue;
+                    }
+
+                    List<string> lines = [window.Current.Name];
+                    for (UIAuto.AutomationElement part = walker.GetFirstChild(window); part != null; part = walker.GetNextSibling(part))
+                    {
+                        if (General.CompareStringsIgnoreCase(part.Current.LocalizedControlType, "text") && !string.IsNullOrWhiteSpace(part.Current.Name))
+                        {
+                            lines.Add(part.Current.Name);
+                        }
+                    }
+                    return string.Join(" - ", lines.Where(line => !string.IsNullOrWhiteSpace(line)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not look for a message box opened by the application", ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// The DataWindow cell that the DataWindow's edit control is placed over, or null when
+        /// the element is not that edit control.
+        /// </summary>
+        private UIAuto.AutomationElement GetDataWindowCellUnderEditor(UIAuto.AutomationElement element)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder)
+            {
+                return null;
+            }
+
+            try
+            {
+                int handle = element.Current.NativeWindowHandle;
+                if (handle == 0 || !Win32Native.IsEditClass(new IntPtr(handle)))
+                {
+                    return null;
+                }
+                UIAuto.AutomationElement dataWindow = UIAuto.TreeWalker.RawViewWalker.GetParent(element);
+                if (!IsDataWindow(dataWindow))
+                {
+                    return null;
+                }
+
+                System.Drawing.Rectangle editor = element.Current.BoundingRectangle;
+                UIAuto.AutomationElement cell = null;
+                int largestOverlap = 0;
+                for (UIAuto.AutomationElement child = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(dataWindow);
+                    child != null;
+                    child = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(child))
+                {
+                    if (child.Current.NativeWindowHandle != 0)
+                    {
+                        continue;
+                    }
+                    System.Drawing.Rectangle overlap = System.Drawing.Rectangle.Intersect(child.Current.BoundingRectangle, editor);
+                    int area = overlap.Width * overlap.Height;
+                    if (area > largestOverlap)
+                    {
+                        largestOverlap = area;
+                        cell = child;
+                    }
+                }
+                return cell;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not find the DataWindow cell under its edit control", ex);
+                return null;
+            }
         }
 
 
@@ -7642,6 +7942,11 @@ namespace GingerCore.Drivers
             bool flagFindFirst = false)
         {
             listRAE = [];
+
+            // Other platforms keep comparing every property with the control type, as they always
+            // have. PowerBuilder DataWindow cells exist only in the raw view, so it compares the
+            // property the XPath names.
+            bool compareNamedProperty = mPlatform == ePlatformType.PowerBuilder;
             UIAuto.AutomationElement TAE;
             UIAuto.AutomationElement AE = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(EAE);
             while (AE != null && !taskFinished)
@@ -7657,21 +7962,21 @@ namespace GingerCore.Drivers
                 }
                 else if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "Name"))
                 {
-                    if (General.CompareStringsIgnoreCase(AE.Current.LocalizedControlType, conditions[0].Value))
+                    if (string.Equals(compareNamedProperty ? AE.Current.Name : AE.Current.LocalizedControlType, conditions[0].Value, StringComparison.OrdinalIgnoreCase))
                     {
                         listRAE.Add(AE);
                     }
                 }
                 else if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "AutomationId"))
                 {
-                    if (General.CompareStringsIgnoreCase(AE.Current.LocalizedControlType, conditions[0].Value))
+                    if (string.Equals(compareNamedProperty ? AE.Current.AutomationId : AE.Current.LocalizedControlType, conditions[0].Value, StringComparison.OrdinalIgnoreCase))
                     {
                         listRAE.Add(AE);
                     }
                 }
                 else if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "ClassName"))
                 {
-                    if (General.CompareStringsIgnoreCase(AE.Current.LocalizedControlType, conditions[0].Value))
+                    if (string.Equals(compareNamedProperty ? AE.Current.ClassName : AE.Current.LocalizedControlType, conditions[0].Value, StringComparison.OrdinalIgnoreCase))
                     {
                         listRAE.Add(AE);
                     }
@@ -7697,33 +8002,44 @@ namespace GingerCore.Drivers
             UIAuto.AutomationProperty AP = GetAutomationPropertyForXpathProp(conditions[0].PropertyName);
             UIAuto.Condition cond = new UIAuto.PropertyCondition(AP, conditions[0].Value);
             //---
-            List<ElementInfo> rc = [];
-            UIAElementInfo EI1;
-            UIAuto.AutomationElementCollection list = ((UIAuto.AutomationElement)EI.ElementObject).FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
-            if (list.Count == 0)
+            UIAuto.AutomationElement parent = (UIAuto.AutomationElement)EI.ElementObject;
+            List<UIAuto.AutomationElement> found = FindAllChildren(parent, cond, conditions);
+            if (found.Count == 0 && ShowDataWindowEditor(parent, conditions))
             {
-                List<UIAuto.AutomationElement> listByRawWalker;
-                GetChildrenUsingRawWalker((UIAuto.AutomationElement)EI.ElementObject, conditions, out listByRawWalker);
-
-                if (listByRawWalker.Count == 0)
+                for (int attempt = 0; found.Count == 0 && attempt < DataWindowEditorAttempts; attempt++)
                 {
-                    return null;
+                    Thread.Sleep(100);
+                    found = FindAllChildren(parent, cond, conditions);
                 }
-                for (int i = 0; i < listByRawWalker.Count; i++)
-                {
-                    EI1 = new UIAElementInfo() { ElementObject = listByRawWalker[i] };
-                    rc.Add(EI1);
-                    EI1 = null;
-                }
-                return rc;
             }
 
-            for (int i = 0; i < list.Count; i++)
+            if (found.Count == 0)
             {
-                EI1 = new UIAElementInfo() { ElementObject = list[i] };
-                rc.Add(EI1);
+                return null;
+            }
+            List<ElementInfo> rc = [];
+            foreach (UIAuto.AutomationElement element in found)
+            {
+                rc.Add(new UIAElementInfo() { ElementObject = element });
             }
             return rc;
+        }
+
+        private List<UIAuto.AutomationElement> FindAllChildren(UIAuto.AutomationElement parent, UIAuto.Condition cond, List<XpathPropertyCondition> conditions)
+        {
+            UIAuto.AutomationElementCollection list = parent.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+            if (list.Count == 0)
+            {
+                GetChildrenUsingRawWalker(parent, conditions, out List<UIAuto.AutomationElement> listByRawWalker);
+                return listByRawWalker;
+            }
+
+            List<UIAuto.AutomationElement> found = [];
+            for (int i = 0; i < list.Count; i++)
+            {
+                found.Add(list[i]);
+            }
+            return found;
         }
 
         ElementInfo IXPath.GetPreviousSibling(ElementInfo EI)
@@ -7937,7 +8253,18 @@ namespace GingerCore.Drivers
 
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
 
-            UIAuto.AutomationProperty[] props = AE.GetSupportedProperties();
+            bool isPowerBuilder = mPlatform == ePlatformType.PowerBuilder;
+            UIAuto.AutomationProperty[] props;
+            try
+            {
+                props = AE.GetSupportedProperties();
+            }
+            catch (Exception e) when (isPowerBuilder)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementProperties while GetSupportedProperties, reading the core properties instead", e);
+                props = GetCoreAutomationProperties();
+            }
+
             foreach (UIAuto.AutomationProperty AP in props)
             {
                 ControlProperty CP = new ControlProperty
@@ -7956,7 +8283,11 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementProperties while GetCurrentPropertyValue::", e);
                     propValue = null;
                 }
-                if (propValue != null)
+                if (isPowerBuilder && propValue is Array arrayValue)
+                {
+                    CP.Value = string.Join(",", arrayValue.Cast<object>());
+                }
+                else if (propValue != null)
                 {
                     //TODO: based on type get the value instead of ToString, use ToString only in Switch default
                     CP.Value = propValue.ToString();
@@ -7964,6 +8295,32 @@ namespace GingerCore.Drivers
                 list.Add(CP);
             }
             return list;
+        }
+
+        private static UIAuto.AutomationProperty[] GetCoreAutomationProperties()
+        {
+            return
+            [
+                UIAuto.AutomationElement.NameProperty,
+                UIAuto.AutomationElement.AutomationIdProperty,
+                UIAuto.AutomationElement.ClassNameProperty,
+                UIAuto.AutomationElement.ControlTypeProperty,
+                UIAuto.AutomationElement.LocalizedControlTypeProperty,
+                UIAuto.AutomationElement.BoundingRectangleProperty,
+                UIAuto.AutomationElement.NativeWindowHandleProperty,
+                UIAuto.AutomationElement.ProcessIdProperty,
+                UIAuto.AutomationElement.IsEnabledProperty,
+                UIAuto.AutomationElement.IsOffscreenProperty,
+                UIAuto.AutomationElement.IsKeyboardFocusableProperty,
+                UIAuto.AutomationElement.HelpTextProperty,
+                UIAuto.ValuePatternIdentifiers.ValueProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.NameProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.RoleProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.StateProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.DescriptionProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.ChildIdProperty,
+            ];
         }
 
         public override object[] GetSupportedPatterns(object obj)

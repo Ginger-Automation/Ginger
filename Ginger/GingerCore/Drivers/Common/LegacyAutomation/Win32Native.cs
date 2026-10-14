@@ -142,6 +142,25 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
             // Some native edit controls ignore WM_SETTEXT but accept a replacement of
             // the current selection, which still needs no foreground keyboard input.
+            return ReplaceAllText(hwnd, expected, timeoutMs);
+        }
+
+        /// <summary>
+        /// Replaces all of a child edit control's text as an edit the user made, and
+        /// confirms it by reading the value back.
+        /// </summary>
+        /// <remarks>
+        /// A multi-line edit control does not tell its parent about text set with
+        /// WM_SETTEXT, so a parent that keeps the value itself, as a DataWindow does with
+        /// its edit control, drops it. A replaced selection is reported.
+        /// </remarks>
+        public static bool ReplaceControlText(IntPtr hwnd, string value, int timeoutMs)
+        {
+            return IsChildWindow(hwnd) && IsEditClass(hwnd) && ReplaceAllText(hwnd, value ?? string.Empty, timeoutMs);
+        }
+
+        private static bool ReplaceAllText(IntPtr hwnd, string expected, int timeoutMs)
+        {
             if (!TrySend(hwnd, EM_SETSEL, IntPtr.Zero, new IntPtr(-1), timeoutMs)
                 || !TrySend(hwnd, EM_REPLACESEL, new IntPtr(1), expected, timeoutMs))
             {
