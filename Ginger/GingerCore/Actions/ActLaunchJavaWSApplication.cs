@@ -23,14 +23,20 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
 using GingerCore.Drivers;
+using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.GeneralLib;
+using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
@@ -367,6 +373,7 @@ namespace GingerCore.Actions
         private int mJavaApplicationProcessID = -1;
 
         private int mProcessIDForAttach = -1;
+        private int mConnectedAgentPort = -1;
 
         private static Mutex mutex = new Mutex(false, "JavaAgentAttachMutex");
 
@@ -375,6 +382,8 @@ namespace GingerCore.Actions
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
         private bool mWaitForWindowTimeOut = false;
+        private const int InactiveAgentGraceTimeMs = 10 * 1000;
+        private const int AgentJarVisibleGraceTimeMs = 5 * 1000;
         private readonly List<string> processNames = [];
         public override void Execute()
         {
@@ -432,6 +441,7 @@ namespace GingerCore.Actions
                     mAttachAgentTask = Task.Run(() =>
                     {
                         mProcessIDForAttach = -1;
+                        mConnectedAgentPort = -1;
                         if (!PerformAttachGingerAgent())
                         {
                             return;
@@ -449,9 +459,10 @@ namespace GingerCore.Actions
                     //Wait Max 30 secs for Attach agent to attach the jar or process to exit
                     Stopwatch st = new Stopwatch();
                     st.Start();
+                    long listeningSinceMs = -1;
                     while (st.ElapsedMilliseconds < 30 * 1000 && !mWaitForWindowTimeOut)
                     {
-                        if (IsInstrumentationModuleLoaded(mProcessIDForAttach))
+                        if (IsAttachedAgentReady(mProcessIDForAttach, st, ref listeningSinceMs))
                         {
                             break;
                         }
@@ -813,6 +824,12 @@ namespace GingerCore.Actions
                     return false;
                 }
 
+                if (mConnectedAgentPort > 0)
+                {
+                    mPort_Calc = mConnectedAgentPort.ToString();
+                    return true;
+                }
+
                 //If Auto detect port then we get available port just before doing attach
                 //So for parallel execution 2 runners won't get same Port                
                 ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
@@ -925,6 +942,7 @@ namespace GingerCore.Actions
         private bool WaitForAppWindowTitle()
         {
             bool bFound = false;
+            Dictionary<int, long> inactiveAgentSinceMs = [];
             try
             {
                 if (IsCustomApplicationProcessName && !string.IsNullOrEmpty(mJApplicationProcessName_calc))
@@ -1008,6 +1026,18 @@ namespace GingerCore.Actions
                                 }
                             }
                         }
+                        // When Ginger launches the application, an already attached window may be an older instance
+                        // while the launched one is still starting, so it is waited for as before.
+                        if (!bFound && matchingProcessList.Count > 0 && !mLaunchJavaApplication)
+                        {
+                            bFound = SelectProcessWithConnectedAgent(matchingProcessList)
+                                || SelectProcessWithAgentOnRequestedPort(matchingProcessList)
+                                || SelectProcessWithInactiveAgent(matchingProcessList, inactiveAgentSinceMs, sw.ElapsedMilliseconds);
+                        }
+                        else
+                        {
+                            inactiveAgentSinceMs.Clear();
+                        }
                     }
                     // Go out after max seconds
                     if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
@@ -1026,6 +1056,244 @@ namespace GingerCore.Actions
 
             return bFound;
 
+        }
+
+        // A Java driver of this runner that is connected to an agent of a matching process means the agent belongs to
+        // this flow, e.g. the application was reopened inside the same JVM, so it is used instead of attaching again.
+        private bool SelectProcessWithConnectedAgent(List<Process> matchingProcessList)
+        {
+            foreach (JavaDriver javaDriver in GetConnectedJavaDriversOfRunner())
+            {
+                HashSet<int> listeningProcessIds = GetListeningProcessIds(javaDriver.JavaAgentPort);
+                if (listeningProcessIds == null)
+                {
+                    continue;
+                }
+
+                Process process = matchingProcessList.FirstOrDefault(matchingProcess => listeningProcessIds.Contains(matchingProcess.Id));
+                if (process != null)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Process '{process.Id}' has the Ginger agent of this runner connected on port '{javaDriver.JavaAgentPort}', using it.");
+                    mProcessIDForAttach = process.Id;
+                    mConnectedAgentPort = javaDriver.JavaAgentPort;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // An agent listening on the manual port of this action is the agent this action attaches, e.g. a previous
+        // attempt attached it but failed afterwards. Another runner cannot listen on the same port at the same time.
+        private bool SelectProcessWithAgentOnRequestedPort(List<Process> matchingProcessList)
+        {
+            if ((ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam) != ePortConfigType.Manual
+                || !int.TryParse(mPort_Calc, out int port) || port <= 0)
+            {
+                return false;
+            }
+
+            HashSet<int> listeningProcessIds = GetListeningProcessIds(port);
+            if (listeningProcessIds == null)
+            {
+                return false;
+            }
+
+            Process process = matchingProcessList.FirstOrDefault(matchingProcess => listeningProcessIds.Contains(matchingProcess.Id));
+            if (process == null)
+            {
+                return false;
+            }
+
+            Reporter.ToLog(eLogLevel.INFO, $"Process '{process.Id}' already has a Ginger agent listening on the requested port '{port}', using it.");
+            mProcessIDForAttach = process.Id;
+            mConnectedAgentPort = port;
+            return true;
+        }
+
+        private List<JavaDriver> GetConnectedJavaDriversOfRunner()
+        {
+            List<JavaDriver> connectedJavaDrivers = [];
+            try
+            {
+                if (Amdocs.Ginger.Common.Context.GetAsContext(Context)?.Runner is not GingerExecutionEngine executionEngine || executionEngine.GingerRunner == null)
+                {
+                    return connectedJavaDrivers;
+                }
+
+                foreach (ApplicationAgent applicationAgent in executionEngine.GingerRunner.ApplicationAgents.OfType<ApplicationAgent>().ToList())
+                {
+                    if ((applicationAgent.Agent?.AgentOperations as AgentOperations)?.Driver is JavaDriver javaDriver
+                        && javaDriver.JavaAgentPort > 0
+                        && IsLocalAddress(javaDriver.JavaAgentHost)
+                        && javaDriver.IsRunning())
+                    {
+                        connectedJavaDrivers.Add(javaDriver);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to read the Java drivers of the runner", ex);
+            }
+            return connectedJavaDrivers;
+        }
+
+        private static bool IsLocalAddress(string host)
+        {
+            if (!IPAddress.TryParse(host, out IPAddress address))
+            {
+                return false;
+            }
+            return IPAddress.IsLoopback(address) || Dns.GetHostAddresses(Dns.GetHostName()).Contains(address);
+        }
+
+        // Reached only when every matching window of the current user already has GingerAgent.jar loaded,
+        // e.g. the application was closed and reopened inside the same JVM and the agent stopped listening.
+        // A process with any listening socket may be served by another runner's agent and is never touched.
+        // A process must stay without a listener for the whole grace time, so an agent that another runner
+        // has just attached gets time to open its port before it is considered inactive.
+        private bool SelectProcessWithInactiveAgent(List<Process> matchingProcessList, Dictionary<int, long> inactiveAgentSinceMs, long elapsedMs)
+        {
+            HashSet<int> listeningProcessIds = GetListeningProcessIds();
+            if (listeningProcessIds == null)
+            {
+                inactiveAgentSinceMs.Clear();
+                return false;
+            }
+
+            foreach (int trackedProcessId in inactiveAgentSinceMs.Keys.Where(id => !matchingProcessList.Any(process => process.Id == id)).ToList())
+            {
+                inactiveAgentSinceMs.Remove(trackedProcessId);
+            }
+
+            int currentSessionId = Process.GetCurrentProcess().SessionId;
+            foreach (Process process in matchingProcessList)
+            {
+                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                if (matchingProcessList.Count > 1 && !process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) && !process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                bool isSameSession;
+                try
+                {
+                    isSameSession = process.SessionId == currentSessionId;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Failed to read session of process '{process.Id}'", ex);
+                    isSameSession = false;
+                }
+
+                if (!isSameSession || listeningProcessIds.Contains(process.Id))
+                {
+                    inactiveAgentSinceMs.Remove(process.Id);
+                    continue;
+                }
+
+                if (!inactiveAgentSinceMs.TryGetValue(process.Id, out long inactiveSinceMs))
+                {
+                    inactiveAgentSinceMs[process.Id] = elapsedMs;
+                    continue;
+                }
+
+                if (elapsedMs - inactiveSinceMs >= InactiveAgentGraceTimeMs)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Process '{process.Id}' has GingerAgent.jar loaded but no listening agent, attaching again.");
+                    mProcessIDForAttach = process.Id;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // While the attach loads the agent, GingerAgent.jar is open only for a moment, and it is opened again only
+        // after the agent already listens. Releasing the attach lock in between lets another runner see the window
+        // as free and attach a second agent, so the lock is held until the agent listens and the jar is seen again.
+        private bool IsAttachedAgentReady(int processId, Stopwatch attachClock, ref long listeningSinceMs)
+        {
+            if (processId > 0 && int.TryParse(mPort_Calc, out int port) && port > 0)
+            {
+                HashSet<int> listeningProcessIds = GetListeningProcessIds(port);
+                if (listeningProcessIds != null)
+                {
+                    if (!listeningProcessIds.Contains(processId))
+                    {
+                        Thread.Sleep(200);
+                        return false;
+                    }
+                    if (listeningSinceMs < 0)
+                    {
+                        listeningSinceMs = attachClock.ElapsedMilliseconds;
+                    }
+                    return IsInstrumentationModuleLoaded(processId) || attachClock.ElapsedMilliseconds - listeningSinceMs >= AgentJarVisibleGraceTimeMs;
+                }
+            }
+            return IsInstrumentationModuleLoaded(processId);
+        }
+
+        private const int TCP_TABLE_OWNER_PID_LISTENER = 3;
+        private const uint ERROR_INSUFFICIENT_BUFFER = 122;
+
+        [DllImport("iphlpapi.dll", SetLastError = true)]
+        private static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int pdwSize, bool bOrder, int ulAf, int tableClass, uint reserved);
+
+        /// <param name="port">Only listeners on this port, 0 for any port.</param>
+        private static HashSet<int> GetListeningProcessIds(int port = 0)
+        {
+            try
+            {
+                HashSet<int> listeningProcessIds = [];
+                // MIB_TCPROW_OWNER_PID: 24 bytes, port at 8, pid at 20. MIB_TCP6ROW_OWNER_PID: 56 bytes, port at 20, pid at 52.
+                if (!AddListeningProcessIds((int)AddressFamily.InterNetwork, 24, 8, 20, port, listeningProcessIds)
+                    || !AddListeningProcessIds((int)AddressFamily.InterNetworkV6, 56, 20, 52, port, listeningProcessIds))
+                {
+                    return null;
+                }
+                return listeningProcessIds;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to read TCP listeners table", ex);
+                return null;
+            }
+        }
+
+        private static bool AddListeningProcessIds(int addressFamily, int rowSize, int portOffset, int pidOffset, int port, HashSet<int> listeningProcessIds)
+        {
+            int bufferSize = 0;
+            uint result = GetExtendedTcpTable(IntPtr.Zero, ref bufferSize, false, addressFamily, TCP_TABLE_OWNER_PID_LISTENER, 0);
+            while (result == ERROR_INSUFFICIENT_BUFFER)
+            {
+                IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+                try
+                {
+                    result = GetExtendedTcpTable(buffer, ref bufferSize, false, addressFamily, TCP_TABLE_OWNER_PID_LISTENER, 0);
+                    if (result != 0)
+                    {
+                        continue;
+                    }
+
+                    int rowsCount = Marshal.ReadInt32(buffer);
+                    for (int i = 0; i < rowsCount; i++)
+                    {
+                        IntPtr row = IntPtr.Add(buffer, 4 + i * rowSize);
+                        int rawPort = Marshal.ReadInt32(row, portOffset);
+                        if (port == 0 || (((rawPort & 0xFF) << 8) | ((rawPort >> 8) & 0xFF)) == port)
+                        {
+                            listeningProcessIds.Add(Marshal.ReadInt32(row, pidOffset));
+                        }
+                    }
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(buffer);
+                }
+            }
+            return result == 0;
         }
 
         private bool CheckWindowTitleByProcessId(int processId)
@@ -1165,6 +1433,14 @@ namespace GingerCore.Actions
                 string result = p.StandardOutput.ReadToEnd();
                 ExInfo += result + Environment.NewLine;
                 string error = p.StandardError.ReadToEnd();
+                // The JVM reports options taken from environment variables on stderr, e.g. JAVA_TOOL_OPTIONS set by other tool
+                string[] errorLines = error.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+                string javaOptionsNotices = string.Join(Environment.NewLine, errorLines.Where(IsJavaOptionsNotice));
+                if (javaOptionsNotices != "")
+                {
+                    ExInfo += javaOptionsNotices + Environment.NewLine;
+                }
+                error = string.Join(Environment.NewLine, errorLines.Where(line => !IsJavaOptionsNotice(line)));
                 if (error != "")
                 {
                     //Status = eStatus.Failed;
@@ -1186,6 +1462,14 @@ namespace GingerCore.Actions
             }
         }
 
+
+        private static readonly string[] JavaOptionsNoticePrefixes = ["Picked up JAVA_TOOL_OPTIONS:", "Picked up _JAVA_OPTIONS:", "Picked up JDK_JAVA_OPTIONS:", "NOTE: Picked up JDK_JAVA_OPTIONS:"];
+
+        private static bool IsJavaOptionsNotice(string line)
+        {
+            string trimmedLine = line.Trim();
+            return JavaOptionsNoticePrefixes.Any(prefix => trimmedLine.StartsWith(prefix, StringComparison.Ordinal));
+        }
 
         public String GetGingerAgentsDefaultFolder()
         {
@@ -1210,6 +1494,10 @@ namespace GingerCore.Actions
             return false;
         }
         private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");
+        private const int HandleExeMaxAttempts = 5;
+        private const int HandleExeListeningMissConfirmations = 3;
+        private const int HandleExeMissConfirmationDelayMs = 500;
+        private const string HandleExeExtractFailure = "Unable to extract";
         private Boolean IsInstrumentationModuleLoaded(int id)
         {
             //This method will check if process modules contains instrument dll
@@ -1222,14 +1510,43 @@ namespace GingerCore.Actions
                     return false;
                 }
 
-                var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -accepteula -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true });
-                string cliOut = processHandle.StandardOutput.ReadToEnd();
-                processHandle.WaitForExit();
-                processHandle.Close();
-
-                if (cliOut.Contains("GingerAgent.jar"))
+                int missesToConfirm = -1;
+                int attempt = 0;
+                while (attempt < HandleExeMaxAttempts)
                 {
-                    return true;
+                    var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -accepteula -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true });
+                    string cliOut = processHandle.StandardOutput.ReadToEnd();
+                    processHandle.WaitForExit();
+                    processHandle.Close();
+
+                    if (cliOut.Contains("GingerAgent.jar"))
+                    {
+                        return true;
+                    }
+
+                    // handle.exe extracts its x64 image to %TEMP% on every run. While another instance holds it the
+                    // extraction fails and "No matching handles found" is printed, which is not an answer.
+                    if (cliOut.Contains(HandleExeExtractFailure))
+                    {
+                        attempt++;
+                        Reporter.ToLog(eLogLevel.DEBUG, $"handle.exe could not inspect process '{id}', attempt {attempt} of {HandleExeMaxAttempts}");
+                        Thread.Sleep(300);
+                        continue;
+                    }
+
+                    // handle.exe now and then lists only part of the handles, or none, and reports a jar that is open as
+                    // missing. A listening process may be served by another runner's agent, so a miss there is trusted
+                    // only after it repeats over a few seconds.
+                    if (missesToConfirm < 0)
+                    {
+                        HashSet<int> listeningProcessIds = GetListeningProcessIds();
+                        missesToConfirm = listeningProcessIds == null || listeningProcessIds.Contains(id) ? HandleExeListeningMissConfirmations : 0;
+                    }
+                    if (missesToConfirm-- == 0)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(HandleExeMissConfirmationDelayMs);
                 }
                 //Process process = Process.GetProcessById(id);
                 //ProcessModuleCollection processModules = process.Modules;
