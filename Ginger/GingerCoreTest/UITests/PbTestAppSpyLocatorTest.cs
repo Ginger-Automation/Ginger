@@ -170,6 +170,10 @@ namespace UnitTest
                 TestContext.WriteLine("  " + Describe(child));
             }
 
+            // a point lookup finds the topmost window under the point
+            mWindow.SetFocus();
+            Thread.Sleep(1000);
+
             pbHelper.taskFinished = false;
             Rectangle area = dataWindow.Current.BoundingRectangle;
             List<SpiedElement> picked = [];
@@ -178,6 +182,7 @@ namespace UnitTest
                 for (int column = 1; column <= 4; column++)
                 {
                     Point point = new Point(area.X + (area.Width * column / 5), area.Y + (area.Height * row / 5));
+                    TestContext.WriteLine("Point " + point + ": UI Automation returns " + Describe(UIAuto.AutomationElement.FromPoint(point)));
                     UIAuto.AutomationElement element = pbHelper.GetElementAtPoint(point) as UIAuto.AutomationElement;
                     if (element == null)
                     {
@@ -200,6 +205,43 @@ namespace UnitTest
             List<string> xpathFailures = picked.Where(s => !s.PbXPathFound).Select(s => s.Describe("XPath " + s.PbXPath)).ToList();
             Assert.IsTrue(picked.Count > 0, "The Spy picked nothing inside " + DataWindowName);
             Assert.AreEqual(0, xpathFailures.Count, string.Join(Environment.NewLine, xpathFailures));
+        }
+
+        [TestMethod]
+        [Timeout(600000)]
+        public void SpyAtTheCentreOfADataWindowCell_PicksTheCell()
+        {
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                Assert.Inconclusive("The Spy picks by screen point, which cannot reach the application: " + InteractiveDesktop.DescribeSession());
+            }
+            UIAComWrapperHelper pbHelper = CreateHelper(ePlatformType.PowerBuilder);
+
+            UIAuto.AutomationElement dataWindow = (UIAuto.AutomationElement)pbHelper.FindElementByLocator(eLocateBy.ByName, DataWindowName);
+            Assert.IsNotNull(dataWindow, DataWindowName + " was not found");
+            List<UIAuto.AutomationElement> descendants = [];
+            CollectDescendants(dataWindow, 0, descendants);
+            List<UIAuto.AutomationElement> cells = descendants.Where(e => e.Current.NativeWindowHandle == 0).ToList();
+            Assert.IsTrue(cells.Count > 0, "No cells under " + DataWindowName);
+
+            // a point lookup finds the topmost window under the point
+            mWindow.SetFocus();
+            Thread.Sleep(1000);
+
+            pbHelper.taskFinished = false;
+            List<string> misses = [];
+            foreach (UIAuto.AutomationElement cell in cells)
+            {
+                Rectangle rect = cell.Current.BoundingRectangle;
+                Point centre = new Point(rect.X + (rect.Width / 2), rect.Y + (rect.Height / 2));
+                UIAuto.AutomationElement picked = pbHelper.GetElementAtPoint(centre) as UIAuto.AutomationElement;
+                TestContext.WriteLine(Describe(cell) + " picked " + (picked == null ? "nothing (" + pbHelper.LastElementFromPointMessage + ")" : Describe(picked)));
+                if (picked == null || !picked.Equals(cell))
+                {
+                    misses.Add(Describe(cell) + " picked " + (picked == null ? "nothing" : Describe(picked)));
+                }
+            }
+            Assert.AreEqual(0, misses.Count, string.Join(Environment.NewLine, misses));
         }
 
         [TestMethod]

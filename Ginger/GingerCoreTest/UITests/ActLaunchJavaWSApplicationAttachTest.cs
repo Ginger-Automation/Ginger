@@ -64,6 +64,23 @@ namespace UnitTests.UITests
             "    }\n" +
             "}\n";
 
+        private const string StderrFloodAppClass = "StderrFloodApp";
+        private const string StderrFloodAppSource =
+            "import javax.swing.*;\n" +
+            "public class " + StderrFloodAppClass + " {\n" +
+            "    public static void main(String[] args) throws Exception {\n" +
+            "        for (int i = 0; i < 3000; i++) {\n" +
+            "            System.err.println(\"stderr line \" + i + \" of the application log, long enough to fill the pipe buffer\");\n" +
+            "        }\n" +
+            "        SwingUtilities.invokeAndWait(new Runnable() { public void run() {\n" +
+            "            JFrame frame = new JFrame(\"" + WindowTitle + "\");\n" +
+            "            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n" +
+            "            frame.setSize(300, 150);\n" +
+            "            frame.setVisible(true);\n" +
+            "        }});\n" +
+            "    }\n" +
+            "}\n";
+
         private static string mJavaExe;
         private static string mTestAppJar;
         private static string mPlainAppFolder;
@@ -150,6 +167,25 @@ namespace UnitTests.UITests
             mStartedProcessIds.Add(processId);
             Assert.IsTrue(string.IsNullOrEmpty(act.Error), act.Error);
             AssertListensOn(processId, port);
+        }
+
+        [TestMethod]
+        [Timeout(180000)]
+        public void Launch_AppWritingMuchToStderr_WindowAppears()
+        {
+            ActLaunchJavaWSApplication act = CreateAction(0, 30);
+            act.LaunchJavaApplication = true;
+            act.LaunchWithAgent = false;
+            act.WaitForWindowWhenDoingLaunch = true;
+            act.URL = CreateStderrFloodJar();
+
+            act.Execute();
+
+            if (int.TryParse(act.ReturnValues.FirstOrDefault(rv => rv.Param == "Process ID")?.Actual, out int processId) && processId > 0)
+            {
+                mStartedProcessIds.Add(processId);
+            }
+            Assert.IsTrue(string.IsNullOrEmpty(act.Error), "The application must not block on a full stderr pipe: " + act.Error);
         }
 
         [TestMethod]
@@ -509,6 +545,32 @@ namespace UnitTests.UITests
             process.WaitForExit();
             Assert.AreEqual(0, process.ExitCode, "Compiling the plain Swing application failed: " + errors);
             mPlainAppFolder = folder;
+        }
+
+        private static string CreateStderrFloodJar()
+        {
+            string classesFolder = Path.Combine(mPlainAppFolder, StderrFloodAppClass);
+            string jarPath = Path.Combine(mPlainAppFolder, StderrFloodAppClass + ".jar");
+            if (File.Exists(jarPath))
+            {
+                return jarPath;
+            }
+            Directory.CreateDirectory(classesFolder);
+            string sourcePath = Path.Combine(classesFolder, StderrFloodAppClass + ".java");
+            File.WriteAllText(sourcePath, StderrFloodAppSource);
+            string jdkBin = Path.GetDirectoryName(mJavaExe);
+            RunJdkTool(Path.Combine(jdkBin, "javac.exe"), $"-d \"{classesFolder}\" \"{sourcePath}\"");
+            RunJdkTool(Path.Combine(jdkBin, "jar.exe"), $"cfe \"{jarPath}\" {StderrFloodAppClass} -C \"{classesFolder}\" .");
+            return jarPath;
+        }
+
+        private static void RunJdkTool(string tool, string arguments)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo(tool, arguments) { UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true };
+            using Process process = Process.Start(startInfo);
+            string errors = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            Assert.AreEqual(0, process.ExitCode, $"'{Path.GetFileName(tool)} {arguments}' failed: {errors}");
         }
 
         /// <summary>

@@ -460,12 +460,13 @@ namespace GingerCore.Actions
                     Stopwatch st = new Stopwatch();
                     st.Start();
                     long listeningSinceMs = -1;
-                    while (st.ElapsedMilliseconds < 30 * 1000 && !mWaitForWindowTimeOut)
+                    while (mProcessIDForAttach > 0 && st.ElapsedMilliseconds < 30 * 1000 && !mWaitForWindowTimeOut)
                     {
                         if (IsAttachedAgentReady(mProcessIDForAttach, st, ref listeningSinceMs))
                         {
                             break;
                         }
+                        Thread.Sleep(200);
                     }
                 }
                 finally
@@ -1222,7 +1223,6 @@ namespace GingerCore.Actions
                 {
                     if (!listeningProcessIds.Contains(processId))
                     {
-                        Thread.Sleep(200);
                         return false;
                     }
                     if (listeningSinceMs < 0)
@@ -1266,7 +1266,7 @@ namespace GingerCore.Actions
         {
             int bufferSize = 0;
             uint result = GetExtendedTcpTable(IntPtr.Zero, ref bufferSize, false, addressFamily, TCP_TABLE_OWNER_PID_LISTENER, 0);
-            while (result == ERROR_INSUFFICIENT_BUFFER)
+            for (int attempt = 0; result == ERROR_INSUFFICIENT_BUFFER && attempt < 5; attempt++)
             {
                 IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
                 try
@@ -1363,6 +1363,7 @@ namespace GingerCore.Actions
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Exception in FindProcessWindowTitle", ex);
+                    break;
                 }
             }
             return false;
@@ -1430,9 +1431,11 @@ namespace GingerCore.Actions
                 p.StartInfo.RedirectStandardError = true;
                 p.Start();
                 mJavaApplicationProcessID = p.Id;
+                // stderr is drained together with stdout, otherwise a process writing more than the pipe buffer to stderr blocks
+                Task<string> errorTask = p.StandardError.ReadToEndAsync();
                 string result = p.StandardOutput.ReadToEnd();
                 ExInfo += result + Environment.NewLine;
-                string error = p.StandardError.ReadToEnd();
+                string error = errorTask.GetAwaiter().GetResult();
                 // The JVM reports options taken from environment variables on stderr, e.g. JAVA_TOOL_OPTIONS set by other tool
                 string[] errorLines = error.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
                 string javaOptionsNotices = string.Join(Environment.NewLine, errorLines.Where(IsJavaOptionsNotice));
@@ -1495,6 +1498,7 @@ namespace GingerCore.Actions
         }
         private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");
         private const int HandleExeMaxAttempts = 5;
+        private const int HandleExeTimeoutMs = 60 * 1000;
         private const int HandleExeListeningMissConfirmations = 3;
         private const int HandleExeMissConfirmationDelayMs = 500;
         private const string HandleExeExtractFailure = "Unable to extract";
@@ -1514,10 +1518,16 @@ namespace GingerCore.Actions
                 int attempt = 0;
                 while (attempt < HandleExeMaxAttempts)
                 {
-                    var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -accepteula -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true });
-                    string cliOut = processHandle.StandardOutput.ReadToEnd();
-                    processHandle.WaitForExit();
-                    processHandle.Close();
+                    using Process processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -accepteula -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true, CreateNoWindow = true });
+                    Task<string> outputTask = processHandle.StandardOutput.ReadToEndAsync();
+                    if (!outputTask.Wait(HandleExeTimeoutMs))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, $"handle.exe did not finish within {HandleExeTimeoutMs / 1000} seconds for process '{id}', stopping it");
+                        processHandle.Kill(true);
+                        return false;
+                    }
+                    processHandle.WaitForExit(HandleExeTimeoutMs);
+                    string cliOut = outputTask.Result;
 
                     if (cliOut.Contains("GingerAgent.jar"))
                     {

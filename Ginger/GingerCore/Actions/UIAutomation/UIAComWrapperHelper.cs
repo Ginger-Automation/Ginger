@@ -7271,6 +7271,10 @@ namespace GingerCore.Drivers
         {
             LastElementFromPointMessage = string.Empty;
             object element = UIAuto.AutomationElement.FromPoint(point);
+            if (mPlatform == ePlatformType.PowerBuilder && element is UIAuto.AutomationElement hitElement)
+            {
+                element = GetPowerBuilderElementAtPoint(hitElement, point);
+            }
             UIAuto.AutomationElement pointElement = element as UIAuto.AutomationElement;
 
             // check it is in current window - CurrentWindow if not return null
@@ -7306,6 +7310,82 @@ namespace GingerCore.Drivers
                 LastElementFromPointMessage = DescribeElementOutsideCurrentWindow(pointElement);
             }
             return null;
+        }
+
+        private const int MaxChildrenSearchedAtPoint = 500;
+
+        /// <summary>
+        /// The element under the point when UI Automation answers with its container.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow that does not resolve a point to one of its columns answers with
+        /// itself, and a group box drawn around controls answers for the controls inside it.
+        /// The smallest visible element there that contains the point is taken instead.
+        /// </remarks>
+        private UIAuto.AutomationElement GetPowerBuilderElementAtPoint(UIAuto.AutomationElement hitElement, System.Drawing.Point point)
+        {
+            try
+            {
+                UIAuto.AutomationElement container = hitElement;
+                if (IsGroupBox(hitElement))
+                {
+                    container = FindSmallestChildAtPoint(UIAuto.TreeWalker.RawViewWalker.GetParent(hitElement), point, Area(hitElement));
+                    if (container == null)
+                    {
+                        return hitElement;
+                    }
+                }
+
+                if (IsDataWindow(container))
+                {
+                    return FindSmallestChildAtPoint(container, point, Area(container)) ?? container;
+                }
+                return container;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not look inside the element under the mouse", ex);
+                return hitElement;
+            }
+        }
+
+        private static bool IsGroupBox(UIAuto.AutomationElement element)
+        {
+            return General.CompareStringsIgnoreCase(element.Current.LocalizedControlType, "group");
+        }
+
+        private static long Area(UIAuto.AutomationElement element)
+        {
+            System.Drawing.Rectangle rect = element.Current.BoundingRectangle;
+            return (long)rect.Width * rect.Height;
+        }
+
+        /// <param name="maxArea">Only children smaller than this are taken.</param>
+        private static UIAuto.AutomationElement FindSmallestChildAtPoint(UIAuto.AutomationElement parent, System.Drawing.Point point, long maxArea)
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+
+            UIAuto.AutomationElement smallest = null;
+            long smallestArea = maxArea;
+            UIAuto.AutomationElement child = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(parent);
+            for (int visited = 0; child != null && visited < MaxChildrenSearchedAtPoint; visited++)
+            {
+                System.Drawing.Rectangle rect = child.Current.BoundingRectangle;
+                if (rect.Width > 0 && rect.Height > 0 && rect.Contains(point) && !child.Current.IsOffscreen && !IsGroupBox(child))
+                {
+                    long area = (long)rect.Width * rect.Height;
+                    if (area < smallestArea)
+                    {
+                        smallest = child;
+                        smallestArea = area;
+                    }
+                }
+                child = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(child);
+            }
+            return smallest;
         }
 
         private string DescribeElementOutsideCurrentWindow(UIAuto.AutomationElement element)
