@@ -828,6 +828,8 @@ namespace GingerCore.Actions
                 if (mConnectedAgentPort > 0)
                 {
                     mPort_Calc = mConnectedAgentPort.ToString();
+                    // The agent opens its console only when it is attached
+                    ExInfo += $"Using the Ginger agent already listening on port {mPort_Calc} in process {mProcessIDForAttach}, no new agent was attached and no new agent console was opened." + Environment.NewLine;
                     return true;
                 }
 

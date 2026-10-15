@@ -31,6 +31,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,6 +50,7 @@ namespace UnitTests.UITests
     {
         private const string WindowTitle = "Java Swing Test App";
         private const string WindowNotFoundError = "Failed to find the Java application with title";
+        private const string AgentConsoleTitle = "Ginger Agent Console";
 
         private const string PlainAppClass = "AttachTestApp";
         private const string PlainAppSource =
@@ -167,6 +170,25 @@ namespace UnitTests.UITests
             mStartedProcessIds.Add(processId);
             Assert.IsTrue(string.IsNullOrEmpty(act.Error), act.Error);
             AssertListensOn(processId, port);
+        }
+
+        [TestMethod]
+        [Timeout(180000)]
+        public void LaunchAndAttach_ShowAgentChecked_AgentConsoleIsShown()
+        {
+            int port = GetFreePort();
+            ActLaunchJavaWSApplication act = CreateAction(port, 60);
+            act.LaunchJavaApplication = true;
+            act.URL = mTestAppJar;
+            act.ShowAgent = true;
+
+            act.Execute();
+
+            int processId = int.Parse(act.ReturnValues.First(rv => rv.Param == "Process ID").Actual);
+            mStartedProcessIds.Add(processId);
+            Assert.IsTrue(string.IsNullOrEmpty(act.Error), act.Error);
+            AssertListensOn(processId, port);
+            AssertWindowShown(processId, AgentConsoleTitle);
         }
 
         [TestMethod]
@@ -328,6 +350,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(port.ToString(), retry.ReturnValues.First(rv => rv.Param == "Port").Actual);
             AssertListensOn(processId, port);
             Assert.IsTrue(elapsed < TimeSpan.FromSeconds(20), "The agent on the requested port must be used without waiting for the window time out, took " + elapsed);
+            StringAssert.Contains(retry.ExInfo, "no new agent console was opened");
         }
 
         [TestMethod]
@@ -632,6 +655,53 @@ namespace UnitTests.UITests
                 Thread.Sleep(500);
             }
             Assert.Fail($"Process {processId} does not listen on port {port}. Listening: {string.Join(",", owners)}");
+        }
+
+        private void AssertWindowShown(int processId, string titlePrefix)
+        {
+            Stopwatch clock = Stopwatch.StartNew();
+            List<string> titles = [];
+            while (clock.Elapsed < TimeSpan.FromSeconds(30))
+            {
+                titles = GetVisibleWindowTitles(processId);
+                if (titles.Any(title => title.StartsWith(titlePrefix, StringComparison.Ordinal)))
+                {
+                    return;
+                }
+                Thread.Sleep(500);
+            }
+            Assert.Fail($"Process {processId} shows no '{titlePrefix}' window. Visible windows: {string.Join(" | ", titles)}");
+        }
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int maxCount);
+
+        private static List<string> GetVisibleWindowTitles(int processId)
+        {
+            List<string> titles = [];
+            EnumWindows((hWnd, lParam) =>
+            {
+                GetWindowThreadProcessId(hWnd, out uint windowProcessId);
+                if (windowProcessId == processId && IsWindowVisible(hWnd))
+                {
+                    StringBuilder title = new StringBuilder(256);
+                    GetWindowText(hWnd, title, title.Capacity);
+                    titles.Add(title.ToString());
+                }
+                return true;
+            }, IntPtr.Zero);
+            return titles;
         }
 
         private static List<int> GetListeningProcessIds(int port)
