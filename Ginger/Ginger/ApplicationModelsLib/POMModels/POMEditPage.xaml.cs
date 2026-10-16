@@ -489,6 +489,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            mPomAllElementsPage.FinishEditInAllGrids();
+            if (!mPomAllElementsPage.ValidateManuallyAddedItems())
+            {
+                return;
+            }
+
             IsPageSaved = true;
             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mPOM);
         }
