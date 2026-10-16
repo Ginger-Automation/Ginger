@@ -322,13 +322,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                 // speed is important so we do the shift with what we know, so it is super fast
                 byte[] rcvLenBytesBB = new byte[4];
 
-                //TODO: wait till max comm timeout   
-                TimeSpan TD = new TimeSpan();
+                Stopwatch TD = Stopwatch.StartNew();
 
-                while (!ns.DataAvailable && TD.TotalSeconds < CommunicationTimout)
+                while (!ns.DataAvailable)
                 {
+                    if (TD.Elapsed.TotalSeconds >= CommunicationTimout)
+                    {
+                        return ErrorPayLoadMessage("Timeout waiting for response from Ginger Java Agent");
+                    }
                     //TODO: adaptive sleep
-                    General.DoEvents();
+                    // No DoEvents here: pumping UI messages lets a UI event re-enter Send on the same thread
+                    // (Synchronized lock is re-entrant), which sends a new request and reads the previous response.
                     Thread.Sleep(10);
                     if (!SocketConnected(clientSocket))
                     {
