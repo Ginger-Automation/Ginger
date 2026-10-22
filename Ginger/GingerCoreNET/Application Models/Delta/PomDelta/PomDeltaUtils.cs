@@ -67,6 +67,15 @@ namespace GingerCoreNET.Application_Models
 
         public bool AcceptElementFoundByMatcher { get; set; } = true;
 
+        /// <summary>
+        /// When enabled, an existing POM element can be matched by the property/image matchers to only one latest element,
+        /// and new elements get names that are unique across the POM and the current comparison.
+        /// </summary>
+        public bool PreventDuplicateElementMatches { get; set; }
+
+        readonly HashSet<Guid> mMatchedOriginalElementGuids = [];
+        readonly HashSet<string> mDeltaElementNames = new(StringComparer.OrdinalIgnoreCase);
+
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;
@@ -84,6 +93,19 @@ namespace GingerCoreNET.Application_Models
                 ((AgentOperations)Agent.AgentOperations).Driver.StopProcess = false;
                 POMElementsCopy.Clear();
                 DeltaViewElements.Clear();
+                mMatchedOriginalElementGuids.Clear();
+                mDeltaElementNames.Clear();
+                if (PreventDuplicateElementMatches)
+                {
+                    foreach (ElementInfo existingElement in POM.MappedUIElements.Concat(POM.UnMappedUIElements))
+                    {
+                        string existingName = existingElement.ElementName?.Trim();
+                        if (!string.IsNullOrEmpty(existingName))
+                        {
+                            mDeltaElementNames.Add(existingName);
+                        }
+                    }
+                }
                 if (PomLearnUtils.AutoMapBasicElementTypesList.Count == 0)
                 {
                     var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
@@ -178,11 +200,15 @@ namespace GingerCoreNET.Application_Models
                     bool usePropertyMatching = ShouldUsePropertyMatcherToFindOriginalElement();
                     bool useImageMatching = ShouldUseImageMatcherToFindOriginalElement();
 
+                    IEnumerable<ElementInfo> matcherCandidates = PreventDuplicateElementMatches
+                        ? POMElementsCopy.Where(original => !mMatchedOriginalElementGuids.Contains(original.Guid))
+                        : POMElementsCopy;
+
                     string matchDetails = string.Empty;
                     if (usePropertyMatching && matchingOriginalElement == null)
                     {
                         ePlatformType platform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
-                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, POMElementsCopy, platform, out double maxMatchScore);
+                        matchingOriginalElement = FindMatchingOldElementByProperty(latestElement, matcherCandidates, platform, out double maxMatchScore);
                         if (matchingOriginalElement != null)
                         {
                             Reporter.ToLog(eLogLevel.INFO, $"predicted original element({matchingOriginalElement.ElementName}) for new element({latestElement.ElementName}) by property with {maxMatchScore * 100}% match");
@@ -191,7 +217,7 @@ namespace GingerCoreNET.Application_Models
                     }
                     if (useImageMatching && matchingOriginalElement == null)
                     {
-                        matchingOriginalElement = FindMatchingOldElementByImage(latestElement, POMElementsCopy, out double maxMatchScore);
+                        matchingOriginalElement = FindMatchingOldElementByImage(latestElement, matcherCandidates, out double maxMatchScore);
                         if (matchingOriginalElement != null)
                         {
                             Reporter.ToLog(eLogLevel.INFO, $"predicted original element({matchingOriginalElement.ElementName}) for new element({latestElement.ElementName}) by image with {maxMatchScore * 100}% match");
@@ -213,10 +239,12 @@ namespace GingerCoreNET.Application_Models
                         {
                             groupToAddTo = ApplicationPOMModel.eElementGroup.Unmapped;
                         }
+                        SetUniqueNewElementName(latestElement);
                         DeltaViewElements.Add(ConvertElementToDelta(latestElement, eDeltaStatus.Added, groupToAddTo, true, "New element"));
                     }
                     else if (matchingOriginalElement != null && (elementFoundWithoutMatcher || AcceptElementFoundByMatcher))//Existing Element
                     {
+                        mMatchedOriginalElementGuids.Add(matchingOriginalElement.Guid);
                         SetMatchingElementDeltaDetails(matchingOriginalElement, latestElement, matchDetails);
                     }
                     else if (matchingOriginalElement != null)
@@ -230,6 +258,7 @@ namespace GingerCoreNET.Application_Models
                         {
                             groupToAddTo = ApplicationPOMModel.eElementGroup.Unmapped;
                         }
+                        SetUniqueNewElementName(latestElement);
                         DeltaElementInfo delta = ConvertElementToDelta(latestElement, eDeltaStatus.Added, groupToAddTo, true, "New element");
                         delta.PredictedElementInfo = matchingOriginalElement;
                         DeltaViewElements.Add(delta);
@@ -240,6 +269,36 @@ namespace GingerCoreNET.Application_Models
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("POM Delta- failed to compare new learned element '{0}' with existing elements", latestElement.ElementName), ex);
                 }
             }
+        }
+
+        private void SetUniqueNewElementName(ElementInfo newElement)
+        {
+            if (!PreventDuplicateElementMatches)
+            {
+                return;
+            }
+
+            string name = newElement.ElementName?.Trim();
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
+            if (mDeltaElementNames.Contains(name))
+            {
+                int suffix = 2;
+                string uniqueName;
+                do
+                {
+                    uniqueName = $"{name}_{suffix++}";
+                }
+                while (mDeltaElementNames.Contains(uniqueName));
+
+                newElement.ElementName = uniqueName;
+                name = uniqueName;
+            }
+
+            mDeltaElementNames.Add(name);
         }
 
         private void SuggestPredictedElementForDelta(DeltaElementInfo originalElementDelta, ElementInfo predictedLatestElement)

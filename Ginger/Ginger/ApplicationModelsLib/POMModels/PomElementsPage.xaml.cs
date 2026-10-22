@@ -76,6 +76,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
         readonly Dictionary<ElementLocator, (eLocateBy LocateBy, string LocateValue)> mLocatorsBeforeEdit = new();
         ElementInfo mElementInNameEdit;
         string mElementNameBeforeEdit;
+        ControlProperty mPropertyInNameEdit;
+        string mPropertyNameBeforeEdit;
 
         bool mAddSelfHealingColumn = true;
 
@@ -884,7 +886,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void LocatorsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             if (Convert.ToString(e.Column.Header) != "Locate Value" || e.Row.Item is not ElementLocator locator
-                || e.EditingElement is not TextBox textBox || mSelectedElement == null
+                || e.EditingElement is not TextBox textBox || mSelectedElement == null || !mSelectedElement.Locators.Contains(locator)
                 || !mLocatorsBeforeEdit.TryGetValue(locator, out (eLocateBy LocateBy, string LocateValue) beforeEdit))
             {
                 return;
@@ -917,7 +919,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (e.Row.Item is not ElementLocator locator
                 || !mLocatorsBeforeEdit.Remove(locator, out (eLocateBy LocateBy, string LocateValue) beforeEdit)
-                || mSelectedElement == null)
+                || mSelectedElement == null || !mSelectedElement.Locators.Contains(locator))
             {
                 return;
             }
@@ -959,6 +961,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     && !ApplicationPOMModel.TryValidateLocator(element.Locators, locator, locator.LocateBy, locator.LocateValue, out string validationError))
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Element '{element.ElementName}' has an invalid manually added locator: {validationError}");
+                    return false;
+                }
+            }
+
+            foreach (ControlProperty property in mManuallyAddedProperties)
+            {
+                ElementInfo owner = mPOM.MappedUIElements.Concat(mPOM.UnMappedUIElements).FirstOrDefault(element => element.Properties.Contains(property));
+                if (owner != null && !owner.IsAutoLearned && IsDuplicatePropertyName(owner, property, property.Name))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Element '{owner.ElementName}' has more than one property named '{property.Name?.Trim()}'. Please rename or remove the duplicate property.");
                     return false;
                 }
             }
@@ -1035,6 +1047,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertiesButtonClicked));
             xElementDetails.xPropertiesGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeletePropertyClicked));
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: PropertiesGrid_PreparingCellForEdit);
+            WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.BeginningEdit), handler: PropertiesGrid_BeginningEdit);
             WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xElementDetails.xPropertiesGrid.grdMain, eventName: nameof(DataGrid.CellEditEnding), handler: PropertiesGrid_CellEditEnding);
 
 
@@ -1044,24 +1057,79 @@ namespace Ginger.ApplicationModelsLib.POMModels
         // properties added manually in this session, or still unnamed, can be edited.
         private void PropertiesGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            bool isNameColumn = e.Column.Header.ToString() == nameof(ControlProperty.Name);
+            bool isNameColumn = Convert.ToString(e.Column.Header) == nameof(ControlProperty.Name);
             bool isNameEditable = e.Row.Item is ControlProperty property
                 && (mManuallyAddedProperties.Contains(property) || string.IsNullOrEmpty(property.Name));
 
-            if (mSelectedElement.IsAutoLearned == true || (isNameColumn && !isNameEditable))
+            if (mSelectedElement == null || mSelectedElement.IsAutoLearned || (isNameColumn && !isNameEditable))
             {
                 e.EditingElement.IsEnabled = false;
             }
         }
 
+        private void PropertiesGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if (Convert.ToString(e.Column.Header) == nameof(ControlProperty.Name) && e.Row.Item is ControlProperty property)
+            {
+                mPropertyInNameEdit = property;
+                mPropertyNameBeforeEdit = property.Name;
+            }
+        }
+
         private void PropertiesGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            if (Convert.ToString(e.Column.Header) == nameof(ControlProperty.Name))
+            {
+                ValidateEditedPropertyName(e);
+                return;
+            }
+
             // Element Path is also the Java component path, so only the Parent IFrame property may drive it.
-            if (e.Column.Header.ToString() == nameof(ControlProperty.Value)
-                && e.EditingElement.DataContext is ControlProperty ctrlProp && ctrlProp.Name == ElementProperty.ParentIFrame)
+            if (Convert.ToString(e.Column.Header) == nameof(ControlProperty.Value)
+                && e.EditingElement.DataContext is ControlProperty ctrlProp && ctrlProp.Name == ElementProperty.ParentIFrame
+                && mSelectedElement != null && mSelectedElement.Properties.Contains(ctrlProp))
             {
                 mSelectedElement.Path = ctrlProp.Value;
             }
+        }
+
+        // Drivers look up properties by name, so a manual element must not get two properties with the same name.
+        // Only a name the user actually changed is checked; untouched (saved) properties are never modified.
+        private void ValidateEditedPropertyName(DataGridCellEditEndingEventArgs e)
+        {
+            if (e.Row.Item is not ControlProperty property || e.EditingElement is not TextBox textBox
+                || !ReferenceEquals(property, mPropertyInNameEdit))
+            {
+                return;
+            }
+
+            string nameBeforeEdit = mPropertyNameBeforeEdit;
+            mPropertyInNameEdit = null;
+            mPropertyNameBeforeEdit = null;
+
+            if (mSelectedElement == null || mSelectedElement.IsAutoLearned || !mSelectedElement.Properties.Contains(property))
+            {
+                return;
+            }
+
+            string proposedName = textBox.Text?.Trim() ?? string.Empty;
+            if (string.Equals(proposedName, nameBeforeEdit?.Trim() ?? string.Empty, StringComparison.Ordinal)
+                || !IsDuplicatePropertyName(mSelectedElement, property, proposedName))
+            {
+                return;
+            }
+
+            textBox.Text = nameBeforeEdit ?? string.Empty;
+            property.Name = nameBeforeEdit;
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"A property named '{proposedName}' already exists for this element. The previous name was restored.");
+        }
+
+        private static bool IsDuplicatePropertyName(ElementInfo element, ControlProperty propertyToExclude, string name)
+        {
+            string trimmedName = name?.Trim();
+            return !string.IsNullOrEmpty(trimmedName)
+                && element.Properties.Any(other => !ReferenceEquals(other, propertyToExclude)
+                    && string.Equals(other.Name?.Trim(), trimmedName, StringComparison.OrdinalIgnoreCase));
         }
 
         private void AddPropertiesButtonClicked(object sender, RoutedEventArgs e)
@@ -1099,16 +1167,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DeletePropertyClicked(object sender, RoutedEventArgs e)
         {
+            if (mSelectedElement == null)
+            {
+                return;
+            }
+
             xElementDetails.xPropertiesGrid.Grid.CommitEdit();
             List<ControlProperty> PropertyToDelete = xElementDetails.xPropertiesGrid.Grid.SelectedItems.Cast<ControlProperty>().ToList();
             foreach (ControlProperty Property in PropertyToDelete)
             {
                 bool isNewOrBlankProperty = mManuallyAddedProperties.Contains(Property)
                     || (string.IsNullOrEmpty(Property.Name) && string.IsNullOrEmpty(Property.Value));
+
                 if (!isNewOrBlankProperty && mSelectedElement.Properties.Count <= 1)
                 {
                     Reporter.ToUser(eUserMsgKey.POMAtLeastOneProperty);
-                    return;
+                    break;
                 }
                 else
                 {
@@ -1185,8 +1259,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
                 }
                 string allProperties = string.Empty;
-                mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
-                mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mSelectedElement.Properties, handler: Properties_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: mSelectedElement.Properties, handler: Properties_CollectionChanged);
 
 
                 xElementDetails.xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());

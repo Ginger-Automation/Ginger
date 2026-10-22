@@ -14,6 +14,7 @@
     <Compile Update="Misc\DataSourceTest.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="CommLib\JavaDriverResponseTimeoutTest.cs" />
     <Compile Include="Misc\DataBaseTest.cs" />
     <Compile Include="Misc\ExpectedWithActual.cs" />
     <Compile Include="Misc\GingersMultiRunTest.cs" />
