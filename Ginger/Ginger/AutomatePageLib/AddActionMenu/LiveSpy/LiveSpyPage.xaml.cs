@@ -23,6 +23,7 @@ using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
+using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -302,6 +303,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         {
                             xUCElementDetails.SelectedElement = null;
                             xStatusTextBlock.Text = "Failed to identify the element.";
+                            string reason = (mWindowExplorerDriver as UIAutomationDriverBase)?.mUIAutomationHelper?.LastElementFromPointMessage;
+                            if (!string.IsNullOrEmpty(reason))
+                            {
+                                xStatusTextBlock.Text += " " + reason;
+                            }
                             xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
                             GingerCore.General.DoEvents();
                         }

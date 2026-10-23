@@ -14,6 +14,7 @@
     <Compile Update="Misc\DataSourceTest.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="CommLib\JavaDriverResponseTimeoutTest.cs" />
     <Compile Include="Misc\DataBaseTest.cs" />
     <Compile Include="Misc\ExpectedWithActual.cs" />
     <Compile Include="Misc\GingersMultiRunTest.cs" />
@@ -29,6 +30,7 @@
     <Compile Include="Misc\DesktopAutomationEngineTest.cs" />
     <Compile Include="Misc\PbLikeDesktopHost.cs" />
     <Compile Include="Misc\PbLikeDesktopAutomationEvidenceTest.cs" />
+    <Compile Include="Misc\PbSpyLocatorTest.cs" />
     <Compile Include="Misc\UnixShellTest.cs" />
     <Compile Include="Misc\UsedVariablesTest.cs" />
     <Compile Include="Misc\ValueExpressionTest.cs" />
@@ -41,6 +43,7 @@
     <Compile Include="TestResources\IEBrowser\IEBrowserWindow.xaml.cs">
       <DependentUpon>IEBrowserWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UITests\ActLaunchJavaWSApplicationAttachTest.cs" />
     <Compile Include="UITests\ActLaunchJavaWSApplicationTest.cs" />
     <Compile Include="UITests\ActUIElementTest.cs" />
     <Compile Include="UITests\ASCFDriverTest.cs" />
@@ -51,6 +54,8 @@
     </Compile>
     <Compile Include="UITests\PBDriverTest.cs" />
     <Compile Include="UITests\PBDriverWidgetTest.cs" />
+    <Compile Include="UITests\PbTestAppSpyLocatorTest.cs" />
+    <Compile Include="UITests\PbTestAppTabAndGridTest.cs" />
     <Compile Include="UITests\UIAAutomationTest.cs" />
     <Compile Include="UITests\VisualCompareTest.cs" />
     <Compile Include="UITests\WebBrowserPageTest.cs" />

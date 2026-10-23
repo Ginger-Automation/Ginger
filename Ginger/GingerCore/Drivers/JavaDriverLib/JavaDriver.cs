@@ -98,6 +98,12 @@ namespace GingerCore.Drivers.JavaDriverLib
         private bool mConnected = false;
         private bool IsTryingToConnect;
         private Boolean mIsResetTimeout = false;
+
+        // Set only while an action runs; requests outside actions (POM learn, explorer, recording) keep waiting without a limit.
+        private readonly AsyncLocal<TimeSpan?> mActionResponseTimeout = new();
+        // The agent answers requests in order, so a reply that arrives after its request timed out must be skipped.
+        private int mPendingStaleResponses = 0;
+        private bool mLastSendTimedOut = false;
         public bool LogCommunication { get; set; }
         private DispatcherTimer mGetRecordingTimer;
 
@@ -190,6 +196,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             if (mConnected)
             {
+                TimeSpan startupResponseTimeout = TimeSpan.FromSeconds(CommunicationTimout);
+
                 //Set Agent Configuration
                 PayLoad plAC = new PayLoad(CommandType.AgentOperation.ToString());
                 plAC.AddEnumValue(AgentOperationType.AgentConfig);
@@ -197,7 +205,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 plAC.AddValue(ImplicitWait);
                 plAC.ClosePackage();
 
-                PayLoad rcAC = Send(plAC);
+                PayLoad rcAC = Send(plAC, startupResponseTimeout);
+                if (mLastSendTimedOut || !mConnected)
+                {
+                    FailAgentStart();
+                    return;
+                }
                 string status = rcAC.GetValueString();
 
                 //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides                
@@ -211,7 +224,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 pl.AddEnumValue(AgentOperationType.GetVersion);
                 pl.ClosePackage();
 
-                PayLoad rc = Send(pl);
+                PayLoad rc = Send(pl, startupResponseTimeout);
+                if (mLastSendTimedOut || !mConnected)
+                {
+                    FailAgentStart();
+                    return;
+                }
                 string s = rc.GetValueString();
 
                 //TODO: do check version with server version make sure protocol match - should be same Gigner version on both sides                
@@ -227,11 +245,34 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
+        // The Java agent serves one connection at a time, so a second agent on the same port waits behind the first one.
+        private void FailAgentStart()
+        {
+            ErrorMessageFromDriver = mLastSendTimedOut
+                ? $"Ginger Java Agent at {JavaAgentHost}:{JavaAgentPort} accepted the connection but did not respond within {CommunicationTimout} seconds. Another agent may already be connected to this port, or the Java application is not responding. Close the other agent or restart the Java application, then start the agent again."
+                : $"The connection to Ginger Java Agent at {JavaAgentHost}:{JavaAgentPort} was closed while the agent was starting. Start the agent again.";
+            Reporter.ToLog(eLogLevel.WARN, ErrorMessageFromDriver);
+            try
+            {
+                clientSocket?.Close();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while closing Java Agent connection after failed start", ex);
+            }
+            finally
+            {
+                clientSocket = null;
+                mConnected = false;
+                mPendingStaleResponses = 0;
+            }
+        }
+
 
         private void ConnectToJavaDriver()
         {
             clientSocket = new TcpClient { ReceiveTimeout = CommunicationTimout * 1000 };
-            ;
+            mPendingStaleResponses = 0;
             if (CommunicationTimout == 0)
             {
                 CommunicationTimout = 120;
@@ -285,6 +326,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 clientSocket.Connect(serverAddress);
                 mConnected = true;
+                mPendingStaleResponses = 0;
                 return true;
             }
             //TODO: catch exception of socket not all..         
@@ -297,6 +339,15 @@ namespace GingerCore.Drivers.JavaDriverLib
         [MethodImpl(MethodImplOptions.Synchronized)]
         public PayLoad Send(PayLoad pl)
         {
+            return Send(pl, mActionResponseTimeout.Value ?? System.Threading.Timeout.InfiniteTimeSpan);
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private PayLoad Send(PayLoad pl, TimeSpan responseTimeout)
+        {
+            mLastSendTimedOut = false;
+            bool hasResponseTimeout = responseTimeout != System.Threading.Timeout.InfiniteTimeSpan;
+
             try
             {
                 if (!mConnected)
@@ -322,47 +373,63 @@ namespace GingerCore.Drivers.JavaDriverLib
                 // speed is important so we do the shift with what we know, so it is super fast
                 byte[] rcvLenBytesBB = new byte[4];
 
-                //TODO: wait till max comm timeout   
-                TimeSpan TD = new TimeSpan();
-
-                while (!ns.DataAvailable && TD.TotalSeconds < CommunicationTimout)
+                Stopwatch responseWait = Stopwatch.StartNew();
+                while (true)
                 {
-                    //TODO: adaptive sleep
-                    General.DoEvents();
-                    Thread.Sleep(10);
-                    if (!SocketConnected(clientSocket))
+                    while (!ns.DataAvailable)
                     {
-                        return ErrorPayLoadMessage("ERROR | Lost connection or Not connected to Ginger Agent!!!");
+                        if (hasResponseTimeout && responseWait.Elapsed >= responseTimeout)
+                        {
+                            mPendingStaleResponses++;
+                            mLastSendTimedOut = true;
+                            string timeoutMessage = $"ERROR | No response from Ginger Java Agent within {(int)responseTimeout.TotalSeconds} seconds";
+                            Reporter.ToLog(eLogLevel.WARN, $"{timeoutMessage} (request '{pl.Name}', unanswered requests: {mPendingStaleResponses})");
+                            return ErrorPayLoadMessage(timeoutMessage);
+                        }
+                        //TODO: adaptive sleep
+                        General.DoEvents();
+                        Thread.Sleep(10);
+                        if (!SocketConnected(clientSocket))
+                        {
+                            return ErrorPayLoadMessage("ERROR | Lost connection or Not connected to Ginger Agent!!!");
+                        }
+                        //TODO: J.G: If current run stopped then notify Java Driver 
+                        //if (PreviousRunStopped)
+                        //{
+                        //    ns.Flush();
+                        //    return PayLoad.Error("Action was stopped");
+                        //    // ns.Flush();
+                        //    //break;
+                        //}                    
                     }
-                    //TODO: J.G: If current run stopped then notify Java Driver 
-                    //if (PreviousRunStopped)
-                    //{
-                    //    ns.Flush();
-                    //    return PayLoad.Error("Action was stopped");
-                    //    // ns.Flush();
-                    //    //break;
-                    //}                    
+                    ns.Read(rcvLenBytesBB, 0, 4);
+                    int rcvLen = ((rcvLenBytesBB[0]) << 24) + (rcvLenBytesBB[1] << 16) + (rcvLenBytesBB[2] << 8) + rcvLenBytesBB[3];
+                    int received = 0;
+                    byte[] rcvBytes = new byte[rcvLen + 4];
+
+                    //Copy len
+                    rcvBytes[0] = rcvLenBytesBB[0];
+                    rcvBytes[1] = rcvLenBytesBB[1];
+                    rcvBytes[2] = rcvLenBytesBB[2];
+                    rcvBytes[3] = rcvLenBytesBB[3];
+
+                    while (received < rcvLen)
+                    {
+                        received += ns.Read(rcvBytes, received + 4, rcvLen - received);
+                    }
+
+                    ns.Flush();
+
+                    if (mPendingStaleResponses > 0)
+                    {
+                        mPendingStaleResponses--;
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Skipped a late Ginger Java Agent response to an earlier timed out request (remaining: {mPendingStaleResponses})");
+                        continue;
+                    }
+
+                    PayLoad plRC = new PayLoad(rcvBytes);
+                    return plRC;
                 }
-                ns.Read(rcvLenBytesBB, 0, 4);
-                int rcvLen = ((rcvLenBytesBB[0]) << 24) + (rcvLenBytesBB[1] << 16) + (rcvLenBytesBB[2] << 8) + rcvLenBytesBB[3];
-                int received = 0;
-                byte[] rcvBytes = new byte[rcvLen + 4];
-
-                //Copy len
-                rcvBytes[0] = rcvLenBytesBB[0];
-                rcvBytes[1] = rcvLenBytesBB[1];
-                rcvBytes[2] = rcvLenBytesBB[2];
-                rcvBytes[3] = rcvLenBytesBB[3];
-
-                while (received < rcvLen)
-                {
-                    received += ns.Read(rcvBytes, received + 4, rcvLen - received);
-                }
-
-                ns.Flush();
-
-                PayLoad plRC = new PayLoad(rcvBytes);
-                return plRC;
             }
             catch (Exception e)
             {
@@ -418,13 +485,15 @@ namespace GingerCore.Drivers.JavaDriverLib
             try
             {
                 cancelAgentLoading = true;
-                clientSocket.Client.Shutdown(SocketShutdown.Both);
-                if (clientSocket.Client.Connected)
+                if (clientSocket != null)
                 {
-                    clientSocket.Client.Disconnect(true);
+                    clientSocket.Client.Shutdown(SocketShutdown.Both);
+                    if (clientSocket.Client.Connected)
+                    {
+                        clientSocket.Client.Disconnect(true);
+                    }
+                    clientSocket.Close();
                 }
-                clientSocket.Close();
-
             }
             catch (Exception ex)
             {
@@ -434,6 +503,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 clientSocket = null;
                 mConnected = false;
+                mPendingStaleResponses = 0;
             }
         }
 
@@ -680,6 +750,25 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public override void RunAction(Act act)
+        {
+            // The agent may use the whole command timeout (action Timeout, else agent Command Timeout, as in SetCommandTimeoutForAction)
+            // before replying, so the Communication Timeout is added on top of it.
+            mActionResponseTimeout.Value = act.Timeout switch
+            {
+                > 0 => TimeSpan.FromSeconds(act.Timeout.Value + CommunicationTimout),
+                _ => TimeSpan.FromSeconds(CommandTimeout + CommunicationTimout)
+            };
+            try
+            {
+                RunJavaAction(act);
+            }
+            finally
+            {
+                mActionResponseTimeout.Value = null;
+            }
+        }
+
+        private void RunJavaAction(Act act)
         {
             string actClass = act.GetType().Name;
             PayLoad Response = null;

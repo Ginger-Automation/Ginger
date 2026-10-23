@@ -262,7 +262,8 @@ namespace Ginger.Agents
                         SelectedAgent.AgentOperations.WaitForAgentToBeReady();
                     }
                     Agent.eStatus Status = ((AgentOperations)SelectedAgent.AgentOperations).Status;
-                    if (((AgentOperations)SelectedAgent.AgentOperations).Driver != null && Status != Agent.eStatus.Running && Status != Agent.eStatus.Starting)
+                    bool agentFailedToStart = ((AgentOperations)SelectedAgent.AgentOperations).Driver != null && Status != Agent.eStatus.Running && Status != Agent.eStatus.Starting;
+                    if (agentFailedToStart)
                     {
                         string errorMessage = ((AgentOperations)SelectedAgent.AgentOperations).Driver.ErrorMessageFromDriver;
                         if (String.IsNullOrEmpty(errorMessage))
@@ -271,9 +272,14 @@ namespace Ginger.Agents
                         }
 
                         Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, errorMessage);
+                        Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, SelectedAgent.Name, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
-                    AgentStartedEvent();
+                    // Subscribers act on the started agent (e.g. POM page navigation), so they are not notified when the start failed.
+                    if (!agentFailedToStart)
+                    {
+                        AgentStartedEvent();
+                    }
                     break;
 
                 case Agent.eStatus.Starting:

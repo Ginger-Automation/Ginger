@@ -410,6 +410,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             unmappedUIElementsPage.FinishEditInGrids();
         }
 
+        public bool ValidateManuallyAddedItems()
+        {
+            return mappedUIElementsPage.ValidateManuallyAddedItems() && unmappedUIElementsPage.ValidateManuallyAddedItems();
+        }
+
         private void POMModelTabsSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xMappedElementsTab.IsSelected)
