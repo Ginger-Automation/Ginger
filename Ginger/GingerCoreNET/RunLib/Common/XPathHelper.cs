@@ -85,7 +85,7 @@ namespace GingerCore.Drivers.Common
             ElementInfo node = EI;
 
             // If it is the window then return / = root 
-            if (string.IsNullOrEmpty(EI.GetElementType()) || EI.ElementType.ToUpper() == "WINDOW")
+            if ((string.IsNullOrEmpty(EI.GetElementType()) && !IsTypelessChild(EI)) || EI.ElementType?.ToUpper() == "WINDOW")
             {
                 return "/";
             }
@@ -108,6 +108,21 @@ namespace GingerCore.Drivers.Common
 
             Xpath = "/" + Xpath; // root start from '/'
             return Xpath;
+        }
+
+        /// <summary>
+        /// Whether an element that reports no type is still below the window, as some
+        /// PowerBuilder DataWindow columns are, so it gets a path instead of '/'.
+        /// </summary>
+        private bool IsTypelessChild(ElementInfo EI)
+        {
+            if (!StrictXpathGeneration)
+            {
+                return false;
+            }
+
+            object root = mDriver.GetRootElement()?.ElementObject;
+            return root != null && EI.ElementObject != null && !Equals(EI.ElementObject, root);
         }
 
         //Go up while not unique, try to add attr based on important prop and avoid long Xpath, 

@@ -55,6 +55,7 @@
     <Compile Include="UITests\PBDriverTest.cs" />
     <Compile Include="UITests\PBDriverWidgetTest.cs" />
     <Compile Include="UITests\PbTestAppSpyLocatorTest.cs" />
+    <Compile Include="UITests\PbTestAppTabAndGridTest.cs" />
     <Compile Include="UITests\UIAAutomationTest.cs" />
     <Compile Include="UITests\VisualCompareTest.cs" />
     <Compile Include="UITests\WebBrowserPageTest.cs" />

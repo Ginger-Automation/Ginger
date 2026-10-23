@@ -254,23 +254,104 @@ namespace GingerCore.Drivers.Common
                 }
 
                 // The centre, because the edge pixel often belongs to the border or the neighbouring control.
-                int xCordinate = elementRect.X + (elementRect.Width / 2) - windowRect.X;
-                int yCordinate = elementRect.Y + (elementRect.Height / 2) - windowRect.Y;
+                System.Drawing.Point centre = new System.Drawing.Point(elementRect.X + (elementRect.Width / 2), elementRect.Y + (elementRect.Height / 2));
+
+                // A control scrolled out of view reports a rectangle outside the window.
+                if (!windowRect.Contains(centre))
+                {
+                    return null;
+                }
+
+                int xCordinate = centre.X - windowRect.X;
+                int yCordinate = centre.Y - windowRect.Y;
                 return new ElementLocator()
                 {
                     LocateBy = eLocateBy.ByXY,
                     LocateValue = xCordinate + "," + yCordinate,
-                    Help = "Not Recommended"
+                    Help = "Not Recommended, depends on the window size, the screen resolution and no other window covering the control"
                 };
             });
 
-            return list;
+            return OrderByFindingTheElement(list, ei.ElementObject);
+        }
+
+        /// <summary>
+        /// Finds the element again with each locator, listing first and marking active those
+        /// that find it, since an action is created with the first locator unless another is picked.
+        /// </summary>
+        /// <remarks>
+        /// A name or AutomationId shared by several controls, as by the cells of every row of
+        /// a DataWindow, finds the first of them. XY is not tried: finding it raises the
+        /// application window.
+        /// </remarks>
+        private ObservableList<ElementLocator> OrderByFindingTheElement(ObservableList<ElementLocator> locators, object element)
+        {
+            if (GetCurrentWindow() == null)
+            {
+                return locators;
+            }
+
+            List<ElementLocator> finding = [];
+            List<ElementLocator> others = [];
+            int implicitWait = mImplicitWait;
+            bool wasTaskFinished = taskFinished;
+            try
+            {
+                // What is on screen now decides; a locator that misses must not wait out the implicit wait.
+                mImplicitWait = -1;
+                taskFinished = false;
+                foreach (ElementLocator locator in locators)
+                {
+                    if (locator.LocateBy != eLocateBy.ByXY && FindsElement(locator, element))
+                    {
+                        finding.Add(locator);
+                    }
+                    else
+                    {
+                        others.Add(locator);
+                    }
+                }
+            }
+            finally
+            {
+                mImplicitWait = implicitWait;
+                taskFinished = wasTaskFinished;
+            }
+
+            return [.. finding, .. others];
+        }
+
+        private bool FindsElement(ElementLocator locator, object element)
+        {
+            string problem;
+            try
+            {
+                object found = FindElementByLocator(locator.LocateBy, locator.LocateValue);
+                if (found != null && found.Equals(element))
+                {
+                    locator.Active = true;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                    return true;
+                }
+
+                problem = found == null ? "Does not find this control again" : "Finds another control first";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not find the element by its " + locator.LocateBy + " locator", ex);
+                problem = "Does not find this control again";
+            }
+
+            locator.StatusError = problem;
+            locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+            locator.Help = problem;
+            return false;
         }
 
         /// <summary>
         /// The value that ByName searches for: the accessible name. The window text is used
-        /// only when the element has no name, since the PowerBuilder ByName search still
-        /// falls back to matching the window text.
+        /// only when the element has no name and holds no value, since the PowerBuilder ByName
+        /// search still falls back to matching the window text.
         /// </summary>
         /// <remarks>
         /// The window text carries the '&amp;' of a mnemonic and is cut at 49 characters, so
@@ -282,6 +363,13 @@ namespace GingerCore.Drivers.Common
             if (!string.IsNullOrEmpty(name))
             {
                 return name;
+            }
+
+            // The window text of a control holding a value, like an edit box, is the value, which changes with the data.
+            if (element is UIAuto.AutomationElement automationElement && automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out _))
+            {
+                string automationId = GetControlPropertyValue(element, "AutomationId");
+                return string.IsNullOrEmpty(automationId) ? null : GetElementControlType(element) + " (" + automationId + ")";
             }
 
             string title = GetElementTitle(element);

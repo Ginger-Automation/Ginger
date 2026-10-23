@@ -246,6 +246,67 @@ namespace UnitTest
 
         [TestMethod]
         [Timeout(600000)]
+        public void XYLocator_UnderAnotherApplicationsWindow_FindsNothing()
+        {
+            if (!InteractiveDesktop.IsAvailable())
+            {
+                Assert.Inconclusive("A point lookup cannot reach the application: " + InteractiveDesktop.DescribeSession());
+            }
+            UIAComWrapperHelper pbHelper = CreateHelper(ePlatformType.PowerBuilder);
+            // Otherwise the lookup raises the application above the covering window first.
+            pbHelper.NonIntrusiveInput = true;
+            UIAuto.AutomationElement target = (UIAuto.AutomationElement)pbHelper.FindElementByLocator(eLocateBy.ByName, "sle_acc_text");
+            Assert.IsNotNull(target, "sle_acc_text was not found");
+            if (!IsShownInWindow(target))
+            {
+                Assert.Inconclusive("sle_acc_text is not on screen: " + Describe(target));
+            }
+
+            // Any other window over the application would answer for the point before the covering window is up.
+            SetWindowPos(mApp.MainWindowHandle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+            Thread.Sleep(500);
+            Rectangle window = mWindow.Current.BoundingRectangle;
+            Rectangle area = target.Current.BoundingRectangle;
+            Point centre = new Point(area.X + (area.Width / 2), area.Y + (area.Height / 2));
+            string xy = (centre.X - window.X) + "," + (centre.Y - window.Y);
+            if (!FindsAtPoint(pbHelper, xy, target))
+            {
+                Assert.Inconclusive("XY " + xy + " did not find sle_acc_text before it was covered: " + Describe(UIAuto.AutomationElement.FromPoint(centre)));
+            }
+
+            using System.Windows.Forms.Form cover = new System.Windows.Forms.Form
+            {
+                Text = "Covering window",
+                ShowInTaskbar = false,
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.None,
+                StartPosition = System.Windows.Forms.FormStartPosition.Manual,
+                Bounds = new Rectangle(centre.X - 40, centre.Y - 20, 80, 40)
+            };
+            cover.Show();
+            SetWindowPos(cover.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+            System.Windows.Forms.Application.DoEvents();
+            UIAuto.AutomationElement atPoint = UIAuto.AutomationElement.FromPoint(centre);
+            if (atPoint == null || atPoint.Current.ProcessId != Environment.ProcessId)
+            {
+                Assert.Inconclusive("The covering window is not what is at " + centre + ": " + Describe(atPoint));
+            }
+
+            pbHelper.taskFinished = false;
+            object found = pbHelper.FindElementByLocator(eLocateBy.ByXY, xy);
+
+            Assert.IsNull(found, "XY " + xy + " found " + (found is UIAuto.AutomationElement element ? Describe(element) : found?.ToString()) + " in the window covering the application");
+        }
+
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOMOVE = 0x0002;
+        private const uint SWP_NOACTIVATE = 0x0010;
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+        [TestMethod]
+        [Timeout(600000)]
         public void DataWindowEditor_SpiedWhileEditing_IsLocatedAfterFocusLeaves()
         {
             UIAComWrapperHelper pbHelper = CreateHelper(ePlatformType.PowerBuilder);

@@ -984,7 +984,7 @@ namespace GingerCore.Drivers
                             System.Drawing.Point point = new System.Drawing.Point((int)xx, (int)yy);
                             //SwitchWindow("NoTitleWindow");  //What is this?
                             RaiseWindowForPointLookup();
-                            element = UIAuto.AutomationElement.FromPoint(point);
+                            element = GetApplicationElementFromPoint(point);
                             break;
                         default:
                             throw new Exception("Locator not implement - " + locateBy.ToString());
@@ -1207,7 +1207,7 @@ namespace GingerCore.Drivers
                     RaiseWindowForPointLookup();
                     List<UIAuto.AutomationElement> AEXYList = null;
                     //FIXIME
-                    UIAuto.AutomationElement AE2 = UIAuto.AutomationElement.FromPoint(point);
+                    UIAuto.AutomationElement AE2 = GetApplicationElementFromPoint(point);
                     if (AE2 != null)
                     {
                         AEXYList = [AE2];
@@ -3030,6 +3030,79 @@ namespace GingerCore.Drivers
         }
 
         /// <summary>
+        /// The element at a screen point, or for PowerBuilder null when another application's
+        /// window covers the point.
+        /// </summary>
+        private UIAuto.AutomationElement GetApplicationElementFromPoint(System.Drawing.Point point)
+        {
+            if (mPlatform == ePlatformType.PowerBuilder && IsCoveredByAnotherApplication(point, GetCurrentWindowProcessId()))
+            {
+                return null;
+            }
+            return UIAuto.AutomationElement.FromPoint(point);
+        }
+
+        /// <summary>
+        /// The process of the current window, or 0 when it cannot be read.
+        /// </summary>
+        private int GetCurrentWindowProcessId()
+        {
+            try
+            {
+                return CurrentWindow.Current.ProcessId;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the process of the current window", ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// For PowerBuilder, whether the window at a screen point, which is where a click there
+        /// goes, belongs to another application than the one driven.
+        /// </summary>
+        /// <remarks>
+        /// False whenever the application cannot be told apart, so the point is then used as it
+        /// always was: an unknown process, or the desktop, which owns no window at any point.
+        /// </remarks>
+        private bool IsCoveredByAnotherApplication(System.Drawing.Point point, int applicationProcessId)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder || applicationProcessId <= 0)
+            {
+                return false;
+            }
+            IntPtr desktop = WinAPIAutomation.GetDesktopWindow();
+            WinAPIAutomation.GetWindowThreadProcessId(desktop, out uint desktopProcessId);
+            if (desktopProcessId == applicationProcessId)
+            {
+                return false;
+            }
+            // Asked of the window rather than of the element at the point, whose properties come
+            // from the application, which need not answer while it is still handling a click.
+            // The point is in physical pixels, as UI Automation gives them, whatever the DPI
+            // awareness of this process. The window is the application's when it or any window it
+            // is inside or owned by is, so one that another process shows inside the application
+            // or for it, as an embedded OLE server does, still counts, and so does an application
+            // window that a launcher of another process owns.
+            IntPtr window = WinAPIAutomation.WindowFromPhysicalPoint(point);
+            IntPtr candidate = window;
+            for (int depth = 0; candidate != IntPtr.Zero && candidate != desktop && depth < 64; depth++)
+            {
+                WinAPIAutomation.GetWindowThreadProcessId(candidate, out uint candidateProcessId);
+                if (candidateProcessId == applicationProcessId)
+                {
+                    return false;
+                }
+                IntPtr parent = WinAPIAutomation.GetAncestor(candidate, WinAPIAutomation.GA_PARENT);
+                candidate = parent != IntPtr.Zero && parent != desktop ? parent : WinAPIAutomation.GetWindow(candidate, WinAPIAutomation.GW_OWNER);
+            }
+            WinAPIAutomation.GetWindowThreadProcessId(window, out uint processId);
+            Reporter.ToLog(eLogLevel.DEBUG, "The point " + point + " of the window '" + CurrentWindowName + "' is covered by a window of process " + processId);
+            return true;
+        }
+
+        /// <summary>
         /// Adds a tree or list node to the current selection rather than replacing it.
         /// </summary>
         /// <remarks>
@@ -3839,6 +3912,7 @@ namespace GingerCore.Drivers
             int endPoint = element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width;
             UIAuto.PropertyCondition tabSelectCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
             int foundTabsCount = 0;
+            bool firstClick = true;
             initialTab = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
             if (((element.Current.BoundingRectangle.Bottom) - (initialTab.Current.BoundingRectangle.Bottom)) < ((initialTab.Current.BoundingRectangle.Top) - (element.Current.BoundingRectangle.Top)))
             {
@@ -3860,9 +3934,38 @@ namespace GingerCore.Drivers
                     // nowhere simply leaves the tab unchanged and the scan moves on.
                     ClickPointWithWindowMessages(element, DesktopOperation.Click, startPoint, y1);
                 }
-                else
+                else if (mPlatform != ePlatformType.PowerBuilder)
                 {
                     winAPI.SendClickOnXYPoint(element, startPoint, y1);
+                }
+                else
+                {
+                    System.Drawing.Point cursor = System.Windows.Forms.Cursor.Position;
+                    WinAPIAutomation.SetForeGroundWindow(id);
+                    // The mouse clicks whatever window is at the point, so where another
+                    // application's covers the tab strip, the tab control is sent the click as
+                    // window messages instead.
+                    if (IsCoveredByAnotherApplication(new System.Drawing.Point(startPoint, y1), id))
+                    {
+                        DesktopAutomationEngine.PointClick.Execute(DesktopActionMapper.ForPoint(element, DesktopOperation.Click, startPoint, y1, preferWindowMessages: true));
+                    }
+                    else
+                    {
+                        WinAPIAutomation.ClickLeftMouseButton(startPoint, y1);
+                        System.Windows.Forms.Cursor.Position = cursor;
+                    }
+                    if (firstClick)
+                    {
+                        // The page read straight after the first click can still be the one shown
+                        // before the scan, which would be counted as the first tab. A click on
+                        // another tab than that one shows its page within this time.
+                        firstClick = false;
+                        Stopwatch shown = Stopwatch.StartNew();
+                        while (shown.ElapsedMilliseconds < 1000 && element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition) == initialTab)
+                        {
+                            Thread.Sleep(100);
+                        }
+                    }
                 }
 
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
@@ -5036,10 +5139,26 @@ namespace GingerCore.Drivers
                 }
                 double xCoordinate = ((element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width / 2));
                 double yCoordinate = ((element.Current.BoundingRectangle.Y + element.Current.BoundingRectangle.Height / 2));
+                System.Drawing.Point point = new System.Drawing.Point(Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
                 element.SetFocus();
                 Thread.Sleep(1000);
-                winAPI.SendClickOnXYPoint(element, Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
-                System.Drawing.Point point = new System.Drawing.Point(Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
+                if (mPlatform != ePlatformType.PowerBuilder)
+                {
+                    winAPI.SendClickOnXYPoint(element, Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
+                }
+                else
+                {
+                    System.Drawing.Point cursor = System.Windows.Forms.Cursor.Position;
+                    WinAPIAutomation.SetForeGroundWindow(element.Current.ProcessId);
+                    // The click and the Tab after it go to whatever is at the point, which is another
+                    // application where one covers the control or the window is minimized.
+                    if (IsCoveredByAnotherApplication(point, element.Current.ProcessId))
+                    {
+                        return val;
+                    }
+                    WinAPIAutomation.ClickLeftMouseButton(point.X, point.Y);
+                    System.Windows.Forms.Cursor.Position = cursor;
+                }
                 var newElement = UIAuto.AutomationElement.FromPoint(point);
                 WinAPIAutomation.SendTabKey();
                 if (newElement == null)
@@ -6433,6 +6552,17 @@ namespace GingerCore.Drivers
                 if (targetAE == null && (!actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText)))
                 {
                     AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
+                    // Set Text does not get here, it ignores the row.
+                    if (RowNumber < 0 && actGrid.LocateRowType == "By Selected Row")
+                    {
+                        actGrid.Error = "'By Selected Row' is not supported for this grid, locate the row by its number or by a column value instead";
+                        return;
+                    }
+                    if (RowNumber < 0 && actGrid.LocateRowType == "Row Number")
+                    {
+                        actGrid.Error = "Given Row Number " + RowNumber + " is not present in Column";
+                        return;
+                    }
                     if (AEColl[RowNumber].Current.IsOffscreen)
                     {
                         getTableElementOnScreen(AE, AEColl[RowNumber], RowNumber);

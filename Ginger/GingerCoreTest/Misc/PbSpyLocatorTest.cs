@@ -19,12 +19,16 @@ limitations under the License.
 extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers;
+using GingerCore.Drivers.Common;
 using GingerCore.Drivers.PBDriver;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -43,12 +47,14 @@ namespace GingerCoreTest.Misc
         private const string BracketName = "Amount [USD]";
         private const string MnemonicCaption = "&Save Customer Record And Continue To The Next Screen Now";
         private const string MnemonicAccessibleName = "Save Customer Record And Continue To The Next Screen Now";
+        private const string EditBoxValue = "www.google.com";
 
         private Form mForm;
         private Button[] mRepeatedButtons;
         private Button mBracketButton;
         private Button mMnemonicButton;
         private CheckBox mCheckedBox;
+        private TextBox mValueBox;
         [TestInitialize]
         public void CreateWindow()
         {
@@ -77,6 +83,9 @@ namespace GingerCoreTest.Misc
 
             mCheckedBox = new CheckBox { Text = "Active", Checked = true, Location = new Point(12, 132) };
             mForm.Controls.Add(mCheckedBox);
+
+            mValueBox = new TextBox { Name = "sle_url", Text = EditBoxValue, Location = new Point(12, 172), Width = 200 };
+            mForm.Controls.Add(mValueBox);
             mForm.Show();
             Application.DoEvents();
         }
@@ -155,6 +164,38 @@ namespace GingerCoreTest.Misc
         }
 
         [TestMethod]
+        public void PowerBuilderNameLocator_OfAnUnnamedEditBox_IsNotItsValue()
+        {
+            UIAComWrapperHelper helper = CreateHelper(ePlatformType.PowerBuilder);
+            UIAuto.AutomationElement element = ElementOf(mValueBox);
+            Assert.AreEqual(string.Empty, element.Current.Name, "The edit box needs to have no accessible name");
+            Assert.AreEqual("sle_url", element.Current.AutomationId);
+
+            ElementLocator byName = helper.GetElementLocators(helper.GetElementInfoFor(element)).Single(l => l.LocateBy == eLocateBy.ByName);
+
+            Assert.AreEqual(element.Current.LocalizedControlType + " (" + element.Current.AutomationId + ")", byName.LocateValue);
+            Assert.AreEqual(element, helper.FindElementByLocator(eLocateBy.ByName, byName.LocateValue));
+        }
+
+        [TestMethod]
+        public void PowerBuilderLocators_ThatFindTheElement_AreActiveAndListedFirst()
+        {
+            UIAComWrapperHelper helper = CreateHelper(ePlatformType.PowerBuilder);
+            UIAuto.AutomationElement element = ElementOf(mRepeatedButtons[1]);
+
+            List<ElementLocator> locators = helper.GetElementLocators(helper.GetElementInfoFor(element)).ToList();
+
+            ElementLocator byName = locators.Single(l => l.LocateBy == eLocateBy.ByName);
+            Assert.IsFalse(byName.Active, "ByName finds the first of the buttons sharing the name");
+            Assert.AreEqual(ElementLocator.eLocateStatus.Failed, byName.LocateStatus);
+            Assert.IsTrue(locators[0].Active, "A new action takes the first locator");
+            Assert.AreEqual(ElementLocator.eLocateStatus.Passed, locators[0].LocateStatus);
+            Assert.AreEqual(element, helper.FindElementByLocator(locators[0].LocateBy, locators[0].LocateValue));
+            Assert.IsTrue(locators.IndexOf(byName) > locators.FindLastIndex(l => l.Active), "ByName is listed above a locator that finds the element");
+            Assert.AreEqual(eLocateBy.ByXY, locators[^1].LocateBy);
+        }
+
+        [TestMethod]
         public void WindowsNameLocator_KeepsTheWindowText()
         {
             UIAComWrapperHelper helper = CreateHelper(ePlatformType.Windows);
@@ -198,6 +239,54 @@ namespace GingerCoreTest.Misc
             Assert.AreEqual(ElementLocator.eLocateStatus.Failed, missing.LocateStatus);
             Assert.IsTrue(clock.Elapsed < TimeSpan.FromSeconds(10), "The missing locator waited out the implicit wait: " + clock.Elapsed);
             Assert.AreEqual(30, helper.ImplicitWait, "The agent's implicit wait has to be put back after the test");
+        }
+
+        [TestMethod]
+        public void TableAction_OnARowThatCannotBeFound_SaysWhyRatherThanFailingOnAnIndex()
+        {
+            Panel grid = new Panel { AccessibleName = "dw_stand_in", Location = new Point(250, 120), Size = new Size(320, 90) };
+            grid.Controls.Add(new Label { AccessibleName = "name_t", Text = "Name", Location = new Point(0, 0), Width = 100 });
+            grid.Controls.Add(new Label { AccessibleName = "address_t", Text = "Address", Location = new Point(110, 0), Width = 200 });
+            for (int row = 0; row < 3; row++)
+            {
+                grid.Controls.Add(new TextBox { AccessibleName = "name", Text = "Name " + row, Location = new Point(0, 20 + (row * 22)), Width = 100 });
+                grid.Controls.Add(new TextBox { AccessibleName = "address", Text = "Address " + row, Location = new Point(110, 20 + (row * 22)), Width = 200 });
+            }
+            mForm.Controls.Add(grid);
+            Application.DoEvents();
+            UIAComWrapperHelper helper = CreateHelper(ePlatformType.PowerBuilder);
+            PBDriver driver = (PBDriver)helper.WindowExplorer;
+            TableElementInfo table = helper.GetTableElementInfoForGrid(ElementOf(grid));
+            CollectionAssert.AreEqual(new[] { "name", "address" }, table.ColumnNames, "The stand-in has to read as a grid of two columns");
+            Assert.AreEqual(3, table.RowCount);
+
+            ActTableElement negativeRow = GridGetValue("Row Number", "-1");
+            driver.RunAction(negativeRow);
+            ActTableElement selectedRow = GridGetValue("By Selected Row", null);
+            driver.RunAction(selectedRow);
+
+            Assert.AreEqual("Given Row Number -1 is not present in Column", negativeRow.Error);
+            StringAssert.Contains(selectedRow.Error, "'By Selected Row' is not supported");
+        }
+
+        private static ActTableElement GridGetValue(string rowType, string rowValue)
+        {
+            ActTableElement action = new ActTableElement
+            {
+                LocateBy = eLocateBy.ByName,
+                LocateValueCalculated = "dw_stand_in",
+                ControlAction = ActTableElement.eTableAction.GetValue,
+                ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle,
+                LocateColTitle = "address",
+                LocateRowType = rowType,
+                LocateRowValue = rowValue
+            };
+            // What the runner does before handing the action to the driver.
+            foreach (ActInputValue input in action.InputValues)
+            {
+                input.ValueForDriver = input.Value;
+            }
+            return action;
         }
 
         private UIAComWrapperHelper CreateHelper(ePlatformType platform)
