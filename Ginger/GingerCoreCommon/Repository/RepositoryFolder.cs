@@ -47,6 +47,11 @@ namespace Amdocs.Ginger.Repository
         // Watch for file and folder changes on this folder
         private FileSystemWatcher mFileWatcher = null;
 
+        // A save and the parent folder's watcher thread can pause the watcher at the same time,
+        // so pauses are counted and events come back only once the last of them is over.
+        private readonly object mFileWatcherLock = new object();
+        private int mFileWatcherPauses = 0;
+
         public RepositoryFolder(SolutionRepository SolutionRepository, SolutionRepositoryItemInfo<T> solutionRepositoryItemInfo, string pattern, string FolderRelativePath, bool ContainsRepositoryItems = true, string DisplayName = null, bool isRootFolder = false)
         {
             this.SolutionRepository = SolutionRepository;
@@ -343,24 +348,28 @@ namespace Amdocs.Ginger.Repository
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
                 {
-                    mFileWatcher = new FileSystemWatcher
+                    lock (mFileWatcherLock)
                     {
-                        Path = base.FolderFullPath,
+                        mFileWatcher = new FileSystemWatcher
+                        {
+                            Path = base.FolderFullPath,
 
-                        //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
-                        // for now we do all xml
-                        // mFileWatcher.Filter = "*.xml";
+                            //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
+                            // for now we do all xml
+                            // mFileWatcher.Filter = "*.xml";
 
-                        NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
-                        IncludeSubdirectories = false
-                    };
+                            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                            IncludeSubdirectories = false
+                        };
 
-                    mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
-                    mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
-                    mFileWatcher.Created += new FileSystemEventHandler(FileWatcher_Changed);
-                    mFileWatcher.Renamed += new RenamedEventHandler(FileWatcher_Renamed);
+                        mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
+                        mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
+                        mFileWatcher.Created += new FileSystemEventHandler(FileWatcher_Changed);
+                        mFileWatcher.Renamed += new RenamedEventHandler(FileWatcher_Renamed);
 
-                    mFileWatcher.EnableRaisingEvents = true;
+                        mFileWatcherPauses = 0;
+                        mFileWatcher.EnableRaisingEvents = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -371,14 +380,19 @@ namespace Amdocs.Ginger.Repository
 
         public override void StopFileWatcherRecursive()
         {
-            if (mFileWatcher != null)
+            lock (mFileWatcherLock)
             {
+                if (mFileWatcher == null)
+                {
+                    return;
+                }
                 mFileWatcher.EnableRaisingEvents = false;
                 mFileWatcher = null;
-                foreach (RepositoryFolderBase RF in GetSubFolders())
-                {
-                    RF.StopFileWatcherRecursive();
-                }
+                mFileWatcherPauses = 0;
+            }
+            foreach (RepositoryFolderBase RF in GetSubFolders())
+            {
+                RF.StopFileWatcherRecursive();
             }
         }
 
@@ -395,30 +409,30 @@ namespace Amdocs.Ginger.Repository
 
         public override void PauseFileWatcher()
         {
-            if (mFileWatcher == null)
+            lock (mFileWatcherLock)
             {
-                return;
-            }
-            if (mFileWatcher.EnableRaisingEvents != false)
-            {
+                if (mFileWatcher == null)
+                {
+                    return;
+                }
+                mFileWatcherPauses++;
                 mFileWatcher.EnableRaisingEvents = false;
-            }
-            else
-            {
-                throw new Exception("RepositoryFolder.PauseFileWatcher is already EnableRaisingEvents = false");
             }
         }
 
         public override void ResumeFileWatcher()
         {
-            if (mFileWatcher == null) return;
-            if (mFileWatcher.EnableRaisingEvents != true)
+            lock (mFileWatcherLock)
             {
-                mFileWatcher.EnableRaisingEvents = true;
-            }
-            else
-            {
-                throw new Exception("RepositoryFolder.PauseFileWatcher is already EnableRaisingEvents = true");
+                if (mFileWatcher == null || mFileWatcherPauses == 0)
+                {
+                    return;
+                }
+                mFileWatcherPauses--;
+                if (mFileWatcherPauses == 0)
+                {
+                    mFileWatcher.EnableRaisingEvents = true;
+                }
             }
         }
 
@@ -550,7 +564,11 @@ namespace Amdocs.Ginger.Repository
                     case WatcherChangeTypes.Deleted:
                         //remove from cache and list
                         item = GetItemFromCacheByFileName(e.FullPath);
-                        RemoveItemFromLists(item);
+                        // Not in the cache when the file was never loaded or was already removed.
+                        if (item != null)
+                        {
+                            RemoveItemFromLists(item);
+                        }
                         break;
                     case WatcherChangeTypes.Created:
                         WaitforFileIsReadable(e.FullPath);
@@ -752,14 +770,14 @@ namespace Amdocs.Ginger.Repository
             //delete from file system
             if (File.Exists(repositoryItem.FilePath))
             {
-                if (mFileWatcher != null)
+                PauseFileWatcher();
+                try
                 {
-                    mFileWatcher.EnableRaisingEvents = false;
+                    File.Delete(repositoryItem.FilePath);
                 }
-                File.Delete(repositoryItem.FilePath);
-                if (mFileWatcher != null)
+                finally
                 {
-                    mFileWatcher.EnableRaisingEvents = true;
+                    ResumeFileWatcher();
                 }
             }
             else
@@ -774,8 +792,14 @@ namespace Amdocs.Ginger.Repository
         public override void SaveRepositoryItem(string fileName, string txt)
         {
             PauseFileWatcher();
-            File.WriteAllText(fileName, txt);
-            ResumeFileWatcher();
+            try
+            {
+                File.WriteAllText(fileName, txt);
+            }
+            finally
+            {
+                ResumeFileWatcher();
+            }
         }
 
         void RemoveItemFromLists(RepositoryItemBase repositoryItem)
@@ -811,9 +835,15 @@ namespace Amdocs.Ginger.Repository
                 if (Directory.Exists(PathHelper.GetLongPath(subfolder.FolderFullPath)))
                 {
                     PauseFileWatcher();
-                    subfolder.DisposeFileWatcher();
-                    Directory.Delete(PathHelper.GetLongPath(subfolder.FolderFullPath), true);
-                    ResumeFileWatcher();
+                    try
+                    {
+                        subfolder.DisposeFileWatcher();
+                        Directory.Delete(PathHelper.GetLongPath(subfolder.FolderFullPath), true);
+                    }
+                    finally
+                    {
+                        ResumeFileWatcher();
+                    }
                 }
                 else
                 {
@@ -1055,11 +1085,15 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         private void DisposeFileWatcher()
         {
-            if (mFileWatcher != null)
+            lock (mFileWatcherLock)
             {
-                mFileWatcher.EnableRaisingEvents = false;
-                mFileWatcher.Dispose();
-                mFileWatcher = null;
+                if (mFileWatcher != null)
+                {
+                    mFileWatcher.EnableRaisingEvents = false;
+                    mFileWatcher.Dispose();
+                    mFileWatcher = null;
+                    mFileWatcherPauses = 0;
+                }
             }
         }
 

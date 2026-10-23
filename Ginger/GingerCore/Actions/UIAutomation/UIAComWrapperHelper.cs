@@ -1036,6 +1036,44 @@ namespace GingerCore.Drivers
             return element;
         }
 
+        /// <remarks>
+        /// The searches of <see cref="FindElementByLocator"/> in the current window, without the scan of the
+        /// text of every control and the old XPath resolver it falls back to, which take seconds on a large window.
+        /// </remarks>
+        protected override object FindElementByLocatorQuickly(eLocateBy locateBy, string locateValue)
+        {
+            UIAuto.AutomationElement window = CurrentWindow;
+            if (window == null || string.IsNullOrEmpty(locateValue))
+            {
+                return null;
+            }
+
+            switch (locateBy)
+            {
+                case eLocateBy.ByName:
+                    UIAuto.AutomationElement element = window.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, locateValue));
+                    int firstIndex = locateValue.IndexOf('(');
+                    int lastIndex = locateValue.IndexOf(')');
+                    if (element == null && firstIndex >= 0 && lastIndex > firstIndex)
+                    {
+                        UIAuto.AndCondition typeAndAutomationId = new UIAuto.AndCondition(
+                            new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue.Substring(firstIndex + 1, lastIndex - firstIndex - 1)),
+                            new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, locateValue[..firstIndex].Trim()));
+                        element = window.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, typeAndAutomationId);
+                    }
+                    return element;
+
+                case eLocateBy.ByXPath:
+                    return (mXPathHelper.GetElementByXpath(locateValue) as UIAElementInfo)?.ElementObject;
+
+                case eLocateBy.ByAutomationID:
+                    return window.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue));
+
+                default:
+                    return null;
+            }
+        }
+
         private UIAuto.AutomationElement GetCurrentActiveWindow()
         {
             UIAuto.AutomationElement currentWin = null;
@@ -3912,13 +3950,18 @@ namespace GingerCore.Drivers
             int endPoint = element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width;
             UIAuto.PropertyCondition tabSelectCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
             int foundTabsCount = 0;
-            bool firstClick = true;
             initialTab = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
             if (((element.Current.BoundingRectangle.Bottom) - (initialTab.Current.BoundingRectangle.Bottom)) < ((initialTab.Current.BoundingRectangle.Top) - (element.Current.BoundingRectangle.Top)))
             {
                 startPoint = element.Current.BoundingRectangle.X + 5;
                 y1 = (element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2;
             }
+
+            // Taking the page shown before the scan for the first tab's goes wrong only where it
+            // is another tab's page and, in a search by title, the page the search is after.
+            bool waitForFirstPage = mPlatform == ePlatformType.PowerBuilder
+                && (searchByIndx || (!string.IsNullOrEmpty(value) && initialTab.Current.Name.Contains(value)))
+                && !Win32Native.IsFirstTabSelected(new IntPtr(element.Current.NativeWindowHandle), 200);
 
             while (startPoint < endPoint && !taskFinished)
             {
@@ -3954,12 +3997,12 @@ namespace GingerCore.Drivers
                         WinAPIAutomation.ClickLeftMouseButton(startPoint, y1);
                         System.Windows.Forms.Cursor.Position = cursor;
                     }
-                    if (firstClick)
+                    if (waitForFirstPage)
                     {
                         // The page read straight after the first click can still be the one shown
                         // before the scan, which would be counted as the first tab. A click on
                         // another tab than that one shows its page within this time.
-                        firstClick = false;
+                        waitForFirstPage = false;
                         Stopwatch shown = Stopwatch.StartNew();
                         while (shown.ElapsedMilliseconds < 1000 && element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition) == initialTab)
                         {

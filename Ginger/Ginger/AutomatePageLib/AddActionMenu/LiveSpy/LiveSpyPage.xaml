@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.LiveSpyPage"
+<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.LiveSpyPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -29,13 +29,11 @@
                 <usercontrols:ucButton x:Name="xStopSpyingBtn" ToolTip= "Stop Spying" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopSpyingBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
             </StackPanel>
 
-            <ScrollViewer Margin="5,0,0,5" DockPanel.Dock="Top">
+            <ScrollViewer Margin="5,0,0,5" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto">
                 <TextBlock Name="xStatusTextBlock"  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $HighlightColor_Purple}" Text="Hover with the mouse over the element you want to spy and click/hold down the 'Ctrl' Key" Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap"/>
             </ScrollViewer>
         </DockPanel>
-        <StackPanel Grid.Row="2">
-        <Ginger:UCElementDetails x:Name="xUCElementDetails" ShowActionTab="True"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </StackPanel>
+        <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="2" ShowActionTab="True"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
 
     </Grid>

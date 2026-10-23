@@ -112,6 +112,13 @@ namespace GingerCore.Drivers.Common
         }
 
         public abstract object FindElementByLocator(eLocateBy eLocatorType, string LocateValue);
+
+        /// <summary>
+        /// Searches once for an element, without the pauses, retries and slow fallback searches of
+        /// <see cref="FindElementByLocator"/>, for checking the locators of a spied element while the user waits.
+        /// </summary>
+        protected abstract object FindElementByLocatorQuickly(eLocateBy locateBy, string locateValue);
+
         public abstract object FindWindowByLocator(eLocateBy eLocatorType, string LocateValue);
         public abstract string SetControlValue(object element, string value);
         public abstract void DragAndDrop(object element, ActUIElement action);
@@ -276,13 +283,14 @@ namespace GingerCore.Drivers.Common
         }
 
         /// <summary>
-        /// Finds the element again with each locator, listing first and marking active those
-        /// that find it, since an action is created with the first locator unless another is picked.
+        /// Moves to the top, marked active, the first locator in the order built that finds the
+        /// element itself, since an action is created with the first locator unless another is picked.
         /// </summary>
         /// <remarks>
         /// A name or AutomationId shared by several controls, as by the cells of every row of
-        /// a DataWindow, finds the first of them. XY is not tried: finding it raises the
-        /// application window.
+        /// a DataWindow, finds the first of them, and is marked so. XY is not tried: finding it
+        /// raises the application window. This runs while the user waits for the spied element,
+        /// so no search starts after a second.
         /// </remarks>
         private ObservableList<ElementLocator> OrderByFindingTheElement(ObservableList<ElementLocator> locators, object element)
         {
@@ -291,60 +299,54 @@ namespace GingerCore.Drivers.Common
                 return locators;
             }
 
-            List<ElementLocator> finding = [];
-            List<ElementLocator> others = [];
-            int implicitWait = mImplicitWait;
-            bool wasTaskFinished = taskFinished;
-            try
+            long giveUpAt = Environment.TickCount64 + 1000;
+            foreach (ElementLocator locator in locators)
             {
-                // What is on screen now decides; a locator that misses must not wait out the implicit wait.
-                mImplicitWait = -1;
-                taskFinished = false;
-                foreach (ElementLocator locator in locators)
+                if (Environment.TickCount64 >= giveUpAt)
                 {
-                    if (locator.LocateBy != eLocateBy.ByXY && FindsElement(locator, element))
-                    {
-                        finding.Add(locator);
-                    }
-                    else
-                    {
-                        others.Add(locator);
-                    }
+                    break;
+                }
+
+                if (locator.LocateBy != eLocateBy.ByXY && FindsElement(locator, element))
+                {
+                    locators.Move(locators.IndexOf(locator), 0);
+                    break;
                 }
             }
-            finally
-            {
-                mImplicitWait = implicitWait;
-                taskFinished = wasTaskFinished;
-            }
 
-            return [.. finding, .. others];
+            return locators;
         }
 
+        /// <remarks>
+        /// Finding nothing proves nothing, so leaves the locator unmarked: a run falls back to
+        /// slower searches that the quick one leaves out.
+        /// </remarks>
         private bool FindsElement(ElementLocator locator, object element)
         {
-            string problem;
             try
             {
-                object found = FindElementByLocator(locator.LocateBy, locator.LocateValue);
-                if (found != null && found.Equals(element))
+                object found = FindElementByLocatorQuickly(locator.LocateBy, locator.LocateValue);
+                if (found == null)
+                {
+                    return false;
+                }
+
+                if (found.Equals(element))
                 {
                     locator.Active = true;
                     locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     return true;
                 }
-
-                problem = found == null ? "Does not find this control again" : "Finds another control first";
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Could not find the element by its " + locator.LocateBy + " locator", ex);
-                problem = "Does not find this control again";
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not search for the element by its " + locator.LocateBy + " locator", ex);
+                return false;
             }
 
-            locator.StatusError = problem;
+            locator.StatusError = "Finds another control first";
             locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-            locator.Help = problem;
+            locator.Help = locator.StatusError;
             return false;
         }
 

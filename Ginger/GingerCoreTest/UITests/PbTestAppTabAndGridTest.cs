@@ -145,6 +145,52 @@ namespace UnitTest
 
         [TestMethod]
         [Timeout(600000)]
+        public void TabControl_CaptionPartOfSeveral_SelectsTheFirstOfThem_FromAnotherOfThem()
+        {
+            UIAuto.AutomationElement tabbed = OpenTabbedWindow();
+            UIAComWrapperHelper helper = CreateHelper(tabbed);
+            UIAuto.AutomationElement tab = TabControlOf(tabbed);
+            bool[] withoutTheMouse = InteractiveDesktop.IsAvailable() ? [true, false] : [true];
+
+            foreach (bool nonIntrusive in withoutTheMouse)
+            {
+                helper.NonIntrusiveInput = true;
+                Assert.IsTrue(helper.SelectTab(tab, "Custom Grid"), "Could not start from the last tab");
+                helper.NonIntrusiveInput = nonIntrusive;
+
+                // "Data Grid", before it, has the part of the caption too.
+                bool selected = helper.SelectTab(tab, "Grid");
+
+                Assert.IsTrue(selected, "Selecting by part of the caption failed, without the mouse: " + nonIntrusive);
+                Assert.AreEqual("Data Grid", PageName(tab), "Without the mouse: " + nonIntrusive);
+            }
+        }
+
+        [TestMethod]
+        [Timeout(600000)]
+        public void TabControl_FirstTabSelected_IsToldApartFromAnotherAndFromAWindowThatIsNoTabControl()
+        {
+            UIAuto.AutomationElement tabbed = OpenTabbedWindow();
+            UIAComWrapperHelper helper = CreateHelper(tabbed);
+            helper.NonIntrusiveInput = true;
+            UIAuto.AutomationElement tab = TabControlOf(tabbed);
+            IntPtr tabHandle = new IntPtr(tab.Current.NativeWindowHandle);
+
+            Assert.IsTrue(helper.SelectTab(tab, "1", true), "Could not select the first tab");
+            bool firstWhenFirst = Win32Native.IsFirstTabSelected(tabHandle, 1000);
+            IntPtr pageHandle = new IntPtr(PageOf(tab).Current.NativeWindowHandle);
+            bool firstOfThePage = Win32Native.IsFirstTabSelected(pageHandle, 1000);
+            Assert.IsTrue(helper.SelectTab(tab, "2", true), "Could not select the second tab");
+            bool firstWhenSecond = Win32Native.IsFirstTabSelected(tabHandle, 1000);
+
+            Assert.IsTrue(firstWhenFirst, "The first tab is selected");
+            Assert.AreNotEqual(IntPtr.Zero, pageHandle, "The page has no window of its own");
+            Assert.IsFalse(firstOfThePage, "The page is no tab control");
+            Assert.IsFalse(firstWhenSecond, "The second tab is selected");
+        }
+
+        [TestMethod]
+        [Timeout(600000)]
         public void TypelessGridCell_OfAMinimizedWindow_ReadsEmptyRatherThanWhateverIsOnTheScreen()
         {
             if (!InteractiveDesktop.IsAvailable())
