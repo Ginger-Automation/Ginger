@@ -47,8 +47,8 @@ namespace Amdocs.Ginger.Repository
         // Watch for file and folder changes on this folder
         private FileSystemWatcher mFileWatcher = null;
 
-        // A save and the parent folder's watcher thread can pause the watcher at the same time,
-        // so pauses are counted and events come back only once the last of them is over.
+        // A save and the parent folder's watcher thread can pause the watcher at the same time.
+        // The count keeps it stopped until the last pause is over, and only that change touches the watcher.
         private readonly object mFileWatcherLock = new object();
         private int mFileWatcherPauses = 0;
 
@@ -415,8 +415,11 @@ namespace Amdocs.Ginger.Repository
                 {
                     return;
                 }
+                if (mFileWatcherPauses == 0)
+                {
+                    mFileWatcher.EnableRaisingEvents = false;
+                }
                 mFileWatcherPauses++;
-                mFileWatcher.EnableRaisingEvents = false;
             }
         }
 
@@ -888,9 +891,12 @@ namespace Amdocs.Ginger.Repository
                 OnPropertyChanged(nameof(FolderFullPath));
                 OnPropertyChanged(nameof(DisplayName));
                 OnPropertyChanged(nameof(FolderName));
-                if (mFileWatcher != null)
+                lock (mFileWatcherLock)
                 {
-                    mFileWatcher.Path = FolderFullPath;
+                    if (mFileWatcher != null)
+                    {
+                        mFileWatcher.Path = FolderFullPath;
+                    }
                 }
 
                 //updating the folder items cache with correct File Path
