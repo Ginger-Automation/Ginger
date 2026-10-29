@@ -5797,6 +5797,15 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// An embedded panel is a Win32 child window. Real pop-ups are top-level windows, so they stay in the failure screenshots.
+        /// </summary>
+        private static bool IsEmbeddedChildWindow(UIAuto.AutomationElement element)
+        {
+            IntPtr hwnd = TryGetNativeHandle(element);
+            return hwnd != IntPtr.Zero && Win32Native.IsChildWindow(hwnd);
+        }
+
         public override List<Bitmap> GetAppDialogAsBitmap(AppWindow aw)  ///********
         {
             List<Bitmap> bList = [];
@@ -5817,17 +5826,29 @@ namespace GingerCore.Drivers
             for (int i = 0; i < AEList.Count; i++)
             {
                 UIAuto.AutomationElement ele = AEList[i];
+                if (IsEmbeddedChildWindow(ele))
+                {
+                    continue;
+                }
                 bList.Add(WindowToBitmap(ele));
             }
             for (int i = 0; i < AEList1.Count; i++)
             {
                 UIAuto.AutomationElement ele = AEList1[i];
+                if (IsEmbeddedChildWindow(ele))
+                {
+                    continue;
+                }
                 bList.Add(WindowToBitmap(ele));
 
             }
 
             for (int i = 0; i < AEListWindows.Count; i++)
             {
+                if (IsEmbeddedChildWindow(AEListWindows[i]))
+                {
+                    continue;
+                }
                 if (AEListWindows[i].Current.BoundingRectangle.X != 0 && AEListWindows[i].Current.BoundingRectangle.Y != 0)
                 {
                     bList.Add(WindowToBitmap(AEListWindows[i]));//adding screenshot of element type "window"

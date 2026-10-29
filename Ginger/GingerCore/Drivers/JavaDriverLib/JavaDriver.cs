@@ -1906,7 +1906,21 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                             if (uiDriver.CurrentWindow != null)
                             {
-                                actScreenShot.AddScreenShot(uiDriver.GetCurrentWindowBitmap());
+                                System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.FromHandle(
+                                    new IntPtr(uiDriver.CurrentWindow.Current.NativeWindowHandle));
+                                Rectangle bounds = screen.Bounds;
+                                using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                                {
+                                    using (Graphics graphics = Graphics.FromImage(bitmap))
+                                    {
+                                        graphics.CopyFromScreen(bounds.Location, Point.Empty, bounds.Size, CopyPixelOperation.SourceCopy);
+                                    }
+                                    actScreenShot.AddScreenShot(bitmap);
+                                }
+                            }
+                            else
+                            {
+                                actScreenShot.Error = "CRM window was not found for the desktop screenshot. Title: " + title;
                             }
                         }
                         catch (Exception e)
