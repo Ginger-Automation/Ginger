@@ -155,6 +155,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void SelectElementsToList(ObservableList<UIElementFilter> elements, ObservableList<UIElementFilter> filterList)
         {
+            // A null filter is saved when all elements were learned; keep the platform default selection in that case.
+            if (elements == null || filterList == null)
+            {
+                return;
+            }
+
             foreach (UIElementFilter element in elements)
             {
                 element.Selected = filterList.FirstOrDefault(f => f.ElementType == element.ElementType)?.Selected ?? false;

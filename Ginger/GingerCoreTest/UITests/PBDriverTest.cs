@@ -85,7 +85,11 @@ namespace UnitTest
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            mDriver = new PBDriver(mBF);
+            mDriver = new PBDriver(mBF)
+            {
+                // "1" runs the suite as an unattended agent runs it, without the mouse, keyboard or foreground window.
+                NonIntrusiveInputMode = Environment.GetEnvironmentVariable("GINGER_PB_TEST_NON_INTRUSIVE_INPUT") == "1"
+            };
             mDriver.StartDriver();
             Agent a = new Agent();
             AgentOperations agentOperations = new AgentOperations(a);

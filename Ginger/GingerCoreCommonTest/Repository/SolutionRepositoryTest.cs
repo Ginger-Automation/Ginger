@@ -21,6 +21,7 @@ using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -615,7 +616,103 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(newName, BF.Name, "Bf.Name is the one modified on file manually");
         }
 
+        [TestMethod]
+        public void FileWatcherDeleteMRIFileNeverLoadedOnDisk()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+            {
+                return;
+            }
 
+            //Arrange
+            RepositoryFolder<MyRepositoryItem> folder = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>();
+            string fileName = Path.Combine(folder.FolderFullPath, "MRI never loaded.Ginger.MyRepositoryItem.xml");
+            folder.PauseFileWatcher();
+            File.WriteAllText(fileName, string.Empty);
+            folder.ResumeFileWatcher();
+
+            WorkSpaceReporterBase reporter = Reporter.WorkSpaceReporter;
+            FileWatcherErrorsReporter errors = new FileWatcherErrorsReporter();
+            Reporter.WorkSpaceReporter = errors;
+            try
+            {
+                //Act
+                File.Delete(fileName);
+                // Here we expect an event of file deleted, handled without anything to show for it but an error
+                Stopwatch st = Stopwatch.StartNew();
+                while (errors.Errors.IsEmpty && st.ElapsedMilliseconds < 2000)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            finally
+            {
+                Reporter.WorkSpaceReporter = reporter;
+            }
+
+            //Assert
+            Assert.IsTrue(errors.Errors.IsEmpty, string.Join(Environment.NewLine, errors.Errors));
+        }
+
+        [TestMethod]
+        public void FileWatcherAlreadyPausedSaveMRIThenChangeOnDisk()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+            {
+                return;
+            }
+
+            //Arrange
+            RepositoryFolder<MyRepositoryItem> folder = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>();
+            string name = "MRI saved while file watcher paused";
+            string newName = "MRI changed manually after file watcher resumed";
+            MyRepositoryItem MRI = new MyRepositoryItem(name);
+
+            //Act
+            // As the parent folder's file watcher does from its own thread when a file is added to the folder
+            folder.PauseFileWatcher();
+            try
+            {
+                folder.AddRepositoryItem(MRI);
+            }
+            finally
+            {
+                folder.ResumeFileWatcher();
+            }
+
+            System.IO.File.WriteAllText(MRI.FilePath, System.IO.File.ReadAllText(MRI.FilePath).Replace(name, newName));
+            // Here we expect an event of file change
+            Stopwatch st = Stopwatch.StartNew();
+            while (MRI.Name != newName && st.ElapsedMilliseconds < 5000) // Max 5 seconds or time out
+            {
+                Thread.Sleep(100);
+            }
+
+            //Assert
+            Assert.AreEqual(newName, MRI.Name, "MRI.Name is the one modified on file manually");
+        }
+
+        private sealed class FileWatcherErrorsReporter : WorkSpaceReporterBase
+        {
+            public ConcurrentQueue<string> Errors { get; } = new ConcurrentQueue<string>();
+
+            public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+            {
+                if ((logLevel is eLogLevel.ERROR or eLogLevel.FATAL) && messageToLog != null && messageToLog.Contains("FileWatcher"))
+                {
+                    Errors.Enqueue(messageToLog + " " + exceptionToLog);
+                }
+            }
+
+            public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
+            {
+                return defualtResualt;
+            }
+
+            public override void ToStatus(eStatusMsgType messageType, string statusText)
+            {
+            }
+        }
 
 
     }
