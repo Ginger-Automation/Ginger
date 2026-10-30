@@ -26,6 +26,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.Drivers.PBDriver.DesktopAutomation;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -984,7 +985,7 @@ namespace GingerCore.Drivers
                             System.Drawing.Point point = new System.Drawing.Point((int)xx, (int)yy);
                             //SwitchWindow("NoTitleWindow");  //What is this?
                             RaiseWindowForPointLookup();
-                            element = UIAuto.AutomationElement.FromPoint(point);
+                            element = GetApplicationElementFromPoint(point);
                             break;
                         default:
                             throw new Exception("Locator not implement - " + locateBy.ToString());
@@ -1034,6 +1035,44 @@ namespace GingerCore.Drivers
             }
 
             return element;
+        }
+
+        /// <remarks>
+        /// The searches of <see cref="FindElementByLocator"/> in the current window, without the scan of the
+        /// text of every control and the old XPath resolver it falls back to, which take seconds on a large window.
+        /// </remarks>
+        protected override object FindElementByLocatorQuickly(eLocateBy locateBy, string locateValue)
+        {
+            UIAuto.AutomationElement window = CurrentWindow;
+            if (window == null || string.IsNullOrEmpty(locateValue))
+            {
+                return null;
+            }
+
+            switch (locateBy)
+            {
+                case eLocateBy.ByName:
+                    UIAuto.AutomationElement element = window.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, locateValue));
+                    int firstIndex = locateValue.IndexOf('(');
+                    int lastIndex = locateValue.IndexOf(')');
+                    if (element == null && firstIndex >= 0 && lastIndex > firstIndex)
+                    {
+                        UIAuto.AndCondition typeAndAutomationId = new UIAuto.AndCondition(
+                            new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue.Substring(firstIndex + 1, lastIndex - firstIndex - 1)),
+                            new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, locateValue[..firstIndex].Trim()));
+                        element = window.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, typeAndAutomationId);
+                    }
+                    return element;
+
+                case eLocateBy.ByXPath:
+                    return (mXPathHelper.GetElementByXpath(locateValue) as UIAElementInfo)?.ElementObject;
+
+                case eLocateBy.ByAutomationID:
+                    return window.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, locateValue));
+
+                default:
+                    return null;
+            }
         }
 
         private UIAuto.AutomationElement GetCurrentActiveWindow()
@@ -1207,7 +1246,7 @@ namespace GingerCore.Drivers
                     RaiseWindowForPointLookup();
                     List<UIAuto.AutomationElement> AEXYList = null;
                     //FIXIME
-                    UIAuto.AutomationElement AE2 = UIAuto.AutomationElement.FromPoint(point);
+                    UIAuto.AutomationElement AE2 = GetApplicationElementFromPoint(point);
                     if (AE2 != null)
                     {
                         AEXYList = [AE2];
@@ -3030,6 +3069,79 @@ namespace GingerCore.Drivers
         }
 
         /// <summary>
+        /// The element at a screen point, or for PowerBuilder null when another application's
+        /// window covers the point.
+        /// </summary>
+        private UIAuto.AutomationElement GetApplicationElementFromPoint(System.Drawing.Point point)
+        {
+            if (mPlatform == ePlatformType.PowerBuilder && IsCoveredByAnotherApplication(point, GetCurrentWindowProcessId()))
+            {
+                return null;
+            }
+            return UIAuto.AutomationElement.FromPoint(point);
+        }
+
+        /// <summary>
+        /// The process of the current window, or 0 when it cannot be read.
+        /// </summary>
+        private int GetCurrentWindowProcessId()
+        {
+            try
+            {
+                return CurrentWindow.Current.ProcessId;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the process of the current window", ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// For PowerBuilder, whether the window at a screen point, which is where a click there
+        /// goes, belongs to another application than the one driven.
+        /// </summary>
+        /// <remarks>
+        /// False whenever the application cannot be told apart, so the point is then used as it
+        /// always was: an unknown process, or the desktop, which owns no window at any point.
+        /// </remarks>
+        private bool IsCoveredByAnotherApplication(System.Drawing.Point point, int applicationProcessId)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder || applicationProcessId <= 0)
+            {
+                return false;
+            }
+            IntPtr desktop = WinAPIAutomation.GetDesktopWindow();
+            WinAPIAutomation.GetWindowThreadProcessId(desktop, out uint desktopProcessId);
+            if (desktopProcessId == applicationProcessId)
+            {
+                return false;
+            }
+            // Asked of the window rather than of the element at the point, whose properties come
+            // from the application, which need not answer while it is still handling a click.
+            // The point is in physical pixels, as UI Automation gives them, whatever the DPI
+            // awareness of this process. The window is the application's when it or any window it
+            // is inside or owned by is, so one that another process shows inside the application
+            // or for it, as an embedded OLE server does, still counts, and so does an application
+            // window that a launcher of another process owns.
+            IntPtr window = WinAPIAutomation.WindowFromPhysicalPoint(point);
+            IntPtr candidate = window;
+            for (int depth = 0; candidate != IntPtr.Zero && candidate != desktop && depth < 64; depth++)
+            {
+                WinAPIAutomation.GetWindowThreadProcessId(candidate, out uint candidateProcessId);
+                if (candidateProcessId == applicationProcessId)
+                {
+                    return false;
+                }
+                IntPtr parent = WinAPIAutomation.GetAncestor(candidate, WinAPIAutomation.GA_PARENT);
+                candidate = parent != IntPtr.Zero && parent != desktop ? parent : WinAPIAutomation.GetWindow(candidate, WinAPIAutomation.GW_OWNER);
+            }
+            WinAPIAutomation.GetWindowThreadProcessId(window, out uint processId);
+            Reporter.ToLog(eLogLevel.DEBUG, "The point " + point + " of the window '" + CurrentWindowName + "' is covered by a window of process " + processId);
+            return true;
+        }
+
+        /// <summary>
         /// Adds a tree or list node to the current selection rather than replacing it.
         /// </summary>
         /// <remarks>
@@ -3846,6 +3958,12 @@ namespace GingerCore.Drivers
                 y1 = (element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2;
             }
 
+            // Taking the page shown before the scan for the first tab's goes wrong only where it
+            // is another tab's page and, in a search by title, the page the search is after.
+            bool waitForFirstPage = mPlatform == ePlatformType.PowerBuilder
+                && (searchByIndx || (!string.IsNullOrEmpty(value) && initialTab.Current.Name.Contains(value)))
+                && !Win32Native.IsFirstTabSelected(new IntPtr(element.Current.NativeWindowHandle), 200);
+
             while (startPoint < endPoint && !taskFinished)
             {
                 // Asked per step rather than once before the loop. The scan can run
@@ -3860,9 +3978,38 @@ namespace GingerCore.Drivers
                     // nowhere simply leaves the tab unchanged and the scan moves on.
                     ClickPointWithWindowMessages(element, DesktopOperation.Click, startPoint, y1);
                 }
-                else
+                else if (mPlatform != ePlatformType.PowerBuilder)
                 {
                     winAPI.SendClickOnXYPoint(element, startPoint, y1);
+                }
+                else
+                {
+                    System.Drawing.Point cursor = System.Windows.Forms.Cursor.Position;
+                    WinAPIAutomation.SetForeGroundWindow(id);
+                    // The mouse clicks whatever window is at the point, so where another
+                    // application's covers the tab strip, the tab control is sent the click as
+                    // window messages instead.
+                    if (IsCoveredByAnotherApplication(new System.Drawing.Point(startPoint, y1), id))
+                    {
+                        DesktopAutomationEngine.PointClick.Execute(DesktopActionMapper.ForPoint(element, DesktopOperation.Click, startPoint, y1, preferWindowMessages: true));
+                    }
+                    else
+                    {
+                        WinAPIAutomation.ClickLeftMouseButton(startPoint, y1);
+                        System.Windows.Forms.Cursor.Position = cursor;
+                    }
+                    if (waitForFirstPage)
+                    {
+                        // The page read straight after the first click can still be the one shown
+                        // before the scan, which would be counted as the first tab. A click on
+                        // another tab than that one shows its page within this time.
+                        waitForFirstPage = false;
+                        Stopwatch shown = Stopwatch.StartNew();
+                        while (shown.ElapsedMilliseconds < 1000 && element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition) == initialTab)
+                        {
+                            Thread.Sleep(100);
+                        }
+                    }
                 }
 
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
@@ -3901,6 +4048,11 @@ namespace GingerCore.Drivers
 
         public override string SetControlValue(object obj, string value)
         {
+            if (obj is UIAuto.AutomationElement dataWindowEditor
+                && TrySetDataWindowEditorValue(dataWindowEditor, value, out string dataWindowResult))
+            {
+                return dataWindowResult;
+            }
 
             try
             {
@@ -5031,10 +5183,26 @@ namespace GingerCore.Drivers
                 }
                 double xCoordinate = ((element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width / 2));
                 double yCoordinate = ((element.Current.BoundingRectangle.Y + element.Current.BoundingRectangle.Height / 2));
+                System.Drawing.Point point = new System.Drawing.Point(Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
                 element.SetFocus();
                 Thread.Sleep(1000);
-                winAPI.SendClickOnXYPoint(element, Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
-                System.Drawing.Point point = new System.Drawing.Point(Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
+                if (mPlatform != ePlatformType.PowerBuilder)
+                {
+                    winAPI.SendClickOnXYPoint(element, Convert.ToInt32(xCoordinate), Convert.ToInt32(yCoordinate));
+                }
+                else
+                {
+                    System.Drawing.Point cursor = System.Windows.Forms.Cursor.Position;
+                    WinAPIAutomation.SetForeGroundWindow(element.Current.ProcessId);
+                    // The click and the Tab after it go to whatever is at the point, which is another
+                    // application where one covers the control or the window is minimized.
+                    if (IsCoveredByAnotherApplication(point, element.Current.ProcessId))
+                    {
+                        return val;
+                    }
+                    WinAPIAutomation.ClickLeftMouseButton(point.X, point.Y);
+                    System.Windows.Forms.Cursor.Position = cursor;
+                }
                 var newElement = UIAuto.AutomationElement.FromPoint(point);
                 WinAPIAutomation.SendTabKey();
                 if (newElement == null)
@@ -5992,7 +6160,7 @@ namespace GingerCore.Drivers
                 ElementObject = obj,
                 WindowExplorer = WindowExplorer
             }; //Create small simple EI
-            string XPath = mXPathHelper.GetElementXpathAbsulote(EI);
+            string XPath = GetPlatformXPathHelper().GetElementXpathAbsulote(EI);
             return XPath;
 
         }
@@ -6362,6 +6530,16 @@ namespace GingerCore.Drivers
             //Dictionary<string, UIAuto.AutomationElementCollection> MainDict = new Dictionary<string, UIAuto.AutomationElementCollection>();            
 
             MainDict = GetUpdateDictionary(AE, ref isElementsFromPoints);
+
+            // A DataWindow whose cells UI Automation does not list is worked through its accessible
+            // object. Every other grid, including every DataWindow UI Automation can see into, carries
+            // on exactly as before.
+            if (TryReadDataWindowCells(AE, MainDict, out DataWindowGrid dataWindowCells))
+            {
+                HandleDataWindowGridAction(AE, dataWindowCells, actGrid);
+                return;
+            }
+
             //Not to Remove Yet
             //if (!parentDictionary.ContainsKey(AE) || parentDictionary[AE].Keys.Count == 0)
             //{
@@ -6428,6 +6606,17 @@ namespace GingerCore.Drivers
                 if (targetAE == null && (!actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText)))
                 {
                     AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
+                    // Set Text does not get here, it ignores the row.
+                    if (RowNumber < 0 && actGrid.LocateRowType == "By Selected Row")
+                    {
+                        actGrid.Error = "'By Selected Row' is not supported for this grid, locate the row by its number or by a column value instead";
+                        return;
+                    }
+                    if (RowNumber < 0 && actGrid.LocateRowType == "Row Number")
+                    {
+                        actGrid.Error = "Given Row Number " + RowNumber + " is not present in Column";
+                        return;
+                    }
                     if (AEColl[RowNumber].Current.IsOffscreen)
                     {
                         getTableElementOnScreen(AE, AEColl[RowNumber], RowNumber);
@@ -7104,7 +7293,11 @@ namespace GingerCore.Drivers
                 }
 
             } while (tempElement != null && !taskFinished);
-            if (MainDict.Count < 4)
+
+            // Looking for the cells point by point puts the focus into the grid and asks it what lies at
+            // hundreds of points, and for a DataWindow that is read through its accessible object it can
+            // only find what is already known, the scroll bars.
+            if (MainDict.Count < 4 && !IsReadThroughItsAccessibleObject(AE, MainDict))
             {
                 List<UIAuto.AutomationElement> gridControls = GetGridControlsFromPoint(AE);
                 isElementsFromPoints = true;
@@ -7152,6 +7345,16 @@ namespace GingerCore.Drivers
                     mColNames.Add(str);
                 }
             }
+
+            // A DataWindow whose cells UI Automation does not list shows up here as the parts of its
+            // scroll bars, which would be offered as the columns. Its columns and rows are read from its
+            // accessible object instead; every other grid keeps the columns it has always had.
+            if (TryReadDataWindowCells(AE, tempDictionary, out DataWindowGrid dataWindowCells))
+            {
+                mColNames = [.. dataWindowCells.ColumnNames];
+                maxcount = dataWindowCells.RowCount;
+            }
+
             TableElementInfo TBI = new TableElementInfo
             {
                 ColumnNames = mColNames,
@@ -7159,6 +7362,591 @@ namespace GingerCore.Drivers
                 MainDict = tempDictionary
             };
             return TBI;
+        }
+
+        /// <summary>
+        /// Reads the cells of a DataWindow that UI Automation does not list, through the DataWindow's
+        /// accessible object.
+        /// </summary>
+        /// <param name="grid">The DataWindow.</param>
+        /// <param name="found">What UI Automation listed for the grid.</param>
+        /// <returns>
+        /// True only for a DataWindow none of whose cells UI Automation lists and whose accessible object
+        /// lists some. Every other grid answers false, and is worked as it always was.
+        /// </returns>
+        /// <remarks>
+        /// PowerBuilder 12.5 flags every cell of a DataWindow as invisible, and the MSAA proxy that gives
+        /// UI Automation its view of the control leaves out whatever is flagged, so the DataWindow reaches
+        /// UI Automation with no cells at all. What the scan of the grid then finds are the parts of its
+        /// scroll bars, which have names too, so the spy offered "Position" as the only column and a run
+        /// took a scroll bar's thumb for the cell. The accessible object itself still lists the cells,
+        /// named after their columns, and reading it needs no focus and no unlocked desktop.
+        ///
+        /// The decision rests on where the elements UI Automation did find lie. A DataWindow draws its
+        /// cells in its client area and its scroll bars outside it, so a grid with no listed element
+        /// inside the client area is one whose cells UI Automation cannot see. A scroll bar, its thumb and
+        /// its buttons do not count as a cell wherever they are found, as a grid that does not use the
+        /// scroll bars of its window draws its own inside the client area. A grid UI Automation can see
+        /// into is never read this way, however its cells read. Nor is a DataWindow that is not shown, as
+        /// one on a tab page that is not selected is not: nothing of it is drawn, so it is not asked.
+        /// </remarks>
+        public static bool TryReadDataWindowCells(UIAuto.AutomationElement grid, Dictionary<string, UIAuto.AutomationElement[]> found, out DataWindowGrid cells)
+        {
+            cells = null;
+            try
+            {
+                if (!IsDataWindowWithoutListedCells(grid, found, out IntPtr dataWindow, explain: true))
+                {
+                    return false;
+                }
+
+                // Logged before the read as well as after it, so that a log that stops here says where a
+                // control that stopped answering did so.
+                string className = grid.Current.ClassName;
+                Reporter.ToLog(eLogLevel.INFO, "UI Automation lists no cell of the " + className + " grid, so its cells are read through its accessible object");
+                Stopwatch clock = Stopwatch.StartNew();
+                if (DataWindowGrid.TryRead(dataWindow, out cells, out string details))
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Read " + cells.Cells.Count + " cells (" + cells.RowCount + " rows) of the " + className
+                        + " grid through its accessible object in " + clock.ElapsedMilliseconds + " ms");
+                    return true;
+                }
+
+                Reporter.ToLog(eLogLevel.INFO, "The accessible object of the " + className + " grid lists no cell either, so the grid is worked as it always was: " + details);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the cells of a DataWindow through its accessible object", ex);
+            }
+
+            cells = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Whether a grid is a DataWindow that is read through its accessible object: one UI Automation
+        /// lists no cell of, whose accessible object lists some.
+        /// </summary>
+        /// <remarks>
+        /// Asked before the grid is searched point by point, so that the search, which only puts the focus
+        /// into the grid and asks it what lies at hundreds of points, is left out where it can find nothing
+        /// but the scroll bars. The question costs a few reads of the accessible object. A grid it cannot
+        /// answer for is searched as it always was.
+        /// </remarks>
+        private static bool IsReadThroughItsAccessibleObject(UIAuto.AutomationElement grid, Dictionary<string, UIAuto.AutomationElement[]> found)
+        {
+            try
+            {
+                return IsDataWindowWithoutListedCells(grid, found, out IntPtr dataWindow, explain: false)
+                    && DataWindowGrid.ListsNamedCells(dataWindow);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not tell whether a DataWindow is read through its accessible object", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Whether a grid is a DataWindow that is shown and in whose cell area UI Automation lists no cell,
+        /// which is the first thing to hold before its accessible object is asked for the cells.
+        /// </summary>
+        /// <param name="explain">Whether to say in the log why a DataWindow is turned away.</param>
+        private static bool IsDataWindowWithoutListedCells(UIAuto.AutomationElement grid, Dictionary<string, UIAuto.AutomationElement[]> found, out IntPtr dataWindow, bool explain)
+        {
+            dataWindow = IntPtr.Zero;
+            if (!IsDataWindow(grid))
+            {
+                return false;
+            }
+
+            IntPtr handle = new IntPtr(grid.Current.NativeWindowHandle);
+            if (!DataWindowGrid.IsShown(handle) || !DataWindowGrid.TryGetClientArea(handle, out System.Drawing.Rectangle area))
+            {
+                if (explain)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "The " + grid.Current.ClassName + " grid is not shown, so the grid is worked as it always was");
+                }
+
+                return false;
+            }
+
+            UIAuto.AutomationElement listed = FindElementInside(found, area);
+            if (listed != null)
+            {
+                if (explain)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "UI Automation lists '" + listed.Current.Name + "' (" + listed.Current.ControlType.ProgrammaticName + ") inside the cell area of the "
+                        + grid.Current.ClassName + " grid, so the grid is worked as it always was");
+                }
+
+                return false;
+            }
+
+            dataWindow = handle;
+            return true;
+        }
+
+        /// <summary>The first element of what the scan found that lies inside the area and is not a part of a scroll bar.</summary>
+        private static UIAuto.AutomationElement FindElementInside(Dictionary<string, UIAuto.AutomationElement[]> found, System.Drawing.Rectangle area)
+        {
+            if (found == null)
+            {
+                return null;
+            }
+
+            foreach (UIAuto.AutomationElement[] elements in found.Values)
+            {
+                foreach (UIAuto.AutomationElement element in elements)
+                {
+                    if (DataWindowGrid.IsInside(area, element.Current.BoundingRectangle) && !IsScrollBarPart(element))
+                    {
+                        return element;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// A scroll bar, the thumb on it, or one of the buttons that scroll by a line or a page, is never a
+        /// cell, wherever the grid draws it.
+        /// </summary>
+        private static bool IsScrollBarPart(UIAuto.AutomationElement element)
+        {
+            int type = element.Current.ControlType.Id;
+            if (type == UIAuto.ControlType.ScrollBar.Id || type == UIAuto.ControlType.Thumb.Id)
+            {
+                return true;
+            }
+
+            if (type != UIAuto.ControlType.Button.Id)
+            {
+                return false;
+            }
+
+            UIAuto.AutomationElement parent = UIAuto.TreeWalker.RawViewWalker.GetParent(element);
+            return parent != null && parent.Current.ControlType.Id == UIAuto.ControlType.ScrollBar.Id;
+        }
+
+        /// <summary>
+        /// Runs a table action against the cells of a DataWindow read through its accessible object.
+        /// </summary>
+        /// <remarks>
+        /// Rows and columns are addressed as they are for any other grid: a row by its number, at random
+        /// or by the value of a column, and a column by title or by position. A title is the name the
+        /// DataWindow gives the column, such as item_code, which is what the spy lists, or the caption the
+        /// header of the column shows, and a row is the n-th cell of that name.
+        ///
+        /// Reading a cell and toggling a check box go through the accessible object and need nothing from
+        /// the desktop. A value is set through the desktop engine's DataWindow layer, which writes it and
+        /// reads it back, and where the control refuses that it is typed in behind a click, as the cells of
+        /// these grids have always been set. A click goes where a click on a point in a grid has always
+        /// gone, and a cell outside the visible part of the grid is scrolled to first, with the messages the
+        /// scroll bars of the grid send, so a row far down a long list is reached as it is by a person. A
+        /// grid that does not scroll is reported, and nothing is clicked in its place. Activating a row is
+        /// a click on one of its cells.
+        /// </remarks>
+        public void HandleDataWindowGridAction(UIAuto.AutomationElement grid, DataWindowGrid cells, ActTableElement actGrid)
+        {
+            if (actGrid.ControlAction.Equals(ActTableElement.eTableAction.GetRowCount))
+            {
+                actGrid.AddOrUpdateReturnParamActual("Actual", cells.RowCount.ToString());
+                actGrid.ExInfo = cells.RowCount.ToString();
+                return;
+            }
+
+            bool setText = actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText);
+            if (setText && (!actGrid.LocateRowType.Equals("Where")
+                || actGrid.WhereColSelector.Equals(ActTableElement.eRunColSelectorValue.ColNum)
+                || actGrid.ColSelectorValue.Equals(ActTableElement.eRunColSelectorValue.ColNum)))
+            {
+                actGrid.Error = "SetText Table Action is currently supported only by ColumnTitle with Where Option. Other available options are not supported yet";
+                return;
+            }
+
+            int row;
+            switch (actGrid.LocateRowType)
+            {
+                case "Row Number":
+                    row = Convert.ToInt32(actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.LocateRowValue));
+                    if (row < 0 || row >= cells.RowCount)
+                    {
+                        actGrid.Error = "Given Row Number " + row + " is not present in Column";
+                        return;
+                    }
+
+                    break;
+
+                case "Any Row":
+                    row = new Random().Next(0, cells.RowCount);
+                    break;
+
+                case "Where":
+                    string whereColumn = ResolveDataWindowColumn(cells, actGrid.WhereColSelector, actGrid.WhereColumnTitle);
+                    List<string> whereValues = [.. cells.Column(whereColumn).Select(cell => cell.Text)];
+                    row = DataWindowGrid.FindRow(whereValues, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                    if (row < 0)
+                    {
+                        throw new Exception("Grid Cell matching to given condition not present.");
+                    }
+
+                    break;
+
+                case "By Selected Row":
+                    actGrid.Error = "'By Selected Row' is not supported for this grid, locate the row by its number or by a column value instead";
+                    return;
+
+                default:
+                    actGrid.Error = "Row selection '" + actGrid.LocateRowType + "' is not supported for this grid";
+                    return;
+            }
+
+            string columnName = ResolveDataWindowColumn(cells, actGrid.ColSelectorValue, actGrid.LocateColTitle);
+            IReadOnlyList<DataWindowCell> column = cells.Column(columnName);
+            if (row >= column.Count)
+            {
+                actGrid.Error = "Given Row Number " + row + " is not present in Column";
+                return;
+            }
+
+            HandleDataWindowCellAction(grid, cells, columnName, row, actGrid);
+        }
+
+        private static string ResolveDataWindowColumn(DataWindowGrid cells, ActTableElement.eRunColSelectorValue selector, string column)
+        {
+            if (selector == ActTableElement.eRunColSelectorValue.ColNum)
+            {
+                int position = Convert.ToInt32(column);
+                if (position < 0 || position >= cells.ColumnNames.Count)
+                {
+                    throw new Exception("Input Column Number " + column + " not present in Grid. The grid has " + cells.ColumnNames.Count + " columns.");
+                }
+
+                return cells.ColumnNames[position];
+            }
+
+            if (cells.HasColumn(column))
+            {
+                return column;
+            }
+
+            // The caption of a header names its column too, which is how the column reads on the screen.
+            IReadOnlyList<string> captioned = cells.ColumnsCaptioned(column);
+            if (captioned.Count == 1)
+            {
+                return captioned[0];
+            }
+
+            if (captioned.Count > 1)
+            {
+                throw new Exception("Input Column Name " + column + " is the title of more than one column in Grid: " + string.Join(", ", captioned) + ". Name the column instead.");
+            }
+
+            throw new Exception("Input Column Name " + column + " not present in Grid. Its columns are " + cells.DescribeColumns() + ".");
+        }
+
+        private void HandleDataWindowCellAction(UIAuto.AutomationElement grid, DataWindowGrid cells, string columnName, int row, ActTableElement actGrid)
+        {
+            DataWindowCell cell = cells.Column(columnName)[row];
+            switch (actGrid.ControlAction)
+            {
+                case ActTableElement.eTableAction.GetValue:
+                case ActTableElement.eTableAction.GetText:
+                    // The DataWindow hands out the text a cell shows, which is the value and the text both.
+                    string text = cell.Text;
+                    actGrid.AddOrUpdateReturnParamActual("Actual", text);
+                    actGrid.ExInfo = text;
+                    return;
+
+                case ActTableElement.eTableAction.Toggle:
+                    if (!cell.IsCheckBox)
+                    {
+                        actGrid.Error = "Toggle is supported only for check box cells.";
+                        return;
+                    }
+
+                    if (!ChangeDataWindowCheckBox(cell, !cell.IsChecked))
+                    {
+                        actGrid.Error = "The check box did not change when it was toggled.";
+                        return;
+                    }
+
+                    actGrid.AddOrUpdateReturnParamActual("Actual", cell.Text);
+                    actGrid.ExInfo = cell.Text;
+                    return;
+
+                case ActTableElement.eTableAction.SetValue:
+                case ActTableElement.eTableAction.SetText:
+                case ActTableElement.eTableAction.Click:
+                case ActTableElement.eTableAction.ClickXY:
+                case ActTableElement.eTableAction.DoubleClick:
+                case ActTableElement.eTableAction.ActivateRow:
+                    break;
+
+                default:
+                    actGrid.Error = "Action  - " + actGrid.ControlAction + " not supported for Grids";
+                    return;
+            }
+
+            bool activateRow = actGrid.ControlAction == ActTableElement.eTableAction.ActivateRow;
+            if (activateRow)
+            {
+                cell = CellToClickToActivate(cells, columnName, row);
+                if (cell == null)
+                {
+                    actGrid.Error = "Row " + row + " has no cell to click that is not a check box, and a click would change a check box.";
+                    return;
+                }
+            }
+
+            // PowerBuilder 12.5 does not flag the rows it has scrolled out of view as off screen, so where the cell
+            // is drawn decides whether a click or the keys aimed at it would reach it. A cell that is not drawn
+            // in view is scrolled to first, which is what a person does with the scroll bar.
+            IntPtr dataWindow = new IntPtr(grid.Current.NativeWindowHandle);
+            using IDisposable inItsPixels = DataWindowGrid.InCoordinatesOf(dataWindow);
+            if (!cells.TryBringIntoView(dataWindow, cell, out System.Drawing.Rectangle bounds, out string notInView))
+            {
+                actGrid.Error = "Unable to bring cell on screen. " + notInView;
+                return;
+            }
+
+            if (actGrid.ControlAction == ActTableElement.eTableAction.SetValue || actGrid.ControlAction == ActTableElement.eTableAction.SetText)
+            {
+                SetDataWindowCellValue(grid, cells, columnName, row, bounds, actGrid);
+                return;
+            }
+
+            // The coordinate clicks take their point as the offset from the top left of the grid, which is the
+            // element they are given, so the point asked for inside the cell is turned into one.
+            System.Drawing.Rectangle gridBounds = grid.Current.BoundingRectangle;
+            string status;
+            if (actGrid.ControlAction == ActTableElement.eTableAction.Click)
+            {
+                // A check box takes its own default action, which reaches the box wherever in the cell it is drawn.
+                status = cell.IsCheckBox && cell.TryDoDefaultAction()
+                    ? ClickedSuccessfully + " Through the check box's default action."
+                    : ClickOnXYPoint(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, null));
+            }
+            else if (actGrid.ControlAction == ActTableElement.eTableAction.ClickXY)
+            {
+                if (!DataWindowGrid.TryParseOffset(actGrid.ValueForDriver, out _, out _))
+                {
+                    actGrid.Error = "ClickXY needs the point inside the cell as x,y, such as 10,5. Got '" + actGrid.ValueForDriver + "'.";
+                    return;
+                }
+
+                status = ClickOnXYPoint(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, actGrid.ValueForDriver));
+            }
+            else if (activateRow)
+            {
+                status = ClickOnXYPoint(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, null));
+            }
+            else
+            {
+                status = DoDoubleClick(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, actGrid.ValueForDriver));
+            }
+
+            if (!status.Contains("Clicked Successfully"))
+            {
+                actGrid.Error += status;
+            }
+            else
+            {
+                actGrid.ExInfo += activateRow ? "Row " + row + " activated through its " + cell.Name + " cell. " + status : status;
+            }
+        }
+
+        /// <summary>
+        /// The cell of a row to click to activate the row: the one in the column asked for, or, where that is
+        /// a check box, which a click would change, the first cell of the row that is not one. Null when the
+        /// row has none.
+        /// </summary>
+        private static DataWindowCell CellToClickToActivate(DataWindowGrid cells, string columnName, int row)
+        {
+            DataWindowCell asked = cells.Column(columnName)[row];
+            if (!asked.IsCheckBox)
+            {
+                return asked;
+            }
+
+            foreach (string name in cells.ColumnNames)
+            {
+                IReadOnlyList<DataWindowCell> column = cells.Column(name);
+                if (row < column.Count && !column[row].IsCheckBox && column[row].TryGetBounds(out _))
+                {
+                    return column[row];
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sets the value of a DataWindow cell and confirms the cell holds it afterwards.
+        /// </summary>
+        /// <remarks>
+        /// Routed as <see cref="SetCellTextAtPoint"/> routes the text it writes into a cell: where the
+        /// mouse and keyboard reach the machine, and the run has not asked for window messages, the value
+        /// is typed in behind a click, which is how these cells have always been set. Otherwise the
+        /// desktop engine writes it through the DataWindow's accessible object, and the keyboard is only
+        /// the last resort where the control refuses the write and a person is still at the machine.
+        /// Either way the cell is read back, so a write that landed nowhere is reported as a failure and
+        /// not as a pass.
+        /// </remarks>
+        private void SetDataWindowCellValue(UIAuto.AutomationElement grid, DataWindowGrid cells, string columnName, int row, System.Drawing.Rectangle bounds, ActTableElement actGrid)
+        {
+            DataWindowCell cell = cells.Column(columnName)[row];
+            string value = actGrid.ValueForDriver;
+            if (cell.IsCheckBox)
+            {
+                if (!TryParseCheckState(value, out bool wanted))
+                {
+                    actGrid.Error = "A check box cell is set with Checked or Unchecked, not '" + value + "'.";
+                }
+                else if (cell.IsChecked != wanted && !ChangeDataWindowCheckBox(cell, wanted))
+                {
+                    actGrid.Error = "The check box did not become " + (wanted ? "checked" : "unchecked") + ".";
+                }
+                else
+                {
+                    actGrid.ExInfo = value + " set";
+                }
+
+                return;
+            }
+
+            int x = bounds.X + (bounds.Width / 2);
+            int y = bounds.Y + (bounds.Height / 2);
+
+            bool typeIt = true;
+            bool inputIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(inputIsUsable))
+            {
+                // The cell has no window and no UI Automation element, so the engine is pointed at the
+                // DataWindow and told where in it the cell is drawn.
+                DesktopActionContext context = DesktopActionMapper.FromElement(null, DesktopOperation.SetValue, value, allowPhysicalInput: false, NonIntrusiveInput);
+                context.PointOwnerWindowHandle = new IntPtr(grid.Current.NativeWindowHandle);
+                context.HasTargetPoint = true;
+                context.TargetScreenX = x;
+                context.TargetScreenY = y;
+
+                DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(context);
+                if (engineResult.Success)
+                {
+                    typeIt = false;
+                }
+                else
+                {
+                    string info = engineResult.ErrorMessage + " " + engineResult.ExecutionInfo;
+                    if (!inputIsUsable)
+                    {
+                        throw new Exception("Unable to set value. Value - " + value + ". The desktop cannot take"
+                            + " physical input (" + InteractiveDesktop.DescribeSession() + "), and " + info);
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("set the grid cell value", info, out string refusal))
+                    {
+                        throw new Exception("Unable to set value. Value - " + value + ". " + refusal);
+                    }
+                }
+            }
+
+            if (typeIt)
+            {
+                winAPI.SendClickOnXYPoint(grid, x, y);
+                WinAPIAutomation.SendInputKeys(value);
+                WinAPIAutomation.SendTabKey();
+            }
+
+            // Whichever route wrote it, the cell is read back, so a write that landed in a neighbouring cell,
+            // or nowhere, is not reported as one that worked. The handle this step holds on the cell is asked
+            // first; if the DataWindow has rebuilt its cells since, the grid is read again and the same
+            // column and row are asked.
+            string actual = null;
+            bool holdsValue = false;
+            for (int attempt = 0; attempt < 10 && !holdsValue; attempt++)
+            {
+                if (attempt > 0)
+                {
+                    System.Threading.Thread.Sleep(100);
+                }
+
+                actual = cell.Value;
+                holdsValue = CellShows(actual, value);
+                if (!holdsValue && attempt > 0
+                    && DataWindowGrid.TryRead(new IntPtr(grid.Current.NativeWindowHandle), out DataWindowGrid fresh, out _)
+                    && row < fresh.Column(columnName).Count)
+                {
+                    actual = fresh.Column(columnName)[row].Value;
+                    holdsValue = CellShows(actual, value);
+                }
+            }
+
+            if (holdsValue)
+            {
+                actGrid.ExInfo = value + " set";
+            }
+            else
+            {
+                actGrid.Error += "The cell did not accept '" + value + "' and still reads '" + actual + "'.";
+            }
+        }
+
+        private static bool CellShows(string actual, string value)
+        {
+            return DataWindowMsaaLayer.CellHoldsValue(actual, value)
+                || (string.IsNullOrWhiteSpace(value) && string.IsNullOrWhiteSpace(actual));
+        }
+
+        /// <summary>
+        /// Brings a check box to the state asked for through its default action, which checks or unchecks
+        /// it, and waits for the DataWindow to show the change.
+        /// </summary>
+        private static bool ChangeDataWindowCheckBox(DataWindowCell checkBox, bool wanted)
+        {
+            if (!checkBox.TryDoDefaultAction())
+            {
+                return false;
+            }
+
+            for (int attempt = 0; attempt < 10; attempt++)
+            {
+                if (checkBox.IsChecked == wanted)
+                {
+                    return true;
+                }
+
+                System.Threading.Thread.Sleep(100);
+            }
+
+            return checkBox.IsChecked == wanted;
+        }
+
+        private static bool TryParseCheckState(string value, out bool isChecked)
+        {
+            isChecked = false;
+            switch ((value ?? string.Empty).Trim().ToLowerInvariant())
+            {
+                case "checked":
+                case "true":
+                case "on":
+                case "yes":
+                case "1":
+                    isChecked = true;
+                    return true;
+
+                case "unchecked":
+                case "false":
+                case "off":
+                case "no":
+                case "0":
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         private object GetComboValues(UIAuto.AutomationElement AE)
@@ -7190,38 +7978,67 @@ namespace GingerCore.Drivers
                 WindowExplorer = WindowExplorer,
                 ElementType = GetElementControlType(AE)
             };
-            EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
+            bool isPowerBuilder = mPlatform == ePlatformType.PowerBuilder;
+
+            EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, ReadElementInfoProperty(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
-            EI.BoundingRectangle = GetControlPropertyValue(EI.ElementObject, "BoundingRectangle");
-            EI.LocalizedControlType = GetControlPropertyValue(EI.ElementObject, "LocalizedControlType");
-            EI.AutomationId = GetControlPropertyValue(EI.ElementObject, "AutomationId");
-            EI.ClassName = GetControlPropertyValue(EI.ElementObject, "ClassName");
-            EI.ToggleState = GetControlPropertyValue(EI.ElementObject, "Interop.UIAutomationClient.ToggleState");
-            EI.Text = GetControlPropertyValue(EI.ElementObject, "Text");
+            EI.BoundingRectangle = ReadElementInfoProperty(EI.ElementObject, "BoundingRectangle");
+            EI.LocalizedControlType = ReadElementInfoProperty(EI.ElementObject, "LocalizedControlType");
+            EI.AutomationId = ReadElementInfoProperty(EI.ElementObject, "AutomationId");
+            EI.ClassName = ReadElementInfoProperty(EI.ElementObject, "ClassName");
+
+            // Windows POMs hold the values these two keys have always produced, and the POM
+            // delta compares them, so only PowerBuilder reads them under the keys the
+            // property switch recognises.
+            EI.ToggleState = ReadElementInfoProperty(EI.ElementObject, isPowerBuilder ? "ToggleState" : "Interop.UIAutomationClient.ToggleState");
+            EI.Text = ReadElementInfoProperty(EI.ElementObject, "Text");
 
             bool isPropertyValue;
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsKeyboardFocusable"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsKeyboardFocusable"), out isPropertyValue))
             {
                 EI.IsKeyboardFocusable = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsEnabled"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsEnabled"), out isPropertyValue))
             {
                 EI.IsEnabled = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsPassword"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsPassword"), out isPropertyValue))
             {
                 EI.IsPassword = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsOffscreen"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, isPowerBuilder ? "IsOffScreen" : "IsOffscreen"), out isPropertyValue))
             {
                 EI.IsOffscreen = isPropertyValue;
             }
-            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsSelected"), out isPropertyValue))
+            if (bool.TryParse(ReadElementInfoProperty(EI.ElementObject, "IsSelected"), out isPropertyValue))
             {
                 EI.IsSelected = isPropertyValue;
             }
 
             return EI;
+        }
+
+        /// <summary>
+        /// Reads one property for the element details. For PowerBuilder a property that
+        /// cannot be read is left empty, so a single refusal from an accessibility proxy
+        /// does not lose the whole element.
+        /// </summary>
+        private string ReadElementInfoProperty(object element, string propertyName)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder)
+            {
+                return GetControlPropertyValue(element, propertyName);
+            }
+
+            try
+            {
+                return GetControlPropertyValue(element, propertyName);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read '" + propertyName + "' while building the element details", ex);
+                return string.Empty;
+            }
         }
 
         public override object GetElementFromCursor()
@@ -7235,7 +8052,13 @@ namespace GingerCore.Drivers
 
         public override object GetElementAtPoint(System.Drawing.Point point)
         {
+            LastElementFromPointMessage = string.Empty;
             object element = UIAuto.AutomationElement.FromPoint(point);
+            if (mPlatform == ePlatformType.PowerBuilder && element is UIAuto.AutomationElement hitElement)
+            {
+                element = GetPowerBuilderElementAtPoint(hitElement, point);
+            }
+            UIAuto.AutomationElement pointElement = element as UIAuto.AutomationElement;
 
             // check it is in current window - CurrentWindow if not return null
             // go to parent until CurrentWindow found then inside our window else return null
@@ -7265,7 +8088,129 @@ namespace GingerCore.Drivers
             }
 
             //not found in our current window
+            if (!taskFinished && mPlatform == ePlatformType.PowerBuilder)
+            {
+                LastElementFromPointMessage = DescribeElementOutsideCurrentWindow(pointElement);
+            }
             return null;
+        }
+
+        private const int MaxChildrenSearchedAtPoint = 500;
+
+        /// <summary>
+        /// The element under the point when UI Automation answers with its container.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow that does not resolve a point to one of its columns answers with
+        /// itself, and a group box drawn around controls answers for the controls inside it.
+        /// The smallest visible element there that contains the point is taken instead.
+        /// </remarks>
+        private UIAuto.AutomationElement GetPowerBuilderElementAtPoint(UIAuto.AutomationElement hitElement, System.Drawing.Point point)
+        {
+            try
+            {
+                UIAuto.AutomationElement container = hitElement;
+                if (IsGroupBox(hitElement))
+                {
+                    container = FindSmallestChildAtPoint(UIAuto.TreeWalker.RawViewWalker.GetParent(hitElement), point, Area(hitElement));
+                    if (container == null)
+                    {
+                        return hitElement;
+                    }
+                }
+
+                if (IsDataWindow(container))
+                {
+                    return FindSmallestChildAtPoint(container, point, Area(container)) ?? container;
+                }
+                return container;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not look inside the element under the mouse", ex);
+                return hitElement;
+            }
+        }
+
+        private static bool IsGroupBox(UIAuto.AutomationElement element)
+        {
+            return General.CompareStringsIgnoreCase(element.Current.LocalizedControlType, "group");
+        }
+
+        private static long Area(UIAuto.AutomationElement element)
+        {
+            System.Drawing.Rectangle rect = element.Current.BoundingRectangle;
+            return (long)rect.Width * rect.Height;
+        }
+
+        /// <param name="maxArea">Only children smaller than this are taken.</param>
+        private static UIAuto.AutomationElement FindSmallestChildAtPoint(UIAuto.AutomationElement parent, System.Drawing.Point point, long maxArea)
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+
+            UIAuto.AutomationElement smallest = null;
+            long smallestArea = maxArea;
+            UIAuto.AutomationElement child = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(parent);
+            for (int visited = 0; child != null && visited < MaxChildrenSearchedAtPoint; visited++)
+            {
+                System.Drawing.Rectangle rect = child.Current.BoundingRectangle;
+                if (rect.Width > 0 && rect.Height > 0 && rect.Contains(point) && !child.Current.IsOffscreen && !IsGroupBox(child))
+                {
+                    long area = (long)rect.Width * rect.Height;
+                    if (area < smallestArea)
+                    {
+                        smallest = child;
+                        smallestArea = area;
+                    }
+                }
+                child = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(child);
+            }
+            return smallest;
+        }
+
+        private string DescribeElementOutsideCurrentWindow(UIAuto.AutomationElement element)
+        {
+            try
+            {
+                if (element == null)
+                {
+                    return "No element was found under the mouse.";
+                }
+
+                if (CurrentWindow == null)
+                {
+                    return "No application window is selected; select the window and spy again.";
+                }
+
+                UIAuto.AutomationElement topLevelWindow = element;
+                UIAuto.AutomationElement parent = UIAuto.TreeWalker.RawViewWalker.GetParent(topLevelWindow);
+                for (int depth = 0; parent != null && parent != UIAuto.AutomationElement.RootElement && depth < 100; depth++)
+                {
+                    topLevelWindow = parent;
+                    parent = UIAuto.TreeWalker.RawViewWalker.GetParent(topLevelWindow);
+                }
+
+                string windowName = topLevelWindow.Current.Name;
+                string windowDescription = string.IsNullOrEmpty(windowName)
+                    ? "an untitled window of class '" + topLevelWindow.Current.ClassName + "'"
+                    : "window '" + windowName + "' (class '" + topLevelWindow.Current.ClassName + "')";
+
+                if (element.Current.ProcessId == CurrentWindow.Current.ProcessId)
+                {
+                    return "The element is in " + windowDescription + " of the same application, outside the selected window '"
+                        + CurrentWindowName + "'. If that window is in the window list, select it and spy again.";
+                }
+
+                return "The element belongs to another application, in " + windowDescription + ".";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not describe the element under the mouse", ex);
+                return "The element is not inside the selected window.";
+            }
         }
 
         public Bitmap WindowToBitmap(UIAuto.AutomationElement tempWindow)
@@ -7516,6 +8461,15 @@ namespace GingerCore.Drivers
 
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)
         {
+            return GetPlatformXPathHelper();
+        }
+
+        /// <summary>
+        /// The platform is assigned after construction, so the XPath mode is applied on use.
+        /// </summary>
+        private XPathHelper GetPlatformXPathHelper()
+        {
+            mXPathHelper.StrictXpathGeneration = mPlatform == ePlatformType.PowerBuilder;
             return mXPathHelper;
         }
 
@@ -7604,19 +8558,228 @@ namespace GingerCore.Drivers
             UIAuto.Condition cond = new UIAuto.PropertyCondition(AP, conditions[0].Value);
             //---
             UIAuto.AutomationElement test = ((UIAuto.AutomationElement)EI.ElementObject);
-            UIAuto.AutomationElement AE = test.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+            UIAuto.AutomationElement AE = FindFirstChild(test, cond, conditions);
+            if (AE == null && ShowDataWindowEditor(test, conditions))
+            {
+                for (int attempt = 0; AE == null && attempt < DataWindowEditorAttempts; attempt++)
+                {
+                    Thread.Sleep(100);
+                    AE = FindFirstChild(test, cond, conditions);
+                }
+            }
             if (AE == null)
             {
-                GetChildrenUsingRawWalker((UIAuto.AutomationElement)EI.ElementObject, conditions,
-                    out List<UIAuto.AutomationElement> listChildren, true);
-                if (listChildren.Count == 0)
-                {
-                    return null;
-                }
-                AE = listChildren[0];
+                return null;
             }
             UIAElementInfo RC = (UIAElementInfo)GetElementInfoFor(AE);
             return RC;
+        }
+
+        private UIAuto.AutomationElement FindFirstChild(UIAuto.AutomationElement parent, UIAuto.Condition cond, List<XpathPropertyCondition> conditions)
+        {
+            UIAuto.AutomationElement AE = parent.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+            if (AE == null)
+            {
+                GetChildrenUsingRawWalker(parent, conditions, out List<UIAuto.AutomationElement> listChildren, true);
+                AE = listChildren.Count == 0 ? null : listChildren[0];
+            }
+            return AE;
+        }
+
+        private const int DataWindowEditorAttempts = 10;
+
+        /// <summary>
+        /// Focuses a DataWindow so that its edit control is in the tree again.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow only has its edit control (a child window placed over the current cell)
+        /// while it has focus, so a locator spied while a cell was being edited finds nothing
+        /// once focus has moved on. The edit control has no name, so only conditions it can be
+        /// located by bring it back.
+        /// </remarks>
+        private bool ShowDataWindowEditor(UIAuto.AutomationElement parent, List<XpathPropertyCondition> conditions)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder || taskFinished)
+            {
+                return false;
+            }
+
+            string propertyName = conditions[0].PropertyName;
+            if (!General.CompareStringsIgnoreCase(propertyName, "AutomationId")
+                && !General.CompareStringsIgnoreCase(propertyName, "ClassName")
+                && !General.CompareStringsIgnoreCase(propertyName, "LocalizedControlType"))
+            {
+                return false;
+            }
+
+            try
+            {
+                if (!IsDataWindow(parent))
+                {
+                    return false;
+                }
+
+                parent.SetFocus();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not focus the DataWindow to bring back its edit control", ex);
+                return false;
+            }
+        }
+
+        private static bool IsDataWindow(UIAuto.AutomationElement element)
+        {
+            string className = element?.Current.ClassName;
+            return className != null && className.StartsWith("pbdw", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Sets the value of the edit control a DataWindow places over its current cell, and
+        /// reads it back from that cell.
+        /// </summary>
+        /// <returns>False when the element is not a DataWindow's edit control.</returns>
+        /// <remarks>
+        /// The generic routes do not reach the DataWindow: typing lands wherever the click put
+        /// the caret, text written with WM_SETTEXT is dropped when focus moves on, and writing
+        /// the cell under the edit control is overwritten by the edit control's old text on
+        /// commit. Reading the edit control back reports any of these as a success.
+        ///
+        /// Tab commits; moving the focus away does not. It is posted to the edit control itself
+        /// rather than typed, since a keyboard Tab goes to whichever application is in the
+        /// foreground, and rather than sent (see <see cref="Win32KeyMessages.PostTab"/>).
+        /// </remarks>
+        private bool TrySetDataWindowEditorValue(UIAuto.AutomationElement editor, string value, out string result)
+        {
+            result = null;
+            UIAuto.AutomationElement cell = GetDataWindowCellUnderEditor(editor);
+            if (cell == null)
+            {
+                return false;
+            }
+
+            IntPtr editorHandle = new IntPtr(editor.Current.NativeWindowHandle);
+            if (!Win32Native.ReplaceControlText(editorHandle, value, 2000))
+            {
+                throw new Exception("Unable to set value. Value - " + value + ". The DataWindow's edit control did not take the text.");
+            }
+            if (!Win32KeyMessages.PostTab(editorHandle))
+            {
+                throw new Exception("The value was written but not committed. Value - " + value
+                    + ". The DataWindow's edit control closed before Tab could be sent to it.");
+            }
+
+            string expected = (value ?? string.Empty).Replace(" ", "").Replace("-", "");
+            string cellValue = null;
+            for (int attempt = 0; attempt < 20; attempt++)
+            {
+                cellValue = GetControlValue(cell) ?? string.Empty;
+                if (cellValue.Replace(" ", "").Replace("-", "") == expected)
+                {
+                    result = "True";
+                    return true;
+                }
+                Thread.Sleep(100);
+            }
+
+            string rejection = GetApplicationDialogText(editor.Current.ProcessId);
+            if (rejection != null)
+            {
+                throw new Exception("Unable to set value. Value - " + value + ". PowerBuilder rejected it and is showing: " + rejection);
+            }
+            result = "False" + cellValue;
+            return true;
+        }
+
+        /// <summary>
+        /// The title and text of a message box the application has open, or null when it has none.
+        /// </summary>
+        /// <remarks>
+        /// A DataWindow rejects a value that fails a column's validation rule with a modal
+        /// "DataWindow Error" message box, and leaves the cell as it was. The box is left open:
+        /// the application expects the user to close it, and a flow may check it.
+        /// </remarks>
+        private static string GetApplicationDialogText(int processId)
+        {
+            try
+            {
+                UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
+                for (UIAuto.AutomationElement window = walker.GetFirstChild(UIAuto.AutomationElement.RootElement); window != null; window = walker.GetNextSibling(window))
+                {
+                    if (window.Current.ProcessId != processId || window.Current.ClassName != "#32770")
+                    {
+                        continue;
+                    }
+
+                    List<string> lines = [window.Current.Name];
+                    for (UIAuto.AutomationElement part = walker.GetFirstChild(window); part != null; part = walker.GetNextSibling(part))
+                    {
+                        if (General.CompareStringsIgnoreCase(part.Current.LocalizedControlType, "text") && !string.IsNullOrWhiteSpace(part.Current.Name))
+                        {
+                            lines.Add(part.Current.Name);
+                        }
+                    }
+                    return string.Join(" - ", lines.Where(line => !string.IsNullOrWhiteSpace(line)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not look for a message box opened by the application", ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// The DataWindow cell that the DataWindow's edit control is placed over, or null when
+        /// the element is not that edit control.
+        /// </summary>
+        private UIAuto.AutomationElement GetDataWindowCellUnderEditor(UIAuto.AutomationElement element)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder)
+            {
+                return null;
+            }
+
+            try
+            {
+                int handle = element.Current.NativeWindowHandle;
+                if (handle == 0 || !Win32Native.IsEditClass(new IntPtr(handle)))
+                {
+                    return null;
+                }
+                UIAuto.AutomationElement dataWindow = UIAuto.TreeWalker.RawViewWalker.GetParent(element);
+                if (!IsDataWindow(dataWindow))
+                {
+                    return null;
+                }
+
+                System.Drawing.Rectangle editor = element.Current.BoundingRectangle;
+                UIAuto.AutomationElement cell = null;
+                int largestOverlap = 0;
+                for (UIAuto.AutomationElement child = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(dataWindow);
+                    child != null;
+                    child = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(child))
+                {
+                    if (child.Current.NativeWindowHandle != 0)
+                    {
+                        continue;
+                    }
+                    System.Drawing.Rectangle overlap = System.Drawing.Rectangle.Intersect(child.Current.BoundingRectangle, editor);
+                    int area = overlap.Width * overlap.Height;
+                    if (area > largestOverlap)
+                    {
+                        largestOverlap = area;
+                        cell = child;
+                    }
+                }
+                return cell;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not find the DataWindow cell under its edit control", ex);
+                return null;
+            }
         }
 
 
@@ -7642,6 +8805,11 @@ namespace GingerCore.Drivers
             bool flagFindFirst = false)
         {
             listRAE = [];
+
+            // Other platforms keep comparing every property with the control type, as they always
+            // have. PowerBuilder DataWindow cells exist only in the raw view, so it compares the
+            // property the XPath names.
+            bool compareNamedProperty = mPlatform == ePlatformType.PowerBuilder;
             UIAuto.AutomationElement TAE;
             UIAuto.AutomationElement AE = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(EAE);
             while (AE != null && !taskFinished)
@@ -7657,21 +8825,21 @@ namespace GingerCore.Drivers
                 }
                 else if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "Name"))
                 {
-                    if (General.CompareStringsIgnoreCase(AE.Current.LocalizedControlType, conditions[0].Value))
+                    if (string.Equals(compareNamedProperty ? AE.Current.Name : AE.Current.LocalizedControlType, conditions[0].Value, StringComparison.OrdinalIgnoreCase))
                     {
                         listRAE.Add(AE);
                     }
                 }
                 else if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "AutomationId"))
                 {
-                    if (General.CompareStringsIgnoreCase(AE.Current.LocalizedControlType, conditions[0].Value))
+                    if (string.Equals(compareNamedProperty ? AE.Current.AutomationId : AE.Current.LocalizedControlType, conditions[0].Value, StringComparison.OrdinalIgnoreCase))
                     {
                         listRAE.Add(AE);
                     }
                 }
                 else if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "ClassName"))
                 {
-                    if (General.CompareStringsIgnoreCase(AE.Current.LocalizedControlType, conditions[0].Value))
+                    if (string.Equals(compareNamedProperty ? AE.Current.ClassName : AE.Current.LocalizedControlType, conditions[0].Value, StringComparison.OrdinalIgnoreCase))
                     {
                         listRAE.Add(AE);
                     }
@@ -7697,33 +8865,44 @@ namespace GingerCore.Drivers
             UIAuto.AutomationProperty AP = GetAutomationPropertyForXpathProp(conditions[0].PropertyName);
             UIAuto.Condition cond = new UIAuto.PropertyCondition(AP, conditions[0].Value);
             //---
-            List<ElementInfo> rc = [];
-            UIAElementInfo EI1;
-            UIAuto.AutomationElementCollection list = ((UIAuto.AutomationElement)EI.ElementObject).FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
-            if (list.Count == 0)
+            UIAuto.AutomationElement parent = (UIAuto.AutomationElement)EI.ElementObject;
+            List<UIAuto.AutomationElement> found = FindAllChildren(parent, cond, conditions);
+            if (found.Count == 0 && ShowDataWindowEditor(parent, conditions))
             {
-                List<UIAuto.AutomationElement> listByRawWalker;
-                GetChildrenUsingRawWalker((UIAuto.AutomationElement)EI.ElementObject, conditions, out listByRawWalker);
-
-                if (listByRawWalker.Count == 0)
+                for (int attempt = 0; found.Count == 0 && attempt < DataWindowEditorAttempts; attempt++)
                 {
-                    return null;
+                    Thread.Sleep(100);
+                    found = FindAllChildren(parent, cond, conditions);
                 }
-                for (int i = 0; i < listByRawWalker.Count; i++)
-                {
-                    EI1 = new UIAElementInfo() { ElementObject = listByRawWalker[i] };
-                    rc.Add(EI1);
-                    EI1 = null;
-                }
-                return rc;
             }
 
-            for (int i = 0; i < list.Count; i++)
+            if (found.Count == 0)
             {
-                EI1 = new UIAElementInfo() { ElementObject = list[i] };
-                rc.Add(EI1);
+                return null;
+            }
+            List<ElementInfo> rc = [];
+            foreach (UIAuto.AutomationElement element in found)
+            {
+                rc.Add(new UIAElementInfo() { ElementObject = element });
             }
             return rc;
+        }
+
+        private List<UIAuto.AutomationElement> FindAllChildren(UIAuto.AutomationElement parent, UIAuto.Condition cond, List<XpathPropertyCondition> conditions)
+        {
+            UIAuto.AutomationElementCollection list = parent.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
+            if (list.Count == 0)
+            {
+                GetChildrenUsingRawWalker(parent, conditions, out List<UIAuto.AutomationElement> listByRawWalker);
+                return listByRawWalker;
+            }
+
+            List<UIAuto.AutomationElement> found = [];
+            for (int i = 0; i < list.Count; i++)
+            {
+                found.Add(list[i]);
+            }
+            return found;
         }
 
         ElementInfo IXPath.GetPreviousSibling(ElementInfo EI)
@@ -7937,7 +9116,18 @@ namespace GingerCore.Drivers
 
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
 
-            UIAuto.AutomationProperty[] props = AE.GetSupportedProperties();
+            bool isPowerBuilder = mPlatform == ePlatformType.PowerBuilder;
+            UIAuto.AutomationProperty[] props;
+            try
+            {
+                props = AE.GetSupportedProperties();
+            }
+            catch (Exception e) when (isPowerBuilder)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementProperties while GetSupportedProperties, reading the core properties instead", e);
+                props = GetCoreAutomationProperties();
+            }
+
             foreach (UIAuto.AutomationProperty AP in props)
             {
                 ControlProperty CP = new ControlProperty
@@ -7956,7 +9146,11 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementProperties while GetCurrentPropertyValue::", e);
                     propValue = null;
                 }
-                if (propValue != null)
+                if (isPowerBuilder && propValue is Array arrayValue)
+                {
+                    CP.Value = string.Join(",", arrayValue.Cast<object>());
+                }
+                else if (propValue != null)
                 {
                     //TODO: based on type get the value instead of ToString, use ToString only in Switch default
                     CP.Value = propValue.ToString();
@@ -7964,6 +9158,32 @@ namespace GingerCore.Drivers
                 list.Add(CP);
             }
             return list;
+        }
+
+        private static UIAuto.AutomationProperty[] GetCoreAutomationProperties()
+        {
+            return
+            [
+                UIAuto.AutomationElement.NameProperty,
+                UIAuto.AutomationElement.AutomationIdProperty,
+                UIAuto.AutomationElement.ClassNameProperty,
+                UIAuto.AutomationElement.ControlTypeProperty,
+                UIAuto.AutomationElement.LocalizedControlTypeProperty,
+                UIAuto.AutomationElement.BoundingRectangleProperty,
+                UIAuto.AutomationElement.NativeWindowHandleProperty,
+                UIAuto.AutomationElement.ProcessIdProperty,
+                UIAuto.AutomationElement.IsEnabledProperty,
+                UIAuto.AutomationElement.IsOffscreenProperty,
+                UIAuto.AutomationElement.IsKeyboardFocusableProperty,
+                UIAuto.AutomationElement.HelpTextProperty,
+                UIAuto.ValuePatternIdentifiers.ValueProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.NameProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.RoleProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.StateProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.DescriptionProperty,
+                UIAuto.LegacyIAccessiblePatternIdentifiers.ChildIdProperty,
+            ];
         }
 
         public override object[] GetSupportedPatterns(object obj)

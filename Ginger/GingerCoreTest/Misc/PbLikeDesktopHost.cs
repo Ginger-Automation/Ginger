@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
+using Accessibility;
 using GingerCore.Drivers.Common.LegacyAutomation;
 using System;
 using System.Diagnostics;
@@ -541,6 +542,205 @@ namespace GingerCoreTest.Misc
             mOwner.Join(5000);
             mCreated.Dispose();
             mRelease.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// A window whose accessible object reads its value back but refuses to take one,
+    /// answering the write with DISP_E_MEMBERNOTFOUND the way a PowerBuilder DataWindow
+    /// cell does.
+    /// </summary>
+    /// <remarks>
+    /// UI Automation reaches it through its MSAA proxy, which offers a ValuePattern
+    /// because the value reads fine, so the refusal only shows once SetValue is called.
+    /// </remarks>
+    internal sealed class ValueRefusingWindow : IDisposable
+    {
+        private const int WsPopup = unchecked((int)0x80000000);
+        private const int WmGetObject = 0x003D;
+        private const int ObjIdClient = -4;
+
+        private static Guid IID_IAccessible = new Guid("618736e0-3c3d-11cf-810c-00aa00389b71");
+
+        private readonly ManualResetEventSlim mCreated = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim mRelease = new ManualResetEventSlim(false);
+        private readonly Thread mOwner;
+        private readonly RefusingCell mCell = new RefusingCell();
+
+        public IntPtr Handle { get; private set; }
+
+        public UIAuto.AutomationElement Element { get; }
+
+        /// <summary>
+        /// How many writes reached the accessible object, which is what shows a refusal
+        /// came from the control rather than from the write never being attempted.
+        /// </summary>
+        public int WriteAttempts => mCell.WriteAttempts;
+
+        public ValueRefusingWindow()
+        {
+            mOwner = new Thread(Own) { IsBackground = true };
+            mOwner.SetApartmentState(ApartmentState.STA);
+            mOwner.Start();
+            mCreated.Wait(5000);
+
+            Element = UIAuto.AutomationElement.FromHandle(Handle);
+        }
+
+        public DesktopActionContext CreateContext(DesktopOperation operation, string value = null)
+        {
+            return new DesktopActionContext
+            {
+                Operation = operation,
+                AutomationElement = Element,
+                NativeWindowHandle = Handle,
+                Value = value,
+                AllowPhysicalInput = false,
+                DesktopCanTakePhysicalInput = false,
+                TimeoutMs = 2000
+            };
+        }
+
+        private void Own()
+        {
+            AccessibleWindow window = new AccessibleWindow(mCell);
+            window.CreateHandle(new CreateParams
+            {
+                Caption = "ginger-value-refusing",
+                Style = WsPopup,
+                X = -32000,
+                Y = -32000,
+                Width = 120,
+                Height = 30
+            });
+            Handle = window.Handle;
+            mCreated.Set();
+
+            // Pumped, because UI Automation asks the window for its accessible object
+            // with a message and waits for the answer.
+            while (!mRelease.IsSet)
+            {
+                Application.DoEvents();
+                Thread.Sleep(1);
+            }
+
+            window.DestroyHandle();
+        }
+
+        public void Dispose()
+        {
+            mRelease.Set();
+            mOwner.Join(5000);
+            mCreated.Dispose();
+            mRelease.Dispose();
+        }
+
+        [DllImport("oleacc.dll")]
+        private static extern IntPtr LresultFromObject(ref Guid riid, IntPtr wParam, IntPtr punk);
+
+        private sealed class AccessibleWindow : NativeWindow
+        {
+            private readonly RefusingCell mCell;
+
+            internal AccessibleWindow(RefusingCell cell)
+            {
+                mCell = cell;
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == WmGetObject && unchecked((int)m.LParam.ToInt64()) == ObjIdClient)
+                {
+                    IntPtr unknown = Marshal.GetIUnknownForObject(mCell);
+                    try
+                    {
+                        m.Result = LresultFromObject(ref IID_IAccessible, m.WParam, unknown);
+                    }
+                    finally
+                    {
+                        Marshal.Release(unknown);
+                    }
+                    return;
+                }
+
+                base.WndProc(ref m);
+            }
+        }
+
+        [ComVisible(true)]
+        private sealed class RefusingCell : IAccessible
+        {
+            private const int ChildIdSelf = 0;
+            private const int RoleSystemText = 0x2A;
+            private const int StateSystemFocusable = 0x100000;
+            private const int DISP_E_MEMBERNOTFOUND = unchecked((int)0x80020003);
+
+            private int mWriteAttempts;
+
+            internal int WriteAttempts => Volatile.Read(ref mWriteAttempts);
+
+            public object accParent => null;
+
+            public int accChildCount => 0;
+
+            public object accFocus => null;
+
+            public object accSelection => null;
+
+            public object get_accChild(object childID) => null;
+
+            public string get_accName(object childID) => "City";
+
+            public string get_accValue(object childID) => "Pune";
+
+            public string get_accDescription(object childID) => null;
+
+            public object get_accRole(object childID) => RoleSystemText;
+
+            public object get_accState(object childID) => StateSystemFocusable;
+
+            public string get_accHelp(object childID) => null;
+
+            public int get_accHelpTopic(out string pszHelpFile, object childID)
+            {
+                pszHelpFile = null;
+                return -1;
+            }
+
+            public string get_accKeyboardShortcut(object childID) => null;
+
+            public string get_accDefaultAction(object childID) => null;
+
+            public void accSelect(int flagsSelect, object childID)
+            {
+            }
+
+            public void accLocation(out int pxLeft, out int pyTop, out int pcxWidth, out int pcyHeight, object childID)
+            {
+                pxLeft = -32000;
+                pyTop = -32000;
+                pcxWidth = 120;
+                pcyHeight = 30;
+            }
+
+            public object accNavigate(int navDir, object childStart) => null;
+
+            public object accHitTest(int xLeft, int yTop) => ChildIdSelf;
+
+            public void accDoDefaultAction(object childID)
+            {
+                throw new COMException("Member not found.", DISP_E_MEMBERNOTFOUND);
+            }
+
+            public void set_accName(object childID, string pszName)
+            {
+            }
+
+            public void set_accValue(object childID, string pszValue)
+            {
+                Interlocked.Increment(ref mWriteAttempts);
+                throw new COMException("Member not found.", DISP_E_MEMBERNOTFOUND);
+            }
         }
     }
 }

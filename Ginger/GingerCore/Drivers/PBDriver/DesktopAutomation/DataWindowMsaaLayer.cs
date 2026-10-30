@@ -381,7 +381,7 @@ namespace GingerCore.Drivers.PBDriver.DesktopAutomation
             return LayerResult.Ok(Name, "SetValue via verified IAccessible write to the targeted DataWindow cell");
         }
 
-        private static bool TryGetAccessible(IntPtr hwnd, out IAccessible accessible)
+        internal static bool TryGetAccessible(IntPtr hwnd, out IAccessible accessible)
         {
             accessible = null;
             if (AccessibleObjectFromWindow(hwnd, OBJID_CLIENT, ref IID_IAccessible, out object raw) != 0)
@@ -421,6 +421,13 @@ namespace GingerCore.Drivers.PBDriver.DesktopAutomation
         /// cells, and its centre points at whatever cell happens to sit in the
         /// middle of the grid.
         /// </summary>
+        /// <remarks>
+        /// A cell that UI Automation does not list has no element to take a
+        /// rectangle from, and the caller that read it through the accessible
+        /// object names the point it is drawn at instead. That point is only used
+        /// when there is no element at all, so a target that has one is still
+        /// resolved from the element exactly as before.
+        /// </remarks>
         private static bool TryGetTargetCentre(DesktopActionContext context, IntPtr dataWindowHandle, out int x, out int y)
         {
             x = 0;
@@ -428,6 +435,13 @@ namespace GingerCore.Drivers.PBDriver.DesktopAutomation
 
             if (context.AutomationElement is not UIAuto.AutomationElement element)
             {
+                if (context.AutomationElement == null && context.HasTargetPoint)
+                {
+                    x = context.TargetScreenX;
+                    y = context.TargetScreenY;
+                    return true;
+                }
+
                 return false;
             }
 

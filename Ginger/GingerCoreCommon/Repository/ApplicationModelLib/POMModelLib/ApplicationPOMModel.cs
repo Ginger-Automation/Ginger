@@ -261,6 +261,72 @@ namespace Amdocs.Ginger.Repository
             return unifiedList;
         }
 
+        public string GetUniqueElementName(string proposedName, ElementInfo elementToExclude = null)
+        {
+            string trimmedName = proposedName?.Trim() ?? string.Empty;
+            HashSet<string> existingNames = new(
+                MappedUIElements.Concat(UnMappedUIElements)
+                    .Where(element => !ReferenceEquals(element, elementToExclude))
+                    .Select(element => element.ElementName?.Trim())
+                    .Where(name => !string.IsNullOrEmpty(name)),
+                StringComparer.OrdinalIgnoreCase);
+
+            return GetUniqueElementName(trimmedName, existingNames);
+        }
+
+        public static bool TryValidateLocator(
+            IEnumerable<ElementLocator> locators,
+            ElementLocator locatorToExclude,
+            eLocateBy locateBy,
+            string locateValue,
+            out string validationError)
+        {
+            if (locateBy == eLocateBy.NA)
+            {
+                validationError = "Locator type must be selected.";
+                return false;
+            }
+
+            string trimmedValue = locateValue?.Trim();
+            if (string.IsNullOrEmpty(trimmedValue))
+            {
+                validationError = "Locator value cannot be empty.";
+                return false;
+            }
+
+            bool duplicateExists = locators?.Any(locator =>
+                !ReferenceEquals(locator, locatorToExclude)
+                && locator.LocateBy == locateBy
+                && string.Equals(locator.LocateValue?.Trim(), trimmedValue, StringComparison.OrdinalIgnoreCase)) == true;
+
+            if (duplicateExists)
+            {
+                validationError = "A locator with the same type and value already exists for this element.";
+                return false;
+            }
+
+            validationError = null;
+            return true;
+        }
+
+        private static string GetUniqueElementName(string proposedName, ISet<string> existingNames)
+        {
+            if (string.IsNullOrEmpty(proposedName) || !existingNames.Contains(proposedName))
+            {
+                return proposedName;
+            }
+
+            int suffix = 2;
+            string uniqueName;
+            do
+            {
+                uniqueName = $"{proposedName}_{suffix++}";
+            }
+            while (existingNames.Contains(uniqueName));
+
+            return uniqueName;
+        }
+
         public enum eElementGroup
         {
             Mapped,

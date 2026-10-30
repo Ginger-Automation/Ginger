@@ -19,12 +19,15 @@ limitations under the License.
 extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using System;
+using System.Runtime.InteropServices;
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.Common.LegacyAutomation
 {
     public sealed class UiaPatternLayer : IDesktopAutomationLayer
     {
+        private const int DISP_E_MEMBERNOTFOUND = unchecked((int)0x80020003);
+
         public string Name => "UIA-Pattern";
 
         public bool CanHandle(DesktopActionContext context)
@@ -63,6 +66,12 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
                         }
                         return LayerResult.Skip("ValuePattern value property not available");
                 }
+            }
+            catch (COMException ex) when (ex.HResult == DISP_E_MEMBERNOTFOUND)
+            {
+                // The control advertises the pattern but does not implement it (PowerBuilder DataWindow cells), so a later layer is expected to carry the action.
+                Reporter.ToLog(eLogLevel.DEBUG, "UIA pattern not implemented by the control: " + ex.Message);
+                return LayerResult.Fail(Name, ex.Message);
             }
             catch (Exception ex)
             {

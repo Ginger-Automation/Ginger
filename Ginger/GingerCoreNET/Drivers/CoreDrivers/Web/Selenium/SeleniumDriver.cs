@@ -6254,9 +6254,10 @@ namespace GingerCore.Drivers
                     xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()='svg']");
                 }
             }
-            else
+            else if (htmlElemNode.Ancestors().Any(ancestor => ancestor.Name.Equals("svg", StringComparison.OrdinalIgnoreCase)))
             {
-                // For SVG child elements, use local-name() in XPath
+                // For SVG child elements, use local-name() in XPath. Regular HTML elements must keep their indexed XPath,
+                // otherwise repeated siblings (menus, lists, rows) all resolve to the first sibling.
                 xpath = CreateSvgElementXPath(htmlElemNode);
             }
 
