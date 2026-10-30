@@ -633,12 +633,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xMainElementsGrid.Grid.CommitEdit();
 
-            if (!TryGetNewElementName(out string elementName))
+            var EI = IntializeElement();
+            if (EI == null || !TryGetNewElementName(out string elementName))
             {
                 return;
-            }
+            }  
 
-            var EI = IntializeElement();
             EI.ElementName = elementName;
 
             mPOM.MappedUIElements.Add(EI);
@@ -648,16 +648,26 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xMainElementsGrid.ScrollToViewCurrentItem();
         }
 
+        /// <summary>
+        /// Creates the element a new row will hold, or null when the user chose not to add one.
+        /// </summary>
+        /// <remarks>
+        /// On a Java application the user is asked whether to add a widget element. That is the only
+        /// element the question offers, so No (or closing the question) declines the add rather than
+        /// adding an element of some other type behind the answer.
+        /// </remarks>
         private ElementInfo IntializeElement()
         {
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Java)
             {
-                if (Reporter.ToUser(eUserMsgKey.WarnAddSwingOrWidgetElement, eUserMsgOption.YesNo, eUserMsgSelection.No) == eUserMsgSelection.Yes)
+                if (Reporter.ToUser(eUserMsgKey.WarnAddSwingOrWidgetElement, eUserMsgOption.YesNo, eUserMsgSelection.No) != eUserMsgSelection.Yes)
                 {
-                    var htmlElementInfo = new HTMLElementInfo();
-                    htmlElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath });
-                    return htmlElementInfo;
+                    return null;
                 }
+
+                var htmlElementInfo = new HTMLElementInfo();
+                htmlElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath });
+                return htmlElementInfo;
             }
 
             return new ElementInfo();
@@ -685,12 +695,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xMainElementsGrid.Grid.CommitEdit();
 
-            if (!TryGetNewElementName(out string elementName))
+            var EI = IntializeElement();
+            if (EI == null || !TryGetNewElementName(out string elementName))
             {
                 return;
             }
 
-            var EI = IntializeElement();
             EI.ElementName = elementName;
             mPOM.UnMappedUIElements.Add(EI);
             mManuallyAddedElements.Add(EI);

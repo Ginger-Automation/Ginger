@@ -255,6 +255,7 @@
     <Compile Include="Drivers\Common\LegacyAutomation\DesktopAutomationEngine.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\UiaPatternLayer.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\MsaaLayer.cs" />
+    <Compile Include="Drivers\PBDriver\DesktopAutomation\DataWindowGrid.cs" />
     <Compile Include="Drivers\PBDriver\DesktopAutomation\DataWindowMsaaLayer.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\Win32Layer.cs" />
     <Compile Include="Drivers\Common\LegacyAutomation\Win32Native.cs" />

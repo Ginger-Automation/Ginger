@@ -28,6 +28,8 @@
     <Compile Include="Misc\SourceControlUnitTest.cs" />
     <Compile Include="Misc\OcrTest.cs" />
     <Compile Include="Misc\DesktopAutomationEngineTest.cs" />
+    <Compile Include="Misc\DataWindowGridTest.cs" />
+    <Compile Include="Misc\FakeDataWindowHost.cs" />
     <Compile Include="Misc\PbLikeDesktopHost.cs" />
     <Compile Include="Misc\PbLikeDesktopAutomationEvidenceTest.cs" />
     <Compile Include="Misc\PbSpyLocatorTest.cs" />

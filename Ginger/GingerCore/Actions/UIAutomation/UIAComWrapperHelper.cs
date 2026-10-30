@@ -26,6 +26,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.Drivers.PBDriver.DesktopAutomation;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -6529,6 +6530,16 @@ namespace GingerCore.Drivers
             //Dictionary<string, UIAuto.AutomationElementCollection> MainDict = new Dictionary<string, UIAuto.AutomationElementCollection>();            
 
             MainDict = GetUpdateDictionary(AE, ref isElementsFromPoints);
+
+            // A DataWindow whose cells UI Automation does not list is worked through its accessible
+            // object. Every other grid, including every DataWindow UI Automation can see into, carries
+            // on exactly as before.
+            if (TryReadDataWindowCells(AE, MainDict, out DataWindowGrid dataWindowCells))
+            {
+                HandleDataWindowGridAction(AE, dataWindowCells, actGrid);
+                return;
+            }
+
             //Not to Remove Yet
             //if (!parentDictionary.ContainsKey(AE) || parentDictionary[AE].Keys.Count == 0)
             //{
@@ -7282,7 +7293,11 @@ namespace GingerCore.Drivers
                 }
 
             } while (tempElement != null && !taskFinished);
-            if (MainDict.Count < 4)
+
+            // Looking for the cells point by point puts the focus into the grid and asks it what lies at
+            // hundreds of points, and for a DataWindow that is read through its accessible object it can
+            // only find what is already known, the scroll bars.
+            if (MainDict.Count < 4 && !IsReadThroughItsAccessibleObject(AE, MainDict))
             {
                 List<UIAuto.AutomationElement> gridControls = GetGridControlsFromPoint(AE);
                 isElementsFromPoints = true;
@@ -7330,6 +7345,16 @@ namespace GingerCore.Drivers
                     mColNames.Add(str);
                 }
             }
+
+            // A DataWindow whose cells UI Automation does not list shows up here as the parts of its
+            // scroll bars, which would be offered as the columns. Its columns and rows are read from its
+            // accessible object instead; every other grid keeps the columns it has always had.
+            if (TryReadDataWindowCells(AE, tempDictionary, out DataWindowGrid dataWindowCells))
+            {
+                mColNames = [.. dataWindowCells.ColumnNames];
+                maxcount = dataWindowCells.RowCount;
+            }
+
             TableElementInfo TBI = new TableElementInfo
             {
                 ColumnNames = mColNames,
@@ -7337,6 +7362,591 @@ namespace GingerCore.Drivers
                 MainDict = tempDictionary
             };
             return TBI;
+        }
+
+        /// <summary>
+        /// Reads the cells of a DataWindow that UI Automation does not list, through the DataWindow's
+        /// accessible object.
+        /// </summary>
+        /// <param name="grid">The DataWindow.</param>
+        /// <param name="found">What UI Automation listed for the grid.</param>
+        /// <returns>
+        /// True only for a DataWindow none of whose cells UI Automation lists and whose accessible object
+        /// lists some. Every other grid answers false, and is worked as it always was.
+        /// </returns>
+        /// <remarks>
+        /// PowerBuilder 12.5 flags every cell of a DataWindow as invisible, and the MSAA proxy that gives
+        /// UI Automation its view of the control leaves out whatever is flagged, so the DataWindow reaches
+        /// UI Automation with no cells at all. What the scan of the grid then finds are the parts of its
+        /// scroll bars, which have names too, so the spy offered "Position" as the only column and a run
+        /// took a scroll bar's thumb for the cell. The accessible object itself still lists the cells,
+        /// named after their columns, and reading it needs no focus and no unlocked desktop.
+        ///
+        /// The decision rests on where the elements UI Automation did find lie. A DataWindow draws its
+        /// cells in its client area and its scroll bars outside it, so a grid with no listed element
+        /// inside the client area is one whose cells UI Automation cannot see. A scroll bar, its thumb and
+        /// its buttons do not count as a cell wherever they are found, as a grid that does not use the
+        /// scroll bars of its window draws its own inside the client area. A grid UI Automation can see
+        /// into is never read this way, however its cells read. Nor is a DataWindow that is not shown, as
+        /// one on a tab page that is not selected is not: nothing of it is drawn, so it is not asked.
+        /// </remarks>
+        public static bool TryReadDataWindowCells(UIAuto.AutomationElement grid, Dictionary<string, UIAuto.AutomationElement[]> found, out DataWindowGrid cells)
+        {
+            cells = null;
+            try
+            {
+                if (!IsDataWindowWithoutListedCells(grid, found, out IntPtr dataWindow, explain: true))
+                {
+                    return false;
+                }
+
+                // Logged before the read as well as after it, so that a log that stops here says where a
+                // control that stopped answering did so.
+                string className = grid.Current.ClassName;
+                Reporter.ToLog(eLogLevel.INFO, "UI Automation lists no cell of the " + className + " grid, so its cells are read through its accessible object");
+                Stopwatch clock = Stopwatch.StartNew();
+                if (DataWindowGrid.TryRead(dataWindow, out cells, out string details))
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Read " + cells.Cells.Count + " cells (" + cells.RowCount + " rows) of the " + className
+                        + " grid through its accessible object in " + clock.ElapsedMilliseconds + " ms");
+                    return true;
+                }
+
+                Reporter.ToLog(eLogLevel.INFO, "The accessible object of the " + className + " grid lists no cell either, so the grid is worked as it always was: " + details);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the cells of a DataWindow through its accessible object", ex);
+            }
+
+            cells = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Whether a grid is a DataWindow that is read through its accessible object: one UI Automation
+        /// lists no cell of, whose accessible object lists some.
+        /// </summary>
+        /// <remarks>
+        /// Asked before the grid is searched point by point, so that the search, which only puts the focus
+        /// into the grid and asks it what lies at hundreds of points, is left out where it can find nothing
+        /// but the scroll bars. The question costs a few reads of the accessible object. A grid it cannot
+        /// answer for is searched as it always was.
+        /// </remarks>
+        private static bool IsReadThroughItsAccessibleObject(UIAuto.AutomationElement grid, Dictionary<string, UIAuto.AutomationElement[]> found)
+        {
+            try
+            {
+                return IsDataWindowWithoutListedCells(grid, found, out IntPtr dataWindow, explain: false)
+                    && DataWindowGrid.ListsNamedCells(dataWindow);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not tell whether a DataWindow is read through its accessible object", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Whether a grid is a DataWindow that is shown and in whose cell area UI Automation lists no cell,
+        /// which is the first thing to hold before its accessible object is asked for the cells.
+        /// </summary>
+        /// <param name="explain">Whether to say in the log why a DataWindow is turned away.</param>
+        private static bool IsDataWindowWithoutListedCells(UIAuto.AutomationElement grid, Dictionary<string, UIAuto.AutomationElement[]> found, out IntPtr dataWindow, bool explain)
+        {
+            dataWindow = IntPtr.Zero;
+            if (!IsDataWindow(grid))
+            {
+                return false;
+            }
+
+            IntPtr handle = new IntPtr(grid.Current.NativeWindowHandle);
+            if (!DataWindowGrid.IsShown(handle) || !DataWindowGrid.TryGetClientArea(handle, out System.Drawing.Rectangle area))
+            {
+                if (explain)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "The " + grid.Current.ClassName + " grid is not shown, so the grid is worked as it always was");
+                }
+
+                return false;
+            }
+
+            UIAuto.AutomationElement listed = FindElementInside(found, area);
+            if (listed != null)
+            {
+                if (explain)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "UI Automation lists '" + listed.Current.Name + "' (" + listed.Current.ControlType.ProgrammaticName + ") inside the cell area of the "
+                        + grid.Current.ClassName + " grid, so the grid is worked as it always was");
+                }
+
+                return false;
+            }
+
+            dataWindow = handle;
+            return true;
+        }
+
+        /// <summary>The first element of what the scan found that lies inside the area and is not a part of a scroll bar.</summary>
+        private static UIAuto.AutomationElement FindElementInside(Dictionary<string, UIAuto.AutomationElement[]> found, System.Drawing.Rectangle area)
+        {
+            if (found == null)
+            {
+                return null;
+            }
+
+            foreach (UIAuto.AutomationElement[] elements in found.Values)
+            {
+                foreach (UIAuto.AutomationElement element in elements)
+                {
+                    if (DataWindowGrid.IsInside(area, element.Current.BoundingRectangle) && !IsScrollBarPart(element))
+                    {
+                        return element;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// A scroll bar, the thumb on it, or one of the buttons that scroll by a line or a page, is never a
+        /// cell, wherever the grid draws it.
+        /// </summary>
+        private static bool IsScrollBarPart(UIAuto.AutomationElement element)
+        {
+            int type = element.Current.ControlType.Id;
+            if (type == UIAuto.ControlType.ScrollBar.Id || type == UIAuto.ControlType.Thumb.Id)
+            {
+                return true;
+            }
+
+            if (type != UIAuto.ControlType.Button.Id)
+            {
+                return false;
+            }
+
+            UIAuto.AutomationElement parent = UIAuto.TreeWalker.RawViewWalker.GetParent(element);
+            return parent != null && parent.Current.ControlType.Id == UIAuto.ControlType.ScrollBar.Id;
+        }
+
+        /// <summary>
+        /// Runs a table action against the cells of a DataWindow read through its accessible object.
+        /// </summary>
+        /// <remarks>
+        /// Rows and columns are addressed as they are for any other grid: a row by its number, at random
+        /// or by the value of a column, and a column by title or by position. A title is the name the
+        /// DataWindow gives the column, such as item_code, which is what the spy lists, or the caption the
+        /// header of the column shows, and a row is the n-th cell of that name.
+        ///
+        /// Reading a cell and toggling a check box go through the accessible object and need nothing from
+        /// the desktop. A value is set through the desktop engine's DataWindow layer, which writes it and
+        /// reads it back, and where the control refuses that it is typed in behind a click, as the cells of
+        /// these grids have always been set. A click goes where a click on a point in a grid has always
+        /// gone, and a cell outside the visible part of the grid is scrolled to first, with the messages the
+        /// scroll bars of the grid send, so a row far down a long list is reached as it is by a person. A
+        /// grid that does not scroll is reported, and nothing is clicked in its place. Activating a row is
+        /// a click on one of its cells.
+        /// </remarks>
+        public void HandleDataWindowGridAction(UIAuto.AutomationElement grid, DataWindowGrid cells, ActTableElement actGrid)
+        {
+            if (actGrid.ControlAction.Equals(ActTableElement.eTableAction.GetRowCount))
+            {
+                actGrid.AddOrUpdateReturnParamActual("Actual", cells.RowCount.ToString());
+                actGrid.ExInfo = cells.RowCount.ToString();
+                return;
+            }
+
+            bool setText = actGrid.ControlAction.Equals(ActTableElement.eTableAction.SetText);
+            if (setText && (!actGrid.LocateRowType.Equals("Where")
+                || actGrid.WhereColSelector.Equals(ActTableElement.eRunColSelectorValue.ColNum)
+                || actGrid.ColSelectorValue.Equals(ActTableElement.eRunColSelectorValue.ColNum)))
+            {
+                actGrid.Error = "SetText Table Action is currently supported only by ColumnTitle with Where Option. Other available options are not supported yet";
+                return;
+            }
+
+            int row;
+            switch (actGrid.LocateRowType)
+            {
+                case "Row Number":
+                    row = Convert.ToInt32(actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.LocateRowValue));
+                    if (row < 0 || row >= cells.RowCount)
+                    {
+                        actGrid.Error = "Given Row Number " + row + " is not present in Column";
+                        return;
+                    }
+
+                    break;
+
+                case "Any Row":
+                    row = new Random().Next(0, cells.RowCount);
+                    break;
+
+                case "Where":
+                    string whereColumn = ResolveDataWindowColumn(cells, actGrid.WhereColSelector, actGrid.WhereColumnTitle);
+                    List<string> whereValues = [.. cells.Column(whereColumn).Select(cell => cell.Text)];
+                    row = DataWindowGrid.FindRow(whereValues, actGrid.WhereOperator, actGrid.GetInputParamCalculatedValue(ActTableElement.Fields.WhereColumnValue));
+                    if (row < 0)
+                    {
+                        throw new Exception("Grid Cell matching to given condition not present.");
+                    }
+
+                    break;
+
+                case "By Selected Row":
+                    actGrid.Error = "'By Selected Row' is not supported for this grid, locate the row by its number or by a column value instead";
+                    return;
+
+                default:
+                    actGrid.Error = "Row selection '" + actGrid.LocateRowType + "' is not supported for this grid";
+                    return;
+            }
+
+            string columnName = ResolveDataWindowColumn(cells, actGrid.ColSelectorValue, actGrid.LocateColTitle);
+            IReadOnlyList<DataWindowCell> column = cells.Column(columnName);
+            if (row >= column.Count)
+            {
+                actGrid.Error = "Given Row Number " + row + " is not present in Column";
+                return;
+            }
+
+            HandleDataWindowCellAction(grid, cells, columnName, row, actGrid);
+        }
+
+        private static string ResolveDataWindowColumn(DataWindowGrid cells, ActTableElement.eRunColSelectorValue selector, string column)
+        {
+            if (selector == ActTableElement.eRunColSelectorValue.ColNum)
+            {
+                int position = Convert.ToInt32(column);
+                if (position < 0 || position >= cells.ColumnNames.Count)
+                {
+                    throw new Exception("Input Column Number " + column + " not present in Grid. The grid has " + cells.ColumnNames.Count + " columns.");
+                }
+
+                return cells.ColumnNames[position];
+            }
+
+            if (cells.HasColumn(column))
+            {
+                return column;
+            }
+
+            // The caption of a header names its column too, which is how the column reads on the screen.
+            IReadOnlyList<string> captioned = cells.ColumnsCaptioned(column);
+            if (captioned.Count == 1)
+            {
+                return captioned[0];
+            }
+
+            if (captioned.Count > 1)
+            {
+                throw new Exception("Input Column Name " + column + " is the title of more than one column in Grid: " + string.Join(", ", captioned) + ". Name the column instead.");
+            }
+
+            throw new Exception("Input Column Name " + column + " not present in Grid. Its columns are " + cells.DescribeColumns() + ".");
+        }
+
+        private void HandleDataWindowCellAction(UIAuto.AutomationElement grid, DataWindowGrid cells, string columnName, int row, ActTableElement actGrid)
+        {
+            DataWindowCell cell = cells.Column(columnName)[row];
+            switch (actGrid.ControlAction)
+            {
+                case ActTableElement.eTableAction.GetValue:
+                case ActTableElement.eTableAction.GetText:
+                    // The DataWindow hands out the text a cell shows, which is the value and the text both.
+                    string text = cell.Text;
+                    actGrid.AddOrUpdateReturnParamActual("Actual", text);
+                    actGrid.ExInfo = text;
+                    return;
+
+                case ActTableElement.eTableAction.Toggle:
+                    if (!cell.IsCheckBox)
+                    {
+                        actGrid.Error = "Toggle is supported only for check box cells.";
+                        return;
+                    }
+
+                    if (!ChangeDataWindowCheckBox(cell, !cell.IsChecked))
+                    {
+                        actGrid.Error = "The check box did not change when it was toggled.";
+                        return;
+                    }
+
+                    actGrid.AddOrUpdateReturnParamActual("Actual", cell.Text);
+                    actGrid.ExInfo = cell.Text;
+                    return;
+
+                case ActTableElement.eTableAction.SetValue:
+                case ActTableElement.eTableAction.SetText:
+                case ActTableElement.eTableAction.Click:
+                case ActTableElement.eTableAction.ClickXY:
+                case ActTableElement.eTableAction.DoubleClick:
+                case ActTableElement.eTableAction.ActivateRow:
+                    break;
+
+                default:
+                    actGrid.Error = "Action  - " + actGrid.ControlAction + " not supported for Grids";
+                    return;
+            }
+
+            bool activateRow = actGrid.ControlAction == ActTableElement.eTableAction.ActivateRow;
+            if (activateRow)
+            {
+                cell = CellToClickToActivate(cells, columnName, row);
+                if (cell == null)
+                {
+                    actGrid.Error = "Row " + row + " has no cell to click that is not a check box, and a click would change a check box.";
+                    return;
+                }
+            }
+
+            // PowerBuilder 12.5 does not flag the rows it has scrolled out of view as off screen, so where the cell
+            // is drawn decides whether a click or the keys aimed at it would reach it. A cell that is not drawn
+            // in view is scrolled to first, which is what a person does with the scroll bar.
+            IntPtr dataWindow = new IntPtr(grid.Current.NativeWindowHandle);
+            using IDisposable inItsPixels = DataWindowGrid.InCoordinatesOf(dataWindow);
+            if (!cells.TryBringIntoView(dataWindow, cell, out System.Drawing.Rectangle bounds, out string notInView))
+            {
+                actGrid.Error = "Unable to bring cell on screen. " + notInView;
+                return;
+            }
+
+            if (actGrid.ControlAction == ActTableElement.eTableAction.SetValue || actGrid.ControlAction == ActTableElement.eTableAction.SetText)
+            {
+                SetDataWindowCellValue(grid, cells, columnName, row, bounds, actGrid);
+                return;
+            }
+
+            // The coordinate clicks take their point as the offset from the top left of the grid, which is the
+            // element they are given, so the point asked for inside the cell is turned into one.
+            System.Drawing.Rectangle gridBounds = grid.Current.BoundingRectangle;
+            string status;
+            if (actGrid.ControlAction == ActTableElement.eTableAction.Click)
+            {
+                // A check box takes its own default action, which reaches the box wherever in the cell it is drawn.
+                status = cell.IsCheckBox && cell.TryDoDefaultAction()
+                    ? ClickedSuccessfully + " Through the check box's default action."
+                    : ClickOnXYPoint(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, null));
+            }
+            else if (actGrid.ControlAction == ActTableElement.eTableAction.ClickXY)
+            {
+                if (!DataWindowGrid.TryParseOffset(actGrid.ValueForDriver, out _, out _))
+                {
+                    actGrid.Error = "ClickXY needs the point inside the cell as x,y, such as 10,5. Got '" + actGrid.ValueForDriver + "'.";
+                    return;
+                }
+
+                status = ClickOnXYPoint(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, actGrid.ValueForDriver));
+            }
+            else if (activateRow)
+            {
+                status = ClickOnXYPoint(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, null));
+            }
+            else
+            {
+                status = DoDoubleClick(grid, DataWindowGrid.OffsetInGrid(gridBounds, bounds, actGrid.ValueForDriver));
+            }
+
+            if (!status.Contains("Clicked Successfully"))
+            {
+                actGrid.Error += status;
+            }
+            else
+            {
+                actGrid.ExInfo += activateRow ? "Row " + row + " activated through its " + cell.Name + " cell. " + status : status;
+            }
+        }
+
+        /// <summary>
+        /// The cell of a row to click to activate the row: the one in the column asked for, or, where that is
+        /// a check box, which a click would change, the first cell of the row that is not one. Null when the
+        /// row has none.
+        /// </summary>
+        private static DataWindowCell CellToClickToActivate(DataWindowGrid cells, string columnName, int row)
+        {
+            DataWindowCell asked = cells.Column(columnName)[row];
+            if (!asked.IsCheckBox)
+            {
+                return asked;
+            }
+
+            foreach (string name in cells.ColumnNames)
+            {
+                IReadOnlyList<DataWindowCell> column = cells.Column(name);
+                if (row < column.Count && !column[row].IsCheckBox && column[row].TryGetBounds(out _))
+                {
+                    return column[row];
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sets the value of a DataWindow cell and confirms the cell holds it afterwards.
+        /// </summary>
+        /// <remarks>
+        /// Routed as <see cref="SetCellTextAtPoint"/> routes the text it writes into a cell: where the
+        /// mouse and keyboard reach the machine, and the run has not asked for window messages, the value
+        /// is typed in behind a click, which is how these cells have always been set. Otherwise the
+        /// desktop engine writes it through the DataWindow's accessible object, and the keyboard is only
+        /// the last resort where the control refuses the write and a person is still at the machine.
+        /// Either way the cell is read back, so a write that landed nowhere is reported as a failure and
+        /// not as a pass.
+        /// </remarks>
+        private void SetDataWindowCellValue(UIAuto.AutomationElement grid, DataWindowGrid cells, string columnName, int row, System.Drawing.Rectangle bounds, ActTableElement actGrid)
+        {
+            DataWindowCell cell = cells.Column(columnName)[row];
+            string value = actGrid.ValueForDriver;
+            if (cell.IsCheckBox)
+            {
+                if (!TryParseCheckState(value, out bool wanted))
+                {
+                    actGrid.Error = "A check box cell is set with Checked or Unchecked, not '" + value + "'.";
+                }
+                else if (cell.IsChecked != wanted && !ChangeDataWindowCheckBox(cell, wanted))
+                {
+                    actGrid.Error = "The check box did not become " + (wanted ? "checked" : "unchecked") + ".";
+                }
+                else
+                {
+                    actGrid.ExInfo = value + " set";
+                }
+
+                return;
+            }
+
+            int x = bounds.X + (bounds.Width / 2);
+            int y = bounds.Y + (bounds.Height / 2);
+
+            bool typeIt = true;
+            bool inputIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(inputIsUsable))
+            {
+                // The cell has no window and no UI Automation element, so the engine is pointed at the
+                // DataWindow and told where in it the cell is drawn.
+                DesktopActionContext context = DesktopActionMapper.FromElement(null, DesktopOperation.SetValue, value, allowPhysicalInput: false, NonIntrusiveInput);
+                context.PointOwnerWindowHandle = new IntPtr(grid.Current.NativeWindowHandle);
+                context.HasTargetPoint = true;
+                context.TargetScreenX = x;
+                context.TargetScreenY = y;
+
+                DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(context);
+                if (engineResult.Success)
+                {
+                    typeIt = false;
+                }
+                else
+                {
+                    string info = engineResult.ErrorMessage + " " + engineResult.ExecutionInfo;
+                    if (!inputIsUsable)
+                    {
+                        throw new Exception("Unable to set value. Value - " + value + ". The desktop cannot take"
+                            + " physical input (" + InteractiveDesktop.DescribeSession() + "), and " + info);
+                    }
+
+                    if (!InteractiveDesktop.TryFallBackToPhysicalInput("set the grid cell value", info, out string refusal))
+                    {
+                        throw new Exception("Unable to set value. Value - " + value + ". " + refusal);
+                    }
+                }
+            }
+
+            if (typeIt)
+            {
+                winAPI.SendClickOnXYPoint(grid, x, y);
+                WinAPIAutomation.SendInputKeys(value);
+                WinAPIAutomation.SendTabKey();
+            }
+
+            // Whichever route wrote it, the cell is read back, so a write that landed in a neighbouring cell,
+            // or nowhere, is not reported as one that worked. The handle this step holds on the cell is asked
+            // first; if the DataWindow has rebuilt its cells since, the grid is read again and the same
+            // column and row are asked.
+            string actual = null;
+            bool holdsValue = false;
+            for (int attempt = 0; attempt < 10 && !holdsValue; attempt++)
+            {
+                if (attempt > 0)
+                {
+                    System.Threading.Thread.Sleep(100);
+                }
+
+                actual = cell.Value;
+                holdsValue = CellShows(actual, value);
+                if (!holdsValue && attempt > 0
+                    && DataWindowGrid.TryRead(new IntPtr(grid.Current.NativeWindowHandle), out DataWindowGrid fresh, out _)
+                    && row < fresh.Column(columnName).Count)
+                {
+                    actual = fresh.Column(columnName)[row].Value;
+                    holdsValue = CellShows(actual, value);
+                }
+            }
+
+            if (holdsValue)
+            {
+                actGrid.ExInfo = value + " set";
+            }
+            else
+            {
+                actGrid.Error += "The cell did not accept '" + value + "' and still reads '" + actual + "'.";
+            }
+        }
+
+        private static bool CellShows(string actual, string value)
+        {
+            return DataWindowMsaaLayer.CellHoldsValue(actual, value)
+                || (string.IsNullOrWhiteSpace(value) && string.IsNullOrWhiteSpace(actual));
+        }
+
+        /// <summary>
+        /// Brings a check box to the state asked for through its default action, which checks or unchecks
+        /// it, and waits for the DataWindow to show the change.
+        /// </summary>
+        private static bool ChangeDataWindowCheckBox(DataWindowCell checkBox, bool wanted)
+        {
+            if (!checkBox.TryDoDefaultAction())
+            {
+                return false;
+            }
+
+            for (int attempt = 0; attempt < 10; attempt++)
+            {
+                if (checkBox.IsChecked == wanted)
+                {
+                    return true;
+                }
+
+                System.Threading.Thread.Sleep(100);
+            }
+
+            return checkBox.IsChecked == wanted;
+        }
+
+        private static bool TryParseCheckState(string value, out bool isChecked)
+        {
+            isChecked = false;
+            switch ((value ?? string.Empty).Trim().ToLowerInvariant())
+            {
+                case "checked":
+                case "true":
+                case "on":
+                case "yes":
+                case "1":
+                    isChecked = true;
+                    return true;
+
+                case "unchecked":
+                case "false":
+                case "off":
+                case "no":
+                case "0":
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         private object GetComboValues(UIAuto.AutomationElement AE)
