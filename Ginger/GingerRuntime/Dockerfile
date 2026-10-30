@@ -1,8 +1,8 @@
 # Use an appropriate base image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-jammy
 
 # Copy the published application to the container
-COPY ./bin/Release/net8.0/linux-x64 ./GingerRuntime
+COPY ./bin/Release/net10.0/linux-x64 ./GingerRuntime
 
 # Switch to root user for installation
 USER root
