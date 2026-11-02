@@ -51,7 +51,8 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            _driver.Quit();
+            // ClassInit skips driver creation on non-Windows, so cleanup must tolerate a null driver.
+            _driver?.Quit();
         }
 
         public static void InitDriver()
@@ -61,7 +62,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         }
         public static void CleanDriver()
         {
-            _driver.Quit();
+            _driver?.Quit();
         }
 
         [TestMethod]
