@@ -3255,6 +3255,316 @@ namespace GingerCore.Drivers
             return true;
         }
 
+        /// <remarks>
+        /// Not static, so the agent's non-intrusive setting can be passed on. While it
+        /// was, the ordinary click - the one most steps in a suite are - was the only
+        /// input route that never asked for the setting, and a run with it switched on
+        /// still took the mouse for every click the UIA patterns could not serve.
+        /// </remarks>
+        private string ClickElementWithDesktopEngine(UIAuto.AutomationElement element, bool allowPhysicalInput)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
+                DesktopActionMapper.FromElement(element, DesktopOperation.Click, null, allowPhysicalInput, NonIntrusiveInput));
+            if (engineResult.Success)
+            {
+                return "Clicked Successfully. " + engineResult.ExecutionInfo;
+            }
+
+            // The attempt log names the layer that declined and why. Dropping it left
+            // a failed click reporting only that everything was tried, which is not
+            // enough to tell a missing pattern from a target no window owns.
+            return string.IsNullOrEmpty(engineResult.ExecutionInfo)
+                ? engineResult.ErrorMessage
+                : engineResult.ErrorMessage + " Techniques tried: " + engineResult.ExecutionInfo;
+        }
+
+        /// <summary>
+        /// The marker the drivers test for. Coordinate clicks report through the same
+        /// wording as every other click path so the existing checks keep working.
+        /// </summary>
+        private const string ClickedSuccessfully = "Clicked Successfully.";
+
+        /// <summary>
+        /// Clicks or double clicks a screen point by window message, for use where the
+        /// mouse cannot reach it.
+        /// </summary>
+        /// <remarks>
+        /// Reached only once the desktop has reported that it cannot take physical
+        /// input, so the mouse still serves every unlocked run exactly as before: a
+        /// message click and a real one are not interchangeable for every control, and
+        /// a passing run is not the place to discover that.
+        /// </remarks>
+        private string ClickPointWithWindowMessages(UIAuto.AutomationElement element, DesktopOperation operation, int screenX, int screenY)
+        {
+            DesktopEngineResult engineResult = DesktopAutomationEngine.PointClick.Execute(
+                DesktopActionMapper.ForPoint(element, operation, screenX, screenY, NonIntrusiveInput));
+
+            return engineResult.Success
+                ? ClickedSuccessfully + " " + engineResult.ExecutionInfo
+                : DesktopActionMapper.DescribeUnreachablePoint(operation, screenX, screenY, engineResult);
+        }
+
+        /// <summary>
+        /// Clicks an element through the layered engine where the quiet route is in
+        /// play, and with the mouse otherwise.
+        /// </summary>
+        /// <remarks>
+        /// Stands in for <see cref="WinAPIAutomation.SendClick"/> at the menu and
+        /// expand routes. That method raises the target's window and moves the real
+        /// cursor to the element's centre, so a run that had asked for the quiet route
+        /// still took the screen for every menu it opened, and behind a lock screen it
+        /// clicked nothing while reporting nothing.
+        /// </remarks>
+        /// <param name="raiseWindow">
+        /// Whether the mouse route should pull the application to the foreground first,
+        /// which it has to for the click to land on the window being driven. Passed
+        /// through unchanged; the quiet route raises nothing.
+        /// </param>
+        /// <returns>
+        /// False only where the click was not delivered and there was nothing further
+        /// to try.
+        /// </returns>
+        private bool ClickElementQuietly(UIAuto.AutomationElement element, string what, bool raiseWindow = true)
+        {
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                string status = ClickElementWithDesktopEngine(element, allowPhysicalInput: false);
+                if (status.Contains(ClickedSuccessfully))
+                {
+                    return true;
+                }
+                if (!mouseIsUsable)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, status);
+                    return false;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput(what, status, out _))
+                {
+                    return false;
+                }
+            }
+
+            return winAPI.SendClick(element, raiseWindow);
+        }
+
+        /// <summary>
+        /// Brings the window being driven to the front before an element is looked up
+        /// by coordinates, so the point lands on it rather than on whatever is covering
+        /// it. Does nothing where the quiet route is in play.
+        /// </summary>
+        /// <remarks>
+        /// Finding an element is not supposed to change anything, and this is the one
+        /// place in the locator that did: a ByXY step pulled the application forward
+        /// and took the screen from whoever was at the machine, before any action had
+        /// run. The hit test reads what is on screen either way, so skipping it costs
+        /// only the certainty of which window answers - and a point under another
+        /// window now resolves to that window, which the step goes on to report rather
+        /// than quietly acting on the wrong one.
+        ///
+        /// Window switching is left alone: raising a window is the whole point of that
+        /// action, not a side effect of it.
+        /// </remarks>
+        private void RaiseWindowForPointLookup()
+        {
+            if (PreferWindowMessages(InteractiveDesktop.IsAvailable()))
+            {
+                return;
+            }
+
+            if (!WinAPIAutomation.SetForeGroundWindow(CurrentWindow.Current.ProcessId))
+            {
+                WinAPIAutomation.ShowWindow(CurrentWindow);
+            }
+        }
+
+        /// <summary>
+        /// The element at a screen point, or for PowerBuilder null when another application's
+        /// window covers the point.
+        /// </summary>
+        private UIAuto.AutomationElement GetApplicationElementFromPoint(System.Drawing.Point point)
+        {
+            if (mPlatform == ePlatformType.PowerBuilder && IsCoveredByAnotherApplication(point, GetCurrentWindowProcessId()))
+            {
+                return null;
+            }
+            return UIAuto.AutomationElement.FromPoint(point);
+        }
+
+        /// <summary>
+        /// The process of the current window, or 0 when it cannot be read.
+        /// </summary>
+        private int GetCurrentWindowProcessId()
+        {
+            try
+            {
+                return CurrentWindow.Current.ProcessId;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the process of the current window", ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// For PowerBuilder, whether the window at a screen point, which is where a click there
+        /// goes, belongs to another application than the one driven.
+        /// </summary>
+        /// <remarks>
+        /// False whenever the application cannot be told apart, so the point is then used as it
+        /// always was: an unknown process, or the desktop, which owns no window at any point.
+        /// </remarks>
+        private bool IsCoveredByAnotherApplication(System.Drawing.Point point, int applicationProcessId)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder || applicationProcessId <= 0)
+            {
+                return false;
+            }
+            IntPtr desktop = WinAPIAutomation.GetDesktopWindow();
+            WinAPIAutomation.GetWindowThreadProcessId(desktop, out uint desktopProcessId);
+            if (desktopProcessId == applicationProcessId)
+            {
+                return false;
+            }
+            // Asked of the window rather than of the element at the point, whose properties come
+            // from the application, which need not answer while it is still handling a click.
+            // The point is in physical pixels, as UI Automation gives them, whatever the DPI
+            // awareness of this process. The window is the application's when it or any window it
+            // is inside or owned by is, so one that another process shows inside the application
+            // or for it, as an embedded OLE server does, still counts, and so does an application
+            // window that a launcher of another process owns.
+            IntPtr window = WinAPIAutomation.WindowFromPhysicalPoint(point);
+            IntPtr candidate = window;
+            for (int depth = 0; candidate != IntPtr.Zero && candidate != desktop && depth < 64; depth++)
+            {
+                WinAPIAutomation.GetWindowThreadProcessId(candidate, out uint candidateProcessId);
+                if (candidateProcessId == applicationProcessId)
+                {
+                    return false;
+                }
+                IntPtr parent = WinAPIAutomation.GetAncestor(candidate, WinAPIAutomation.GA_PARENT);
+                candidate = parent != IntPtr.Zero && parent != desktop ? parent : WinAPIAutomation.GetWindow(candidate, WinAPIAutomation.GW_OWNER);
+            }
+            WinAPIAutomation.GetWindowThreadProcessId(window, out uint processId);
+            Reporter.ToLog(eLogLevel.DEBUG, "The point " + point + " of the window '" + CurrentWindowName + "' is covered by a window of process " + processId);
+            return true;
+        }
+
+        /// <summary>
+        /// Adds a tree or list node to the current selection rather than replacing it.
+        /// </summary>
+        /// <remarks>
+        /// The selection pattern comes first because it says exactly that and needs no
+        /// input at all. Where it is missing the selection is extended the way the
+        /// mouse does it, by clicking with Ctrl held: on the quiet route the modifier
+        /// rides in the message, so it applies to this one click and to nothing else.
+        ///
+        /// The physical route is last and holds the real key, which is why the release
+        /// is in a finally. A click that throws in between used to leave Ctrl down for
+        /// the machine, turning every keystroke after it - in the run and for whoever
+        /// was at the desk - into a shortcut.
+        /// </remarks>
+        private void AddNodeToSelection(UIAuto.AutomationElement node, object selectionItemPattern, bool canSelectMultiple)
+        {
+            if (selectionItemPattern != null && canSelectMultiple)
+            {
+                ((UIAuto.SelectionItemPattern)selectionItemPattern).AddToSelection();
+                return;
+            }
+
+            UIAuto.AutomationElement target = NodeClickTarget(node);
+
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                ResolveClickPoint(target, string.Empty, out int x, out int y);
+                string status = ClickPointWithWindowMessages(target, DesktopOperation.ControlClick, x, y);
+                if (status.Contains(ClickedSuccessfully))
+                {
+                    return;
+                }
+                if (!mouseIsUsable)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, status);
+                    return;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput("add the node to the selection", status, out _))
+                {
+                    return;
+                }
+            }
+
+            WinAPIAutomation.HoldControlKeyOfKeyboard();
+            try
+            {
+                winAPI.SendClick(target);
+            }
+            finally
+            {
+                WinAPIAutomation.ReleaseControlKeyOfKeyboard();
+            }
+        }
+
+        /// <summary>
+        /// Where a node's click should land: on its text child where it has one, since
+        /// a tree item's own rectangle can run the width of the control and its centre
+        /// then falls on empty row rather than on the label.
+        /// </summary>
+        private static UIAuto.AutomationElement NodeClickTarget(UIAuto.AutomationElement node)
+        {
+            UIAuto.AutomationElement nodeText = node.FindFirst(
+                Interop.UIAutomationClient.TreeScope.TreeScope_Children,
+                new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
+
+            return nodeText ?? node;
+        }
+
+        /// <summary>
+        /// Clicks a screen point that one of the control-specific routes worked out for
+        /// itself - a tab's label, a scrollbar's arrow, a drop-down's button - by
+        /// window message where that route is in play and with the mouse otherwise.
+        /// </summary>
+        /// <remarks>
+        /// Stands in for <see cref="WinAPIAutomation.SendClickOnXYPoint"/> at the sites
+        /// that had nothing but it. That method raises the target's window and moves
+        /// the real cursor, so these steps took the screen even on a run that had asked
+        /// for the quiet route, and behind a lock screen they clicked nothing and
+        /// reported nothing about it.
+        /// </remarks>
+        /// <param name="what">
+        /// What the click was for, phrased to read inside a sentence about falling back
+        /// to the mouse.
+        /// </param>
+        /// <returns>
+        /// False only where the click was not delivered and there was nothing further
+        /// to try. A run with the mouse available ends at it and so always answers true.
+        /// </returns>
+        private bool ClickScreenPoint(UIAuto.AutomationElement element, int screenX, int screenY, string what)
+        {
+            bool mouseIsUsable = InteractiveDesktop.IsAvailable();
+            if (PreferWindowMessages(mouseIsUsable))
+            {
+                string status = ClickPointWithWindowMessages(element, DesktopOperation.Click, screenX, screenY);
+                if (status.Contains(ClickedSuccessfully))
+                {
+                    return true;
+                }
+                if (!mouseIsUsable)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, status);
+                    return false;
+                }
+                if (!InteractiveDesktop.TryFallBackToPhysicalInput(what, status, out _))
+                {
+                    return false;
+                }
+            }
+
+            winAPI.SendClickOnXYPoint(element, screenX, screenY);
+            return true;
+        }
+
         private bool TrySetValueViaDesktopEngine(UIAuto.AutomationElement element, string value, out string info)
         {
             DesktopEngineResult engineResult = DesktopAutomationEngine.Default.Execute(
