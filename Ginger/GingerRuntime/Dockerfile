@@ -62,9 +62,31 @@ USER root
 # Set the working directory
 WORKDIR /GingerRuntime
 
-RUN ./selenium-manager/linux/selenium-manager --browser chrome
-RUN ./selenium-manager/linux/selenium-manager --browser firefox --browser-version 134
-RUN ./selenium-manager/linux/selenium-manager --browser edge --browser-version 134
+# Selenium 4.41 publishes the binary as a native asset. Older packages used
+# selenium-manager/linux/selenium-manager. Use whichever path this build contains.
+RUN set -eu; \
+    manager=""; \
+    for candidate in \
+        /GingerRuntime/selenium-manager \
+        /GingerRuntime/runtimes/linux/native/selenium-manager \
+        /GingerRuntime/publish/selenium-manager \
+        /GingerRuntime/publish/runtimes/linux/native/selenium-manager \
+        /GingerRuntime/selenium-manager/linux/selenium-manager \
+        /GingerRuntime/publish/selenium-manager/linux/selenium-manager; do \
+        if [ -f "$candidate" ]; then \
+            manager="$candidate"; \
+            break; \
+        fi; \
+    done; \
+    if [ -z "$manager" ]; then \
+        echo "selenium-manager was not found under /GingerRuntime" >&2; \
+        find /GingerRuntime -name 'selenium-manager*' -print >&2; \
+        exit 1; \
+    fi; \
+    chmod +x "$manager"; \
+    "$manager" --browser chrome; \
+    "$manager" --browser firefox --browser-version 134; \
+    "$manager" --browser edge --browser-version 134
 
 # Specify the entry point
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
