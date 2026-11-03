@@ -111,16 +111,22 @@ jobs:
             if: runner.os == 'macOS'
             run: brew install mono
 # ------------------------------------------------------------------------------------------------------
-# Install Nuget tool v1.0.5
+# Install Nuget tool
 # ------------------------------------------------------------------------------------------------------
         -   name: 'Setup Nuget'
+            if: runner.os == 'Windows'
             uses: Nuget/setup-nuget@v2.0.1
 
 # ------------------------------------------------------------------------------------------------------
 # Restore Ginger solution NuGet packages
 # ------------------------------------------------------------------------------------------------------
-        -   name: 'Restore nuget packages'
+        -   name: 'Restore nuget packages - Windows'
+            if: runner.os == 'Windows'
             run: nuget restore ./Ginger/Ginger.sln
+            
+        -   name: 'Restore nuget packages - Linux and macOS'
+            if: runner.os != 'Windows'
+            run: dotnet restore ./Ginger/GingerRuntime/GingerRuntime.csproj
         
 # ------------------------------------------------------------------------------------------------------
 # Build && Publish Ginger Solution

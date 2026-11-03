@@ -46,6 +46,8 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         private const int MK_LBUTTON = 0x0001;
         private const int MK_RBUTTON = 0x0002;
         private const int MK_CONTROL = 0x0008;
+        private const int TCM_GETITEMCOUNT = 0x1304;
+        private const int TCM_GETCURSEL = 0x130B;
         private const uint CWP_SKIPINVISIBLE = 0x0001;
         private const uint CWP_SKIPDISABLED = 0x0002;
         private const uint CWP_SKIPTRANSPARENT = 0x0004;
@@ -142,6 +144,25 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
 
             // Some native edit controls ignore WM_SETTEXT but accept a replacement of
             // the current selection, which still needs no foreground keyboard input.
+            return ReplaceAllText(hwnd, expected, timeoutMs);
+        }
+
+        /// <summary>
+        /// Replaces all of a child edit control's text as an edit the user made, and
+        /// confirms it by reading the value back.
+        /// </summary>
+        /// <remarks>
+        /// A multi-line edit control does not tell its parent about text set with
+        /// WM_SETTEXT, so a parent that keeps the value itself, as a DataWindow does with
+        /// its edit control, drops it. A replaced selection is reported.
+        /// </remarks>
+        public static bool ReplaceControlText(IntPtr hwnd, string value, int timeoutMs)
+        {
+            return IsChildWindow(hwnd) && IsEditClass(hwnd) && ReplaceAllText(hwnd, value ?? string.Empty, timeoutMs);
+        }
+
+        private static bool ReplaceAllText(IntPtr hwnd, string expected, int timeoutMs)
+        {
             if (!TrySend(hwnd, EM_SETSEL, IntPtr.Zero, new IntPtr(-1), timeoutMs)
                 || !TrySend(hwnd, EM_REPLACESEL, new IntPtr(1), expected, timeoutMs))
             {
@@ -168,6 +189,19 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             }
 
             return TrySend(hwnd, BM_CLICK, IntPtr.Zero, IntPtr.Zero, timeoutMs);
+        }
+
+        /// <summary>
+        /// Whether a tab control has its first tab selected. False also where the window does
+        /// not answer as a tab control, which answers both messages with 0.
+        /// </summary>
+        public static bool IsFirstTabSelected(IntPtr hwnd, int timeoutMs)
+        {
+            return IsChildWindow(hwnd)
+                && TrySend(hwnd, TCM_GETITEMCOUNT, IntPtr.Zero, IntPtr.Zero, timeoutMs, out IntPtr count)
+                && count.ToInt64() > 0
+                && TrySend(hwnd, TCM_GETCURSEL, IntPtr.Zero, IntPtr.Zero, timeoutMs, out IntPtr selected)
+                && selected.ToInt64() == 0;
         }
 
         /// <summary>

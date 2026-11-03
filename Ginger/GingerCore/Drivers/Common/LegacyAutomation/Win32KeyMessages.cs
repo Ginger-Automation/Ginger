@@ -78,6 +78,10 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
         private static extern IntPtr SendMessageTimeout(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, uint flags, uint timeout, out IntPtr result);
 
         [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -216,6 +220,23 @@ namespace GingerCore.Drivers.Common.LegacyAutomation
             return IsDialog(dialog)
                 && Deliver(dialog, WM_NEXTDLGCTL, IntPtr.Zero, timeout)
                 && FocusSettled(before, hwnd);
+        }
+
+        /// <summary>
+        /// Queues VK_TAB down + up on <paramref name="hwnd"/> without waiting for the
+        /// window to handle it.
+        /// </summary>
+        /// <remarks>
+        /// A PowerBuilder DataWindow that rejects the value being committed opens a modal
+        /// message box while it is still handling the key, so <see cref="SendTab"/> does not
+        /// return until someone closes the box and fails on its timeout. Nothing here
+        /// confirms the key was acted on; the caller has to read the application for that.
+        /// </remarks>
+        public static bool PostTab(IntPtr hwnd)
+        {
+            return hwnd != IntPtr.Zero
+                && PostMessage(hwnd, WM_KEYDOWN, (IntPtr)VK_TAB, IntPtr.Zero)
+                && PostMessage(hwnd, WM_KEYUP, (IntPtr)VK_TAB, IntPtr.Zero);
         }
 
         /// <summary>
