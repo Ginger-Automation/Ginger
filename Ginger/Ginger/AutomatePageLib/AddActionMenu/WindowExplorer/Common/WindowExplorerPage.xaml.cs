@@ -528,6 +528,7 @@ namespace Ginger.WindowExplorer
         {
             xLoadingTreeViewBanner.Visibility = Visibility.Visible;
             xWindowControlsTreeView.Visibility = Visibility.Collapsed;
+            bool expandJavaRoot = false;
 
             AppWindow AW = SwitchToCurrentWindow();
 
@@ -580,6 +581,8 @@ namespace Ginger.WindowExplorer
                     JWTI.JavaElementInfo = JEI;
                     JEI.WindowExplorer = mWindowExplorerDriver;
                     InitTree(JWTI);
+                    // Java controls are loaded only when the window node expands.
+                    expandJavaRoot = true;
                     break;
                 ///We're no more working with TreeView for Mobile platform
                 //case AppWindow.eWindowType.Appium:
@@ -631,6 +634,11 @@ namespace Ginger.WindowExplorer
 
             xLoadingTreeViewBanner.Visibility = Visibility.Collapsed;
             xWindowControlsTreeView.Visibility = Visibility.Visible;
+
+            if (expandJavaRoot && mTreeRootItem != null)
+            {
+                mTreeRootItem.IsExpanded = true;
+            }
         }
 
         private void SetPageFunctionalityEnableDisable(bool RecordingButtonFlag, bool ControlsRefreshButtonFlag, bool RefreshWindowsButtonFlag, bool AddSwitchWindowActionButtonFlag, bool WindowsComboBoxFlag, bool ControlsViewsExpanderFlag, bool SelectedControlDetailsExpanderFlag, bool LiveSpyButtonFlag, bool SyncWithLiveSpyButtonFlag, bool GridTreeViewButtonFlag, bool DORButtonFlag)

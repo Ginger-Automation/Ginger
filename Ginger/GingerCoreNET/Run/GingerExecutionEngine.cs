@@ -2305,7 +2305,14 @@ namespace Ginger.Run
                     string msg;
                     try
                     {
-                        if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
+                        Agent screenshotAgent = CurrentBusinessFlow.CurrentActivity?.CurrentAgent as Agent;
+                        bool javaDesktopScreen = act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen
+                            && (screenshotAgent?.DriverType == Agent.eDriverType.JavaDriver
+                                || screenshotAgent?.DriverType == Agent.eDriverType.PowerBuilder);
+
+                        // Java and PowerBuilder desktop capture is the monitor that contains the application window.
+                        // Other drivers keep the shared desktop capture.
+                        if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen && !javaDesktopScreen)
                         {
                             TakeDesktopScreenShotIntoAction(act);
                         }
@@ -2317,7 +2324,7 @@ namespace Ginger.Run
                                 WindowsToCapture = act.WindowsToCapture
                             };
 
-                            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !javaDesktopScreen)
                             {
                                 screenShotAction.WindowsToCapture = ActScreenShot.eWindowsToCapture.AllAvailableWindows;
                             }

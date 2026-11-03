@@ -979,16 +979,28 @@ namespace GingerCore
                 }
 
                 System.Drawing.Rectangle bounds = screen.Bounds;
+                int sourceX = bounds.X;
+                if (!screen.Primary && sourceX != 0)
+                {
+                    using (Graphics dpi = Graphics.FromHwnd(IntPtr.Zero))
+                    {
+                        if (dpi.DpiX > 96f)
+                        {
+                            sourceX = (int)Math.Round(sourceX * 96f / dpi.DpiX);
+                        }
+                    }
+                }
+
                 using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
                 {
                     using (Graphics g = Graphics.FromImage(bitmap))
                     {
                         g.CopyFromScreen(
-                                           screen.Bounds.X,
-                                           screen.Bounds.Y,
+                                           sourceX,
+                                           bounds.Y,
                                            0,
                                            0,
-                                           screen.Bounds.Size,
+                                           bounds.Size,
                                            CopyPixelOperation.SourceCopy);
                     }
                     string imagePath = GingerCore.General.BitmapImageToFile(bitmap);

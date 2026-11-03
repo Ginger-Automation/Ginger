@@ -57,6 +57,11 @@ namespace GingerCore.Drivers.Common
         public IWindowExplorer WindowExplorer { get; set; }
         public bool taskFinished;
         public bool StopProcess { get; set; } = false;
+
+        /// <summary>
+        /// Why the last point lookup returned no element, or empty when it found one.
+        /// </summary>
+        public string LastElementFromPointMessage { get; protected set; } = string.Empty;
         public abstract void StopRecording();
 
         public UIAElementInfo CurrentWindowRootElement = null;
@@ -107,6 +112,13 @@ namespace GingerCore.Drivers.Common
         }
 
         public abstract object FindElementByLocator(eLocateBy eLocatorType, string LocateValue);
+
+        /// <summary>
+        /// Searches once for an element, without the pauses, retries and slow fallback searches of
+        /// <see cref="FindElementByLocator"/>, for checking the locators of a spied element while the user waits.
+        /// </summary>
+        protected abstract object FindElementByLocatorQuickly(eLocateBy locateBy, string locateValue);
+
         public abstract object FindWindowByLocator(eLocateBy eLocatorType, string LocateValue);
         public abstract string SetControlValue(object element, string value);
         public abstract void DragAndDrop(object element, ActUIElement action);
@@ -176,6 +188,11 @@ namespace GingerCore.Drivers.Common
 
         public ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)
         {
+            if (mPlatform == ePlatformType.PowerBuilder)
+            {
+                return GetPowerBuilderElementLocators(ei);
+            }
+
             string elementName = GetElementTitle(ei.ElementObject);
 
             ObservableList<ElementLocator> list = [];
@@ -195,25 +212,193 @@ namespace GingerCore.Drivers.Common
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByAutomationID, LocateValue = elementAutomamtionID, Help = "Recommended and usually stable" });
             }
 
-            //TODO: Fix the issue with X,Y Calculations for Windows Driver. meanwhile showing x,y locator only for PB
-            if (mPlatform == ePlatformType.PowerBuilder)
+            return list;
+        }
+
+        /// <summary>
+        /// Locators for a PowerBuilder element, each built on its own so one that cannot be
+        /// read leaves the others in place.
+        /// </summary>
+        private ObservableList<ElementLocator> GetPowerBuilderElementLocators(ElementInfo ei)
+        {
+            ObservableList<ElementLocator> list = [];
+
+            AddLocatorIfAvailable(list, "ByName", () =>
             {
-                double x;
-                double y;
+                string elementName = GetPowerBuilderNameLocatorValue(ei.ElementObject);
+                return string.IsNullOrEmpty(elementName)
+                    ? null
+                    : new ElementLocator() { LocateBy = eLocateBy.ByName, LocateValue = elementName, Help = "Highly Recommended when Name is unique in page" };
+            });
 
-                x = ((UIAuto.AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
-                y = ((UIAuto.AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
+            AddLocatorIfAvailable(list, "ByXPath", () =>
+            {
+                string absXPath = GetElementAbsoluteXPath(ei.ElementObject);
+                return new ElementLocator() { LocateBy = eLocateBy.ByXPath, LocateValue = absXPath, Help = "using Absolute Xpath Recommended but sensitive to screen changes " };
+            });
 
-                double xCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "XOffset")) - x;
-                double yCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "YOffset")) - y;
-                list.Add(new ElementLocator()
+            AddLocatorIfAvailable(list, "ByAutomationID", () =>
+            {
+                string elementAutomationID = GetControlPropertyValue(ei.ElementObject, "AutomationId");
+                return string.IsNullOrEmpty(elementAutomationID)
+                    ? null
+                    : new ElementLocator() { LocateBy = eLocateBy.ByAutomationID, LocateValue = elementAutomationID, Help = "Recommended and usually stable" };
+            });
+
+            //TODO: Fix the issue with X,Y Calculations for Windows Driver. meanwhile showing x,y locator only for PB
+            AddLocatorIfAvailable(list, "ByXY", () =>
+            {
+                if (GetCurrentWindow() is not UIAuto.AutomationElement window)
+                {
+                    return null;
+                }
+
+                System.Drawing.Rectangle windowRect = window.Current.BoundingRectangle;
+                System.Drawing.Rectangle elementRect = GetElementBoundingRectangle(ei.ElementObject);
+                if (elementRect.Width <= 0 || elementRect.Height <= 0)
+                {
+                    return null;
+                }
+
+                // The centre, because the edge pixel often belongs to the border or the neighbouring control.
+                System.Drawing.Point centre = new System.Drawing.Point(elementRect.X + (elementRect.Width / 2), elementRect.Y + (elementRect.Height / 2));
+
+                // A control scrolled out of view reports a rectangle outside the window.
+                if (!windowRect.Contains(centre))
+                {
+                    return null;
+                }
+
+                int xCordinate = centre.X - windowRect.X;
+                int yCordinate = centre.Y - windowRect.Y;
+                return new ElementLocator()
                 {
                     LocateBy = eLocateBy.ByXY,
                     LocateValue = xCordinate + "," + yCordinate,
-                    Help = "Not Recommended"
-                });
+                    Help = "Not Recommended, depends on the window size, the screen resolution and no other window covering the control"
+                };
+            });
+
+            return OrderByFindingTheElement(list, ei.ElementObject);
+        }
+
+        /// <summary>
+        /// Moves to the top, marked active, the first locator in the order built that finds the
+        /// element itself, since an action is created with the first locator unless another is picked.
+        /// </summary>
+        /// <remarks>
+        /// A name or AutomationId shared by several controls, as by the cells of every row of
+        /// a DataWindow, finds the first of them, and is marked so. XY is not tried: finding it
+        /// raises the application window. This runs while the user waits for the spied element,
+        /// so no search starts after a second.
+        /// </remarks>
+        private ObservableList<ElementLocator> OrderByFindingTheElement(ObservableList<ElementLocator> locators, object element)
+        {
+            if (GetCurrentWindow() == null)
+            {
+                return locators;
             }
-            return list;
+
+            long giveUpAt = Environment.TickCount64 + 1000;
+            foreach (ElementLocator locator in locators)
+            {
+                if (Environment.TickCount64 >= giveUpAt)
+                {
+                    break;
+                }
+
+                if (locator.LocateBy != eLocateBy.ByXY && FindsElement(locator, element))
+                {
+                    locators.Move(locators.IndexOf(locator), 0);
+                    break;
+                }
+            }
+
+            return locators;
+        }
+
+        /// <remarks>
+        /// Finding nothing proves nothing, so leaves the locator unmarked: a run falls back to
+        /// slower searches that the quick one leaves out.
+        /// </remarks>
+        private bool FindsElement(ElementLocator locator, object element)
+        {
+            try
+            {
+                object found = FindElementByLocatorQuickly(locator.LocateBy, locator.LocateValue);
+                if (found == null)
+                {
+                    return false;
+                }
+
+                if (found.Equals(element))
+                {
+                    locator.Active = true;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not search for the element by its " + locator.LocateBy + " locator", ex);
+                return false;
+            }
+
+            locator.StatusError = "Finds another control first";
+            locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+            locator.Help = locator.StatusError;
+            return false;
+        }
+
+        /// <summary>
+        /// The value that ByName searches for: the accessible name. The window text is used
+        /// only when the element has no name and holds no value, since the PowerBuilder ByName
+        /// search still falls back to matching the window text.
+        /// </summary>
+        /// <remarks>
+        /// The window text carries the '&amp;' of a mnemonic and is cut at 49 characters, so
+        /// it rarely equals the accessible name the search compares against first.
+        /// </remarks>
+        private string GetPowerBuilderNameLocatorValue(object element)
+        {
+            string name = GetControlPropertyValue(element, "Name");
+            if (!string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+
+            // The window text of a control holding a value, like an edit box, is the value, which changes with the data.
+            if (element is UIAuto.AutomationElement automationElement && automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out _))
+            {
+                string automationId = GetControlPropertyValue(element, "AutomationId");
+                return string.IsNullOrEmpty(automationId) ? null : GetElementControlType(element) + " (" + automationId + ")";
+            }
+
+            string title = GetElementTitle(element);
+
+            // A title that is only the control type matches the first control of that type in the window.
+            if (string.Equals(title, GetElementControlType(element), StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            return title;
+        }
+
+        private static void AddLocatorIfAvailable(ObservableList<ElementLocator> list, string locatorName, Func<ElementLocator> createLocator)
+        {
+            try
+            {
+                ElementLocator locator = createLocator();
+                if (locator != null)
+                {
+                    list.Add(locator);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not build the " + locatorName + " locator for the element", ex);
+            }
         }
 
         public abstract object GetElementData(object element);
