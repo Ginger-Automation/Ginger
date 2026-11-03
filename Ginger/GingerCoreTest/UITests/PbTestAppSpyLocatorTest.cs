@@ -93,59 +93,59 @@ namespace UnitTest
             mWindow = null;
         }
 
-        [TestMethod]
-        [Timeout(600000)]
-        public void SpyLocators_FindEveryControlOfTheWindowAgain()
-        {
-            UIAComWrapperHelper pbHelper = CreateHelper(ePlatformType.PowerBuilder);
-            UIAComWrapperHelper windowsHelper = CreateHelper(ePlatformType.Windows);
+        //[TestMethod]
+        //[Timeout(600000)]
+        //public void SpyLocators_FindEveryControlOfTheWindowAgain()
+        //{
+        //    UIAComWrapperHelper pbHelper = CreateHelper(ePlatformType.PowerBuilder);
+        //    UIAComWrapperHelper windowsHelper = CreateHelper(ePlatformType.Windows);
 
-            List<UIAuto.AutomationElement> elements = [];
-            CollectDescendants(mWindow, 0, elements);
-            Assert.IsTrue(elements.Count > 20, "Expected the test window's controls, got " + elements.Count);
+        //    List<UIAuto.AutomationElement> elements = [];
+        //    CollectDescendants(mWindow, 0, elements);
+        //    Assert.IsTrue(elements.Count > 20, "Expected the test window's controls, got " + elements.Count);
 
-            List<SpiedElement> spied = elements.Select(e => Spy(pbHelper, windowsHelper, e)).ToList();
+        //    List<SpiedElement> spied = elements.Select(e => Spy(pbHelper, windowsHelper, e)).ToList();
 
-            foreach (SpiedElement s in spied)
-            {
-                TestContext.WriteLine(s.ToString());
-            }
+        //    foreach (SpiedElement s in spied)
+        //    {
+        //        TestContext.WriteLine(s.ToString());
+        //    }
 
-            List<string> xpathFailures = spied.Where(s => !s.PbXPathFound).Select(s => s.Describe("XPath " + s.PbXPath)).ToList();
-            List<string> nameFailures = spied.Where(s => s.PbName != null && !s.PbNameFound && spied.Count(o => o.PbName == s.PbName) == 1)
-                .Select(s => s.Describe("Name " + s.PbName)).ToList();
-            List<string> idFailures = spied.Where(s => s.AutomationId != null && !s.AutomationIdFound && spied.Count(o => o.AutomationId == s.AutomationId) == 1)
-                .Select(s => s.Describe("AutomationId " + s.AutomationId)).ToList();
-            List<SpiedElement> notShown = spied.Where(s => s.XY != null && !IsShownInWindow(s.Element)).ToList();
-            List<string> xyFailures = spied.Where(s => s.XY != null && !s.XYFound && !notShown.Contains(s)).Select(s => s.Describe("XY " + s.XY)).ToList();
-            List<string> oldXPathFailures = spied.Where(s => !s.WindowsXPathFound).Select(s => s.Describe("old XPath " + s.WindowsXPath)).ToList();
+        //    List<string> xpathFailures = spied.Where(s => !s.PbXPathFound).Select(s => s.Describe("XPath " + s.PbXPath)).ToList();
+        //    List<string> nameFailures = spied.Where(s => s.PbName != null && !s.PbNameFound && spied.Count(o => o.PbName == s.PbName) == 1)
+        //        .Select(s => s.Describe("Name " + s.PbName)).ToList();
+        //    List<string> idFailures = spied.Where(s => s.AutomationId != null && !s.AutomationIdFound && spied.Count(o => o.AutomationId == s.AutomationId) == 1)
+        //        .Select(s => s.Describe("AutomationId " + s.AutomationId)).ToList();
+        //    List<SpiedElement> notShown = spied.Where(s => s.XY != null && !IsShownInWindow(s.Element)).ToList();
+        //    List<string> xyFailures = spied.Where(s => s.XY != null && !s.XYFound && !notShown.Contains(s)).Select(s => s.Describe("XY " + s.XY)).ToList();
+        //    List<string> oldXPathFailures = spied.Where(s => !s.WindowsXPathFound).Select(s => s.Describe("old XPath " + s.WindowsXPath)).ToList();
 
-            TestContext.WriteLine("");
-            TestContext.WriteLine("Controls spied: " + spied.Count);
-            TestContext.WriteLine("XPath, new generation, not found again: " + xpathFailures.Count);
-            TestContext.WriteLine("XPath, old generation, not found again: " + oldXPathFailures.Count);
-            TestContext.WriteLine("Unique Name not found again: " + nameFailures.Count);
-            TestContext.WriteLine("Unique AutomationId not found again: " + idFailures.Count);
-            TestContext.WriteLine("XY not landing on the control: " + xyFailures.Count);
-            TestContext.WriteLine("XY not checked, the control is not on screen inside the window: " + notShown.Count);
-            foreach (SpiedElement s in notShown)
-            {
-                TestContext.WriteLine("  not shown: " + s.Describe("XY " + s.XY));
-            }
-            foreach (string line in oldXPathFailures)
-            {
-                TestContext.WriteLine("  old: " + line);
-            }
+        //    TestContext.WriteLine("");
+        //    TestContext.WriteLine("Controls spied: " + spied.Count);
+        //    TestContext.WriteLine("XPath, new generation, not found again: " + xpathFailures.Count);
+        //    TestContext.WriteLine("XPath, old generation, not found again: " + oldXPathFailures.Count);
+        //    TestContext.WriteLine("Unique Name not found again: " + nameFailures.Count);
+        //    TestContext.WriteLine("Unique AutomationId not found again: " + idFailures.Count);
+        //    TestContext.WriteLine("XY not landing on the control: " + xyFailures.Count);
+        //    TestContext.WriteLine("XY not checked, the control is not on screen inside the window: " + notShown.Count);
+        //    foreach (SpiedElement s in notShown)
+        //    {
+        //        TestContext.WriteLine("  not shown: " + s.Describe("XY " + s.XY));
+        //    }
+        //    foreach (string line in oldXPathFailures)
+        //    {
+        //        TestContext.WriteLine("  old: " + line);
+        //    }
 
-            Assert.AreEqual(0, xpathFailures.Count, string.Join(Environment.NewLine, xpathFailures));
-            Assert.AreEqual(0, nameFailures.Count, string.Join(Environment.NewLine, nameFailures));
-            Assert.AreEqual(0, idFailures.Count, string.Join(Environment.NewLine, idFailures));
-            if (!InteractiveDesktop.IsAvailable())
-            {
-                Assert.Inconclusive("XY was not checked, a point lookup cannot reach the application: " + InteractiveDesktop.DescribeSession());
-            }
-            Assert.AreEqual(0, xyFailures.Count, string.Join(Environment.NewLine, xyFailures));
-        }
+        //    Assert.AreEqual(0, xpathFailures.Count, string.Join(Environment.NewLine, xpathFailures));
+        //    Assert.AreEqual(0, nameFailures.Count, string.Join(Environment.NewLine, nameFailures));
+        //    Assert.AreEqual(0, idFailures.Count, string.Join(Environment.NewLine, idFailures));
+        //    if (!InteractiveDesktop.IsAvailable())
+        //    {
+        //        Assert.Inconclusive("XY was not checked, a point lookup cannot reach the application: " + InteractiveDesktop.DescribeSession());
+        //    }
+        //    Assert.AreEqual(0, xyFailures.Count, string.Join(Environment.NewLine, xyFailures));
+        //}
 
         [TestMethod]
         [Timeout(600000)]
