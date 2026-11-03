@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerCore.Drivers.Common.LegacyAutomation;
 using GingerCore.Drivers.PBDriver.DesktopAutomation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -106,6 +107,20 @@ namespace GingerCoreTest.Misc
             DesktopEngineResult result = uiaOnly.Execute(host.CreateContext(DesktopOperation.Click, host.ButtonHwnd));
 
             Assert.IsFalse(result.Success);
+        }
+
+        [TestMethod]
+        public void UiaPattern_ValuePatternTheControlDoesNotImplement_FailsWithoutLoggingAnError()
+        {
+            using ValueRefusingWindow window = new ValueRefusingWindow();
+            int errorsBefore = Reporter.ReporterData.ErrorCounter;
+
+            LayerResult result = new UiaPatternLayer().TryExecute(window.CreateContext(DesktopOperation.SetValue, "Mumbai"));
+
+            Assert.AreEqual(1, window.WriteAttempts, "SetValue has to reach the control for its refusal to be what is tested");
+            Assert.AreEqual(LayerExecutionStatus.Failed, result.Status);
+            Assert.AreEqual(errorsBefore, Reporter.ReporterData.ErrorCounter,
+                "A refusal the later layers are there to handle is not an error");
         }
 
         [TestMethod]

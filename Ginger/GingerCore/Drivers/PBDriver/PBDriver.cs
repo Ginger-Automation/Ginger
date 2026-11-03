@@ -33,6 +33,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -309,13 +310,55 @@ namespace GingerCore.Drivers.PBDriver
                                     bList.Clear();
                                 }
                             }
-                            else
+                            else if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow)
                             {
-                                if (mUIAutomationHelper.GetCurrentWindow() != null)
+                                UIAuto.AutomationElement current = mUIAutomationHelper.GetCurrentWindow() as UIAuto.AutomationElement;
+                                if (current != null)
                                 {
-                                    using (Bitmap bmpcurrentwin = mUIAutomationHelper.GetCurrentWindowBitmap())
+                                    UIAuto.AutomationElement windowToCapture = current;
+                                    try
                                     {
-                                        act.AddScreenShot(bmpcurrentwin);
+                                        IntPtr foregroundHandle = WinAPIAutomation.GetForegroundWindow();
+                                        if (foregroundHandle != IntPtr.Zero)
+                                        {
+                                            UIAuto.AutomationElement foregroundWindow = UIAuto.AutomationElement.FromHandle(foregroundHandle);
+                                            if (mUIAutomationHelper.IsWindowValid(foregroundWindow)
+                                                && foregroundWindow.Current.ProcessId == current.Current.ProcessId)
+                                            {
+                                                windowToCapture = foregroundWindow;
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Reporter.ToLog(eLogLevel.DEBUG, "Failed to resolve foreground window for screenshot", ex);
+                                    }
+
+                                    using (Bitmap bitmap = windowToCapture == current
+                                        ? mUIAutomationHelper.GetCurrentWindowBitmap()
+                                        : ((UIAComWrapperHelper)mUIAutomationHelper).WindowToBitmap(windowToCapture))
+                                    {
+                                        act.AddScreenShot(bitmap);
+                                    }
+                                }
+                            }
+                            else if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
+                            {
+                                UIAuto.AutomationElement current = mUIAutomationHelper.GetCurrentWindow() as UIAuto.AutomationElement;
+                                if (current == null)
+                                {
+                                    act.Error = "PowerBuilder window was not found for the desktop screenshot.";
+                                    return;
+                                }
+
+                                Screen screen = Screen.FromHandle(new IntPtr(current.Current.NativeWindowHandle));
+                                var shots = GingerCore.General.TakeDesktopScreenShot(true);
+                                if (shots != null && shots.TryGetValue(screen.DeviceName, out string path))
+                                {
+                                    using (Bitmap fromFile = new Bitmap(path))
+                                    using (Bitmap bitmap = new Bitmap(fromFile))
+                                    {
+                                        act.AddScreenShot(bitmap);
                                     }
                                 }
                             }
@@ -1307,7 +1350,69 @@ namespace GingerCore.Drivers.PBDriver
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
-            throw new NotImplementedException();
+            foreach (ElementLocator locator in EI.Locators)
+            {
+                locator.StatusError = string.Empty;
+                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            }
+
+            bool anyLocatorPassed = false;
+            int implicitWait = mUIAutomationHelper.mImplicitWait;
+            bool taskFinished = mUIAutomationHelper.taskFinished;
+            try
+            {
+                mIsDriverBusy = true;
+
+                // A test reports what is on screen now; waiting out the implicit wait for every
+                // locator that misses would hold the explorer for that long per locator.
+                mUIAutomationHelper.mImplicitWait = -1;
+                mUIAutomationHelper.taskFinished = false;
+
+                foreach (ElementLocator locator in EI.Locators.Where(x => x.Active).ToList())
+                {
+                    try
+                    {
+                        string locateValue = locator.LocateValue;
+                        if (!locator.IsAutoLearned)
+                        {
+                            locateValue = new ValueExpression(this.Environment, this.BusinessFlow).Calculate(locateValue);
+                        }
+
+                        if (mUIAutomationHelper.FindElementByLocator(locator.LocateBy, locateValue) != null)
+                        {
+                            locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                            anyLocatorPassed = true;
+                            if (GetOutAfterFoundElement)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                            locator.StatusError = "No element was found in the selected window";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception while testing the " + locator.LocateBy + " locator", ex);
+                        locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                        locator.StatusError = ex.Message;
+                    }
+                }
+            }
+            finally
+            {
+                mUIAutomationHelper.mImplicitWait = implicitWait;
+                mUIAutomationHelper.taskFinished = taskFinished;
+                foreach (ElementLocator locator in EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                {
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                }
+                mIsDriverBusy = false;
+            }
+
+            return anyLocatorPassed;
         }
 
         public override void ActionCompleted(Act act)

@@ -31,7 +31,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         public PomDeltaWizard(ApplicationPOMModel pom, Agent agent)
         {
-            mPomDeltaUtils = new PomDeltaUtils(pom, agent);
+            mPomDeltaUtils = new PomDeltaUtils(pom, agent)
+            {
+                PreventDuplicateElementMatches = true
+            };
 
             AddPage(Name: "Elements Update Settings", Title: "Elements Update Settings", SubTitle: "Elements Update Settings", Page: new PomDeltaSettingsWizardPage());
             AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Elements Comparison with Latest Status", Page: new PomDeltaElementCompareWizardPage(pom));

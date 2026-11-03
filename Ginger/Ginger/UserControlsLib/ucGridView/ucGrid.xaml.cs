@@ -2617,10 +2617,11 @@ namespace Ginger
 
         public List<eUcGridValidationRules> ValidationRules = [];
 
+        public Func<bool> HasCustomValidationError { get; set; }
 
         public bool HasValidationError()
         {
-            bool validationRes = false;
+            bool validationRes = HasCustomValidationError?.Invoke() == true;
             foreach (eUcGridValidationRules rule in ValidationRules)
             {
                 switch (rule)

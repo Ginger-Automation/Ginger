@@ -75,14 +75,20 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool v1.0.5
 # ------------------------------------------------------------------------------------------------------
-        -   name: Setup Nuget
+        -   name: 'Setup Nuget'
+            if: runner.os == 'Windows'
             uses: Nuget/setup-nuget@v2.0.1
 
 # ------------------------------------------------------------------------------------------------------
 # Restore Ginger solution NuGet packages
 # ------------------------------------------------------------------------------------------------------
-        -   name: Restore nuget packages
+        -   name: 'Restore nuget packages - Windows'
+            if: runner.os == 'Windows'
             run: nuget restore ./Ginger/Ginger.sln
+            
+        -   name: 'Restore nuget packages - Linux and macOS'
+            if: runner.os != 'Windows'
+            run: dotnet restore ./Ginger/GingerRuntime/GingerRuntime.csproj
            
 # ------------------------------------------------------------------------------------------------------
 # Install msbild && Build Ginger Solution
@@ -147,28 +153,28 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Publish Test Results
 # ------------------------------------------------------------------------------------------------------
-        -   name: Test Report - Windows
-            uses: dorny/test-reporter@v1
-            if: (success() || failure()) && (runner.os == 'Windows')        # run this step even if previous step failed
-            with:
-                name: Generate Unit Test Report for Windows    # Name of the check run which will be created
-                path: "D:/a/TestResults/*.trx"                # Path to test results
-                reporter: dotnet-trx            # Format of test results
-                
-        -   name: Test Report - Linux
-            uses: dorny/test-reporter@v1
-            if: (success() || failure())   && (runner.os == 'Linux')      # run this step even if previous step failed
-            with:
-                name: Generate Unit Test Report for Linux    # Name of the check run which will be created
-                path: "**/*.trx"                # Path to test results
-                reporter: dotnet-trx            # Format of test results 
+ # -   name: Test Report - Windows
+#     uses: dorny/test-reporter@v1
+#     if: (success() || failure()) && (runner.os == 'Windows')
+#     with:
+#         name: Generate Unit Test Report for Windows
+#         path: "D:/a/TestResults/*.trx"
+#         reporter: dotnet-trx
 
-        -   name: Test Report - MacOS
-            uses: dorny/test-reporter@v1
-            if: (success() || failure())  && (runner.os == 'macOS')       # run this step even if previous step failed
-            with:
-                name: Generate Unit Test Report for MacOS    # Name of the check run which will be created
-                path: "**/*.trx"                # Path to test results
-                reporter: dotnet-trx            # Format of test results    
+# -   name: Test Report - Linux
+#     uses: dorny/test-reporter@v1
+#     if: (success() || failure()) && (runner.os == 'Linux')
+#     with:
+#         name: Generate Unit Test Report for Linux
+#         path: "**/*.trx"
+#         reporter: dotnet-trx
+
+# -   name: Test Report - MacOS
+#     uses: dorny/test-reporter@v1
+#     if: (success() || failure()) && (runner.os == 'macOS')
+#     with:
+#         name: Generate Unit Test Report for MacOS
+#         path: "**/*.trx"
+#         reporter: dotnet-trx
                 
    

@@ -77,6 +77,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.LeavingForNextPage:
                 case EventType.Finish:
                         mPomAllElementsPage.FinishEditInAllGrids();
+                        if (mPomAllElementsPage?.ValidateManuallyAddedItems() == false)
+                        {
+                            WizardEventArgs.CancelEvent = true;
+                            break;
+                        }
                         if (mPomAllElementsPage != null)
                         {
                             mPomAllElementsPage.StopSpy();
@@ -207,6 +212,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     ShowTestAllElementsButton = Visibility.Collapsed
                 };
                 mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
+                mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.HasCustomValidationError = () => !mPomAllElementsPage.ValidateManuallyAddedItems();
+                mPomAllElementsPage.unmappedUIElementsPage.MainElementsGrid.HasCustomValidationError = () => !mPomAllElementsPage.ValidateManuallyAddedItems();
                 xPomElementsMappingPageFrame.ClearAndSetContent(mPomAllElementsPage);
             }
             

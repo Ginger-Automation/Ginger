@@ -63,6 +63,16 @@ namespace GingerCore.Drivers.Common
             mImportnatProperties = ImportnatProperties;
         }
 
+        /// <summary>
+        /// When set, a created XPath gives each element the index that finding it by that XPath
+        /// lands on, and escapes brackets in the first important property's value.
+        /// </summary>
+        /// <remarks>
+        /// Off by default: drivers whose POM delta matches elements by XPath string would see
+        /// every learned element with a repeated name or a bracket reported as changed.
+        /// </remarks>
+        public bool StrictXpathGeneration { get; set; }
+
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Create XPath
         // -------------------------------------------------------------------------------------------------------------------------------------
@@ -75,7 +85,7 @@ namespace GingerCore.Drivers.Common
             ElementInfo node = EI;
 
             // If it is the window then return / = root 
-            if (string.IsNullOrEmpty(EI.GetElementType()) || EI.ElementType.ToUpper() == "WINDOW")
+            if ((string.IsNullOrEmpty(EI.GetElementType()) && !IsTypelessChild(EI)) || EI.ElementType?.ToUpper() == "WINDOW")
             {
                 return "/";
             }
@@ -98,6 +108,21 @@ namespace GingerCore.Drivers.Common
 
             Xpath = "/" + Xpath; // root start from '/'
             return Xpath;
+        }
+
+        /// <summary>
+        /// Whether an element that reports no type is still below the window, as some
+        /// PowerBuilder DataWindow columns are, so it gets a path instead of '/'.
+        /// </summary>
+        private bool IsTypelessChild(ElementInfo EI)
+        {
+            if (!StrictXpathGeneration)
+            {
+                return false;
+            }
+
+            object root = mDriver.GetRootElement()?.ElementObject;
+            return root != null && EI.ElementObject != null && !Equals(EI.ElementObject, root);
         }
 
         //Go up while not unique, try to add attr based on important prop and avoid long Xpath, 
@@ -133,9 +158,15 @@ namespace GingerCore.Drivers.Common
                 string val = mDriver.GetElementProperty(EI, prop);
                 if (!string.IsNullOrEmpty(val))
                 {
+                    string rawVal = val;
+
                     // if it is the first property then it is Name and no need to identify it
                     if (prop == mImportnatProperties[0])
                     {
+                        if (StrictXpathGeneration)
+                        {
+                            val = val.Replace("[", @"\[").Replace("]", @"\]");
+                        }
                         XPath = val + "%INDEX%";   // we don't know if there will be index so prep place
                     }
                     else
@@ -145,7 +176,7 @@ namespace GingerCore.Drivers.Common
                     }
 
                     //Need to see if we have similar item with same property under same parent if yes need to add index
-                    int? index = GetPropValIndex(EI, prop, val);
+                    int? index = StrictXpathGeneration ? GetResolvablePropValIndex(EI, prop, rawVal) : GetPropValIndex(EI, prop, val);
                     string SIndex = null;
                     if (index is null or 0)
                     {
@@ -213,6 +244,51 @@ namespace GingerCore.Drivers.Common
                 //no index found so unique, no need for [index]
             }
             return index;
+        }
+
+        /// <summary>
+        /// The element's position among its parent's children that match the property, as
+        /// FindNode resolves it: null for the first, otherwise the zero based position used
+        /// against FindAll.
+        /// </summary>
+        private int? GetResolvablePropValIndex(ElementInfo EI, string prop, string val)
+        {
+            List<XpathPropertyCondition> conditions =
+            [
+                new XpathPropertyCondition() { PropertyName = prop, Op = XpathPropertyCondition.XpathConditionOperator.Equel, Value = val },
+            ];
+
+            try
+            {
+                ElementInfo parent = mDriver.GetElementParent(EI) ?? mDriver.GetRootElement();
+                List<ElementInfo> matches = parent == null ? null : mDriver.FindAll(parent, conditions);
+                if (matches != null)
+                {
+                    for (int i = 0; i < matches.Count; i++)
+                    {
+                        if (Equals(matches[i].ElementObject, EI.ElementObject))
+                        {
+                            return i == 0 ? null : i;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not resolve the XPath index through the parent, counting the previous siblings instead", ex);
+            }
+
+            int previousMatches = 0;
+            ElementInfo sibling = mDriver.GetPreviousSibling(EI);
+            while (sibling != null)
+            {
+                if (mDriver.GetElementProperty(sibling, prop) == val)
+                {
+                    previousMatches++;
+                }
+                sibling = mDriver.GetPreviousSibling(sibling);
+            }
+            return previousMatches == 0 ? null : previousMatches;
         }
 
         // -------------------------------------------------------------------------------------------------------------------------------------
