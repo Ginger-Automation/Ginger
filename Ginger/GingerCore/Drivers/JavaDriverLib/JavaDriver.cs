@@ -388,7 +388,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             return ErrorPayLoadMessage(timeoutMessage);
                         }
                         //TODO: adaptive sleep
-                        General.DoEvents();
+                        //General.DoEvents();
                         Thread.Sleep(10);
                         if (!SocketConnected(clientSocket))
                         {
