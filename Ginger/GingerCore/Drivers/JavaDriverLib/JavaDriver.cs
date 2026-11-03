@@ -106,6 +106,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private bool mLastSendTimedOut = false;
         public bool LogCommunication { get; set; }
         private DispatcherTimer mGetRecordingTimer;
+        private int mHighlightToken;
 
 
         public override bool IsWindowExplorerSupportReady()
@@ -2563,6 +2564,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 // Request.AddValue("");  // Why?          
                 Request.ClosePackage();
                 Send(Request);
+                ScheduleHighlightClear();
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
@@ -2579,6 +2581,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Request.AddValue(HEI.XPath);
                     Request.ClosePackage();
                     Send(Request);
+                    ScheduleHighlightClear();
                 }
                 else
                 {
@@ -2587,6 +2590,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Request.AddValue(HEI.XPath);
                     Request.ClosePackage();
                     Send(Request);
+                    ScheduleHighlightClear();
                     //TODO:J.G: Fix it for JEDITOR Elements
                 }
             }
@@ -3902,6 +3906,19 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 Reporter.ToLog(eLogLevel.WARN, "failed to un-highlight object", ex);
             }
+        }
+
+        private void ScheduleHighlightClear()
+        {
+            int token = Interlocked.Increment(ref mHighlightToken);
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                if (token == Volatile.Read(ref mHighlightToken))
+                {
+                    UnhighlightLast();
+                }
+            });
         }
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
