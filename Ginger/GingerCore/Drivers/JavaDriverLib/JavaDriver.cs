@@ -1998,14 +1998,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                             {
                                 System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.FromHandle(
                                     new IntPtr(uiDriver.CurrentWindow.Current.NativeWindowHandle));
-                                Rectangle bounds = screen.Bounds;
-                                using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                                var shots = GingerCore.General.TakeDesktopScreenShot(true);
+                                if (shots != null && shots.TryGetValue(screen.DeviceName, out string path))
                                 {
-                                    using (Graphics graphics = Graphics.FromImage(bitmap))
+                                    using (Bitmap fromFile = new Bitmap(path))
+                                    using (Bitmap bitmap = new Bitmap(fromFile))
                                     {
-                                        graphics.CopyFromScreen(bounds.Location, Point.Empty, bounds.Size, CopyPixelOperation.SourceCopy);
+                                        actScreenShot.AddScreenShot(bitmap);
                                     }
-                                    actScreenShot.AddScreenShot(bitmap);
                                 }
                             }
                             else

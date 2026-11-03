@@ -342,6 +342,26 @@ namespace GingerCore.Drivers.PBDriver
                                     }
                                 }
                             }
+                            else if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
+                            {
+                                UIAuto.AutomationElement current = mUIAutomationHelper.GetCurrentWindow() as UIAuto.AutomationElement;
+                                if (current == null)
+                                {
+                                    act.Error = "PowerBuilder window was not found for the desktop screenshot.";
+                                    return;
+                                }
+
+                                Screen screen = Screen.FromHandle(new IntPtr(current.Current.NativeWindowHandle));
+                                var shots = GingerCore.General.TakeDesktopScreenShot(true);
+                                if (shots != null && shots.TryGetValue(screen.DeviceName, out string path))
+                                {
+                                    using (Bitmap fromFile = new Bitmap(path))
+                                    using (Bitmap bitmap = new Bitmap(fromFile))
+                                    {
+                                        act.AddScreenShot(bitmap);
+                                    }
+                                }
+                            }
                             return;
                         }
                         catch (Exception ex)

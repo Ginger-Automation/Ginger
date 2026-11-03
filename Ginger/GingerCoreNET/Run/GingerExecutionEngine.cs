@@ -2307,9 +2307,10 @@ namespace Ginger.Run
                     {
                         Agent screenshotAgent = CurrentBusinessFlow.CurrentActivity?.CurrentAgent as Agent;
                         bool javaDesktopScreen = act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen
-                            && screenshotAgent?.DriverType == Agent.eDriverType.JavaDriver;
+                            && (screenshotAgent?.DriverType == Agent.eDriverType.JavaDriver
+                                || screenshotAgent?.DriverType == Agent.eDriverType.PowerBuilder);
 
-                        // Java desktop capture is the monitor that contains the CRM window.
+                        // Java and PowerBuilder desktop capture is the monitor that contains the application window.
                         // Other drivers keep the shared desktop capture.
                         if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen && !javaDesktopScreen)
                         {
