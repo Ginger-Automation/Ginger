@@ -52,7 +52,7 @@
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.1" />
 		<PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.3" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
 		<PackageReference Include="System.Security.Permissions" Version="8.0.0" />
 		<PackageReference Include="System.Text.Json" Version="10.0.2" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
