@@ -472,6 +472,7 @@ namespace GingerCore.Drivers
         public string HealeniumUrl { get; set; }
 
         IWebElement LastHighLightedElement;
+        private int mHighlightToken;
         XPathHelper mXPathHelper;
 
         private List<ElementInfo> allReadElem = [];
@@ -7365,6 +7366,10 @@ namespace GingerCore.Drivers
                 }
 
                 LastHighLightedElement = webElement;
+                if (!isAppiumSession)
+                {
+                    ScheduleHighlightClear();
+                }
 
             }
             finally
@@ -7399,6 +7404,19 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.WARN, "failed to unhighlight object", ex);
             }
+        }
+
+        private void ScheduleHighlightClear()
+        {
+            int token = Interlocked.Increment(ref mHighlightToken);
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                if (token == Volatile.Read(ref mHighlightToken))
+                {
+                    UnhighlightLast();
+                }
+            });
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
