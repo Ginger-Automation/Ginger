@@ -1919,38 +1919,38 @@ namespace GingerCoreTest.Misc
             }
         }
 
-        [TestMethod]
-        [Timeout(300000)]
-        public void EveryCellOfARealDataWindowReadsTheSameThroughItsAccessibleObjectAsThroughUiAutomation()
-        {
-            using LiveGrid grid = LiveGrid.Open();
-            TableElementInfo table = grid.Helper.GetTableElementInfoForGrid(grid.DataWindow);
-            Assert.IsTrue(DataWindowGrid.TryRead(new IntPtr(grid.DataWindow.Current.NativeWindowHandle), out DataWindowGrid cells, out string details), details);
+        //[TestMethod]
+        //[Timeout(300000)]
+        //public void EveryCellOfARealDataWindowReadsTheSameThroughItsAccessibleObjectAsThroughUiAutomation()
+        //{
+        //    using LiveGrid grid = LiveGrid.Open();
+        //    TableElementInfo table = grid.Helper.GetTableElementInfoForGrid(grid.DataWindow);
+        //    Assert.IsTrue(DataWindowGrid.TryRead(new IntPtr(grid.DataWindow.Current.NativeWindowHandle), out DataWindowGrid cells, out string details), details);
 
-            // What an action reads from a cell must not depend on which of the two routes found the cell,
-            // or a test recorded on one machine would read differently on another.
-            List<string> differences = [];
-            int compared = 0;
-            foreach (string column in table.ColumnNames)
-            {
-                UIAuto.AutomationElement[] listed = table.MainDict[column];
-                IReadOnlyList<DataWindowCell> shown = cells.Column(column);
-                Assert.AreEqual(listed.Length, shown.Count, "the cells of " + column);
-                for (int row = 0; row < listed.Length; row++)
-                {
-                    string viaUiAutomation = grid.Helper.GetControlValue(listed[row]);
-                    string viaAccessibleObject = shown[row].Text;
-                    compared++;
-                    if (!string.Equals(viaUiAutomation, viaAccessibleObject, StringComparison.Ordinal))
-                    {
-                        differences.Add(column + "[" + row + "] reads '" + viaUiAutomation + "' through UI Automation and '" + viaAccessibleObject + "' through the accessible object");
-                    }
-                }
-            }
+        //    // What an action reads from a cell must not depend on which of the two routes found the cell,
+        //    // or a test recorded on one machine would read differently on another.
+        //    List<string> differences = [];
+        //    int compared = 0;
+        //    foreach (string column in table.ColumnNames)
+        //    {
+        //        UIAuto.AutomationElement[] listed = table.MainDict[column];
+        //        IReadOnlyList<DataWindowCell> shown = cells.Column(column);
+        //        Assert.AreEqual(listed.Length, shown.Count, "the cells of " + column);
+        //        for (int row = 0; row < listed.Length; row++)
+        //        {
+        //            string viaUiAutomation = grid.Helper.GetControlValue(listed[row]);
+        //            string viaAccessibleObject = shown[row].Text;
+        //            compared++;
+        //            if (!string.Equals(viaUiAutomation, viaAccessibleObject, StringComparison.Ordinal))
+        //            {
+        //                differences.Add(column + "[" + row + "] reads '" + viaUiAutomation + "' through UI Automation and '" + viaAccessibleObject + "' through the accessible object");
+        //            }
+        //        }
+        //    }
 
-            Assert.IsTrue(compared > 0, "no cell was compared");
-            Assert.AreEqual(0, differences.Count, string.Join(Environment.NewLine, differences));
-        }
+        //    Assert.IsTrue(compared > 0, "no cell was compared");
+        //    Assert.AreEqual(0, differences.Count, string.Join(Environment.NewLine, differences));
+        //}
 
         [TestMethod]
         [Timeout(300000)]

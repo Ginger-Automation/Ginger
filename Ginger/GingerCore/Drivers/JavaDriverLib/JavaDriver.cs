@@ -106,6 +106,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private bool mLastSendTimedOut = false;
         public bool LogCommunication { get; set; }
         private DispatcherTimer mGetRecordingTimer;
+        private int mHighlightToken;
 
 
         public override bool IsWindowExplorerSupportReady()
@@ -387,7 +388,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             return ErrorPayLoadMessage(timeoutMessage);
                         }
                         //TODO: adaptive sleep
-                        General.DoEvents();
+                        //General.DoEvents();
                         Thread.Sleep(10);
                         if (!SocketConnected(clientSocket))
                         {
@@ -1995,7 +1996,21 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                             if (uiDriver.CurrentWindow != null)
                             {
-                                actScreenShot.AddScreenShot(uiDriver.GetCurrentWindowBitmap());
+                                System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.FromHandle(
+                                    new IntPtr(uiDriver.CurrentWindow.Current.NativeWindowHandle));
+                                Rectangle bounds = screen.Bounds;
+                                using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                                {
+                                    using (Graphics graphics = Graphics.FromImage(bitmap))
+                                    {
+                                        graphics.CopyFromScreen(bounds.Location, Point.Empty, bounds.Size, CopyPixelOperation.SourceCopy);
+                                    }
+                                    actScreenShot.AddScreenShot(bitmap);
+                                }
+                            }
+                            else
+                            {
+                                actScreenShot.Error = "CRM window was not found for the desktop screenshot. Title: " + title;
                             }
                         }
                         catch (Exception e)
@@ -2549,6 +2564,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 // Request.AddValue("");  // Why?          
                 Request.ClosePackage();
                 Send(Request);
+                ScheduleHighlightClear();
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
@@ -2565,6 +2581,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Request.AddValue(HEI.XPath);
                     Request.ClosePackage();
                     Send(Request);
+                    ScheduleHighlightClear();
                 }
                 else
                 {
@@ -2573,6 +2590,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Request.AddValue(HEI.XPath);
                     Request.ClosePackage();
                     Send(Request);
+                    ScheduleHighlightClear();
                     //TODO:J.G: Fix it for JEDITOR Elements
                 }
             }
@@ -3888,6 +3906,19 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 Reporter.ToLog(eLogLevel.WARN, "failed to un-highlight object", ex);
             }
+        }
+
+        private void ScheduleHighlightClear()
+        {
+            int token = Interlocked.Increment(ref mHighlightToken);
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                if (token == Volatile.Read(ref mHighlightToken))
+                {
+                    UnhighlightLast();
+                }
+            });
         }
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {

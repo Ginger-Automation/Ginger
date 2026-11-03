@@ -310,13 +310,35 @@ namespace GingerCore.Drivers.PBDriver
                                     bList.Clear();
                                 }
                             }
-                            else
+                            else if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow)
                             {
-                                if (mUIAutomationHelper.GetCurrentWindow() != null)
+                                UIAuto.AutomationElement current = mUIAutomationHelper.GetCurrentWindow() as UIAuto.AutomationElement;
+                                if (current != null)
                                 {
-                                    using (Bitmap bmpcurrentwin = mUIAutomationHelper.GetCurrentWindowBitmap())
+                                    UIAuto.AutomationElement windowToCapture = current;
+                                    try
                                     {
-                                        act.AddScreenShot(bmpcurrentwin);
+                                        IntPtr foregroundHandle = WinAPIAutomation.GetForegroundWindow();
+                                        if (foregroundHandle != IntPtr.Zero)
+                                        {
+                                            UIAuto.AutomationElement foregroundWindow = UIAuto.AutomationElement.FromHandle(foregroundHandle);
+                                            if (mUIAutomationHelper.IsWindowValid(foregroundWindow)
+                                                && foregroundWindow.Current.ProcessId == current.Current.ProcessId)
+                                            {
+                                                windowToCapture = foregroundWindow;
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Reporter.ToLog(eLogLevel.DEBUG, "Failed to resolve foreground window for screenshot", ex);
+                                    }
+
+                                    using (Bitmap bitmap = windowToCapture == current
+                                        ? mUIAutomationHelper.GetCurrentWindowBitmap()
+                                        : ((UIAComWrapperHelper)mUIAutomationHelper).WindowToBitmap(windowToCapture))
+                                    {
+                                        act.AddScreenShot(bitmap);
                                     }
                                 }
                             }
