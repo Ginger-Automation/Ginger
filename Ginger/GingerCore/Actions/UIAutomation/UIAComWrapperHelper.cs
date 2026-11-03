@@ -3069,6 +3069,79 @@ namespace GingerCore.Drivers
         }
 
         /// <summary>
+        /// The element at a screen point, or for PowerBuilder null when another application's
+        /// window covers the point.
+        /// </summary>
+        private UIAuto.AutomationElement GetApplicationElementFromPoint(System.Drawing.Point point)
+        {
+            if (mPlatform == ePlatformType.PowerBuilder && IsCoveredByAnotherApplication(point, GetCurrentWindowProcessId()))
+            {
+                return null;
+            }
+            return UIAuto.AutomationElement.FromPoint(point);
+        }
+
+        /// <summary>
+        /// The process of the current window, or 0 when it cannot be read.
+        /// </summary>
+        private int GetCurrentWindowProcessId()
+        {
+            try
+            {
+                return CurrentWindow.Current.ProcessId;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the process of the current window", ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// For PowerBuilder, whether the window at a screen point, which is where a click there
+        /// goes, belongs to another application than the one driven.
+        /// </summary>
+        /// <remarks>
+        /// False whenever the application cannot be told apart, so the point is then used as it
+        /// always was: an unknown process, or the desktop, which owns no window at any point.
+        /// </remarks>
+        private bool IsCoveredByAnotherApplication(System.Drawing.Point point, int applicationProcessId)
+        {
+            if (mPlatform != ePlatformType.PowerBuilder || applicationProcessId <= 0)
+            {
+                return false;
+            }
+            IntPtr desktop = WinAPIAutomation.GetDesktopWindow();
+            WinAPIAutomation.GetWindowThreadProcessId(desktop, out uint desktopProcessId);
+            if (desktopProcessId == applicationProcessId)
+            {
+                return false;
+            }
+            // Asked of the window rather than of the element at the point, whose properties come
+            // from the application, which need not answer while it is still handling a click.
+            // The point is in physical pixels, as UI Automation gives them, whatever the DPI
+            // awareness of this process. The window is the application's when it or any window it
+            // is inside or owned by is, so one that another process shows inside the application
+            // or for it, as an embedded OLE server does, still counts, and so does an application
+            // window that a launcher of another process owns.
+            IntPtr window = WinAPIAutomation.WindowFromPhysicalPoint(point);
+            IntPtr candidate = window;
+            for (int depth = 0; candidate != IntPtr.Zero && candidate != desktop && depth < 64; depth++)
+            {
+                WinAPIAutomation.GetWindowThreadProcessId(candidate, out uint candidateProcessId);
+                if (candidateProcessId == applicationProcessId)
+                {
+                    return false;
+                }
+                IntPtr parent = WinAPIAutomation.GetAncestor(candidate, WinAPIAutomation.GA_PARENT);
+                candidate = parent != IntPtr.Zero && parent != desktop ? parent : WinAPIAutomation.GetWindow(candidate, WinAPIAutomation.GW_OWNER);
+            }
+            WinAPIAutomation.GetWindowThreadProcessId(window, out uint processId);
+            Reporter.ToLog(eLogLevel.DEBUG, "The point " + point + " of the window '" + CurrentWindowName + "' is covered by a window of process " + processId);
+            return true;
+        }
+
+        /// <summary>
         /// Adds a tree or list node to the current selection rather than replacing it.
         /// </summary>
         /// <remarks>
