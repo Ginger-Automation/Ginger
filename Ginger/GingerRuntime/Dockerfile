@@ -86,7 +86,7 @@ RUN set -eu; \
     chmod +x "$manager"; \
     "$manager" --browser chrome; \
     "$manager" --browser firefox --browser-version 134; \
-    "$manager" --browser edge --browser-version 134
+    "$manager" --browser edge
 
 # Specify the entry point
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
