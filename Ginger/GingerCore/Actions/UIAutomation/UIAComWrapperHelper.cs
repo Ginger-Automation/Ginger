@@ -8075,7 +8075,7 @@ namespace GingerCore.Drivers
         {
             LastElementFromPointMessage = string.Empty;
             object element = UIAuto.AutomationElement.FromPoint(point);
-            if (mPlatform == ePlatformType.PowerBuilder && element is UIAuto.AutomationElement hitElement)
+            if (element is UIAuto.AutomationElement hitElement && (mPlatform == ePlatformType.PowerBuilder || IsPowerBuilderWindow(CurrentWindow)))
             {
                 element = GetPowerBuilderElementAtPoint(hitElement, point);
             }
@@ -8124,7 +8124,10 @@ namespace GingerCore.Drivers
         /// <remarks>
         /// A DataWindow that does not resolve a point to one of its columns answers with
         /// itself, and a group box drawn around controls answers for the controls inside it.
-        /// The smallest visible element there that contains the point is taken instead.
+        /// A background drawn behind controls, such as a picture, a rectangle or a static
+        /// text, can also answer for every control drawn over it, so each of them is spied
+        /// as that same background. The smallest visible element there that contains the
+        /// point is taken instead.
         /// </remarks>
         private UIAuto.AutomationElement GetPowerBuilderElementAtPoint(UIAuto.AutomationElement hitElement, System.Drawing.Point point)
         {
@@ -8139,6 +8142,10 @@ namespace GingerCore.Drivers
                         return hitElement;
                     }
                 }
+                else if (!IsDataWindow(hitElement) && !hitElement.Current.IsKeyboardFocusable)
+                {
+                    container = FindSmallestElementInFrontAtPoint(hitElement, point) ?? hitElement;
+                }
 
                 if (IsDataWindow(container))
                 {
@@ -8150,6 +8157,48 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Could not look inside the element under the mouse", ex);
                 return hitElement;
+            }
+        }
+
+        /// <summary>
+        /// The smallest visible element inside, or beside, an element that cannot take focus,
+        /// that contains the point. Null when the element itself is the smallest there.
+        /// </summary>
+        private UIAuto.AutomationElement FindSmallestElementInFrontAtPoint(UIAuto.AutomationElement hitElement, System.Drawing.Point point)
+        {
+            long hitArea = Area(hitElement);
+            UIAuto.AutomationElement inside = FindSmallestChildAtPoint(hitElement, point, hitArea);
+            if (hitElement.Equals(CurrentWindow))
+            {
+                return inside;
+            }
+
+            // The siblings of a top level window are the other applications' windows.
+            UIAuto.AutomationElement parent = UIAuto.TreeWalker.RawViewWalker.GetParent(hitElement);
+            if (parent == null || parent.Equals(UIAuto.AutomationElement.RootElement))
+            {
+                return inside;
+            }
+
+            UIAuto.AutomationElement beside = FindSmallestChildAtPoint(parent, point, inside == null ? hitArea : Area(inside));
+            return beside ?? inside;
+        }
+
+        /// <summary>
+        /// Whether a window is a PowerBuilder window, which the Windows driver can be spying as well.
+        /// PowerBuilder names its window classes FNWND followed by the runtime build.
+        /// </summary>
+        private static bool IsPowerBuilderWindow(UIAuto.AutomationElement window)
+        {
+            try
+            {
+                string className = window?.Current.ClassName;
+                return className != null && className.StartsWith("FNW", StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not read the class of the current window", ex);
+                return false;
             }
         }
 
