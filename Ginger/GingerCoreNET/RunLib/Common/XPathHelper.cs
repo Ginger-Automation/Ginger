@@ -176,7 +176,7 @@ namespace GingerCore.Drivers.Common
                     }
 
                     //Need to see if we have similar item with same property under same parent if yes need to add index
-                    int? index = StrictXpathGeneration ? GetResolvablePropValIndex(EI, prop, rawVal) : GetPropValIndex(EI, prop, val);
+                    int? index = StrictXpathGeneration ? GetResolvablePropValIndex(EI, prop, rawVal) : GetLegacyPropValIndex(EI, prop, val, rawVal);
                     string SIndex = null;
                     if (index is null or 0)
                     {
@@ -247,12 +247,31 @@ namespace GingerCore.Drivers.Common
         }
 
         /// <summary>
-        /// The element's position among its parent's children that match the property, as
-        /// FindNode resolves it: null for the first, otherwise the zero based position used
-        /// against FindAll.
+        /// The index the XPath has always been given, unless it lands on another element that
+        /// shares the property, as every repeated sibling after the first one did.
         /// </summary>
-        private int? GetResolvablePropValIndex(ElementInfo EI, string prop, string val)
+        /// <remarks>
+        /// POM delta matches elements by XPath string, so an XPath that finds its element is
+        /// kept exactly as it was produced before.
+        /// </remarks>
+        private int? GetLegacyPropValIndex(ElementInfo EI, string prop, string val, string rawVal)
         {
+            int? legacyIndex = GetPropValIndex(EI, prop, val);
+            if (legacyIndex == null)
+            {
+                return null;
+            }
+
+            return TryGetIndexAmongParentMatches(EI, prop, rawVal, out int? resolvableIndex) ? resolvableIndex : legacyIndex;
+        }
+
+        /// <summary>
+        /// The element's position among its parent's children that match the property, as
+        /// FindNode resolves it. False when the parent's matches do not include the element.
+        /// </summary>
+        private bool TryGetIndexAmongParentMatches(ElementInfo EI, string prop, string val, out int? index)
+        {
+            index = null;
             List<XpathPropertyCondition> conditions =
             [
                 new XpathPropertyCondition() { PropertyName = prop, Op = XpathPropertyCondition.XpathConditionOperator.Equel, Value = val },
@@ -268,14 +287,29 @@ namespace GingerCore.Drivers.Common
                     {
                         if (Equals(matches[i].ElementObject, EI.ElementObject))
                         {
-                            return i == 0 ? null : i;
+                            index = i == 0 ? null : i;
+                            return true;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Could not resolve the XPath index through the parent, counting the previous siblings instead", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Could not resolve the XPath index through the parent", ex);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// The element's position among its parent's children that match the property, as
+        /// FindNode resolves it: null for the first, otherwise the zero based position used
+        /// against FindAll.
+        /// </summary>
+        private int? GetResolvablePropValIndex(ElementInfo EI, string prop, string val)
+        {
+            if (TryGetIndexAmongParentMatches(EI, prop, val, out int? index))
+            {
+                return index;
             }
 
             int previousMatches = 0;

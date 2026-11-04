@@ -127,14 +127,54 @@ namespace GingerCoreTest.Misc
         }
 
         [TestMethod]
-        public void WindowsXPath_KeepsTheXPathItProducedBefore()
+        public void WindowsXPath_KeepsTheXPathItProducedBeforeWhereThatFindsTheElement()
         {
             UIAComWrapperHelper helper = CreateHelper(ePlatformType.Windows);
 
-            string secondButtonXPath = helper.GetElementAbsoluteXPath(ElementOf(mRepeatedButtons[1]));
+            // Windows POM delta matches elements by XPath string, so an XPath that finds its element must not move.
+            Assert.AreEqual("/" + RepeatedName, helper.GetElementAbsoluteXPath(ElementOf(mRepeatedButtons[0])));
+            Assert.AreEqual("/" + BracketName, helper.GetElementAbsoluteXPath(ElementOf(mBracketButton)));
+        }
 
-            // Windows POM delta matches elements by XPath string, so its output must not move.
-            Assert.AreEqual("/" + RepeatedName, secondButtonXPath);
+        [TestMethod]
+        public void WindowsXPath_FindsEachOfTheRepeatedlyNamedSiblings()
+        {
+            UIAComWrapperHelper helper = CreateHelper(ePlatformType.Windows);
+            List<string> xpaths = [];
+
+            foreach (Button button in mRepeatedButtons)
+            {
+                UIAuto.AutomationElement expected = ElementOf(button);
+                string xpath = helper.GetElementAbsoluteXPath(expected);
+                xpaths.Add(xpath);
+
+                Assert.AreEqual(expected, helper.FindElementByLocator(eLocateBy.ByXPath, xpath), "XPath '" + xpath + "' landed on a different button than the one it was created for");
+            }
+            Assert.AreEqual(xpaths.Count, xpaths.Distinct().Count(), "Each button needs an XPath of its own: " + string.Join(", ", xpaths));
+        }
+
+        [TestMethod]
+        public void WindowsXPath_GivesEachUnnamedTextBoxAnXPathOfItsOwn()
+        {
+            TextBox[] boxes = new TextBox[4];
+            for (int i = 0; i < boxes.Length; i++)
+            {
+                boxes[i] = new TextBox { Text = "000" + i, Location = new Point(250 + (i * 80), 172), Width = 70 };
+                mForm.Controls.Add(boxes[i]);
+            }
+            Application.DoEvents();
+            UIAComWrapperHelper helper = CreateHelper(ePlatformType.Windows);
+            List<string> xpaths = [];
+
+            foreach (TextBox box in boxes)
+            {
+                UIAuto.AutomationElement expected = ElementOf(box);
+                string xpath = helper.GetElementAbsoluteXPath(expected);
+                xpaths.Add(xpath);
+
+                Assert.AreEqual(expected, helper.FindElementByLocator(eLocateBy.ByXPath, xpath), "XPath '" + xpath + "' landed on a different text box than the one it was created for");
+            }
+            Assert.AreEqual(xpaths.Count, xpaths.Distinct().Count(), "Each text box needs an XPath of its own: " + string.Join(", ", xpaths));
         }
 
         [TestMethod]
