@@ -158,7 +158,7 @@ namespace GingerCoreTest.Misc
         {
             TextBox[] boxes = new TextBox[4];
             for (int i = 0; i < boxes.Length; i++)
-            {
+        {
                 boxes[i] = new TextBox { Text = "000" + i, Location = new Point(250 + (i * 80), 172), Width = 70 };
                 mForm.Controls.Add(boxes[i]);
             }

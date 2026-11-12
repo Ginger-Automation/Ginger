@@ -7376,6 +7376,15 @@ namespace GingerCore.Drivers
                 maxcount = dataWindowCells.RowCount;
             }
 
+            // A DataWindow whose cells UI Automation does not list shows up here as the parts of its
+            // scroll bars, which would be offered as the columns. Its columns and rows are read from its
+            // accessible object instead; every other grid keeps the columns it has always had.
+            if (TryReadDataWindowCells(AE, tempDictionary, out DataWindowGrid dataWindowCells))
+            {
+                mColNames = [.. dataWindowCells.ColumnNames];
+                maxcount = dataWindowCells.RowCount;
+            }
+
             TableElementInfo TBI = new TableElementInfo
             {
                 ColumnNames = mColNames,
