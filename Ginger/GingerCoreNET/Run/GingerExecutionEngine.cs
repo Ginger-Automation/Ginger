@@ -103,7 +103,6 @@ namespace Ginger.Run
 
         private bool mStopRun = false;
         private bool mStopBusinessFlow = false;
-
         private bool mCurrentActivityChanged = false;
         //private bool mErrorHandlerExecuted = false;
 
@@ -2079,7 +2078,41 @@ namespace Ginger.Run
                 }
             }
         }
+        private void AddErrorHandlerActivityInReport()
+        {
+            try
+            {
+                ObservableList<Activity> errorActivities = new ObservableList<Activity>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && (a.Status == eRunStatus.Passed || a.Status == eRunStatus.Failed) && a.Active == true
+                     ).ToList());
 
+                if (errorActivities.Count > 0)
+                {
+                    foreach (ErrorHandler errActivity in errorActivities)
+                    {
+                        CurrentBusinessFlow.CurrentActivity = errActivity;
+
+                        NotifyActivityStart(errActivity);
+                        foreach (Act act in errActivity.Acts)
+                        {
+                            if (act.Active)
+                            {
+                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
+
+                                NotifyActionStart(act);
+
+                                NotifyActionEnd(act);
+                            }
+                        }
+                        NotifyActivityEnd(errActivity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to add Error Handler Activity : {ex.Message}");
+            }
+        }
 
         private void ExecuteErrorHandlerActivities(ObservableList<ErrorHandler> errorHandlerActivities)
         {
@@ -3769,7 +3802,7 @@ namespace Ginger.Run
                 {
                     //check if Activity is allowed to run
                     if (CurrentBusinessFlow == null ||
-                        activity.Acts.Count == 0 || //no Actions to run
+                        activity.Acts.Count == 0 || //no Actions to run                           
                             activity.GetType() == typeof(ErrorHandler) ||//don't run error handler from RunActivity                            
                                 activity.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow, true) == false || //Variables-Dependencies not allowing to run
                                     (mGingerRunner.FilterExecutionByTags == true && CheckIfActivityTagsMatch() == false))//add validation for Ginger runner tags
@@ -4417,7 +4450,7 @@ namespace Ginger.Run
                         }
                         else
                         {
-                             ExecutingActivity = null;
+                            ExecutingActivity = null;
                             break;
                         }
                     }
@@ -4504,6 +4537,7 @@ namespace Ginger.Run
 
                 if (mStopRun == false)
                 {
+                    AddErrorHandlerActivityInReport();
                     ExecuteCleanUpActivities();
                 }
                 SetBusinessFlowActivitiesAndActionsSkipStatus();
