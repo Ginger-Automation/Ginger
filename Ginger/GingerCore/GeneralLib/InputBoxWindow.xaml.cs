@@ -31,6 +31,7 @@ namespace GingerCore.GeneralLib
     public partial class InputBoxWindow : Window
     {
         private string mOriginalValue;
+        private Func<string, bool, string> mRenameDialogSaveHandler;
 
         public static InputBoxWindow CurrentInputBoxWindow = null;
 
@@ -56,6 +57,29 @@ namespace GingerCore.GeneralLib
                 return false;
             }
 
+        }
+
+        public static bool OpenRenameDialog(string title, string message, ref string Value, Func<string, bool, string> saveHandler, out bool syncWithBusinessFlow)
+        {
+            InputBoxWindow IBW = new InputBoxWindow();
+            IBW.Init(title, message, ref Value, false);
+            CheckBox syncCheckBox = (CheckBox)IBW.FindName("SyncWithBusinessFlowCheckBox");
+            syncCheckBox.Visibility = Visibility.Visible;
+            IBW.mRenameDialogSaveHandler = saveHandler;
+            IBW.SizeToContent = SizeToContent.Height;
+            IBW.Height = double.NaN;
+            CurrentInputBoxWindow = IBW;
+            IBW.ShowDialog();
+
+            if (IBW.OK)
+            {
+                Value = IBW.value;
+                syncWithBusinessFlow = syncCheckBox.IsChecked == true;
+                return true;
+            }
+
+            syncWithBusinessFlow = false;
+            return false;
         }
 
         public static bool OpenDialog(string title, string message, ref string Value, List<string> possibleValues)
@@ -176,6 +200,21 @@ namespace GingerCore.GeneralLib
             {
                 value = ValueTextBox.Text;
             }
+
+            if (mRenameDialogSaveHandler != null)
+            {
+                string errorMessage = mRenameDialogSaveHandler(value, ((CheckBox)FindName("SyncWithBusinessFlowCheckBox")).IsChecked == true);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    TextBlock errorTextBlock = (TextBlock)FindName("RenameErrorMessage");
+                    errorTextBlock.Text = errorMessage;
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    errorTextBlock.UpdateLayout();
+                    UpdateLayout();
+                    return;
+                }
+            }
+
             OK = true;
             this.Close();
         }
@@ -183,6 +222,17 @@ namespace GingerCore.GeneralLib
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBlock errorTextBlock = (TextBlock)FindName("RenameErrorMessage");
+            if (errorTextBlock != null && errorTextBlock.Visibility == Visibility.Visible)
+            {
+                errorTextBlock.Text = string.Empty;
+                errorTextBlock.Visibility = Visibility.Collapsed;
+                UpdateLayout();
+            }
         }
 
         public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
