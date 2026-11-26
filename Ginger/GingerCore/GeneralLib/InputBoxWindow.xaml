@@ -29,7 +29,7 @@
         <TextBox x:Name="ValueTextBox" Grid.Row="2" HorizontalAlignment="Stretch" Text="Value" Margin="10,0,10,10" Style="{StaticResource @MultiRowsTextBoxStyle}" TextChanged="ValueTextBox_TextChanged"/>
         <ComboBox x:Name="xValueComboBox" Grid.Row="2" HorizontalAlignment="Stretch" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="10,0,10,10" Visibility="Collapsed" />
 
-        <CheckBox x:Name="SyncWithBusinessFlowCheckBox"
+        <CheckBox x:Name="SyncWithEntityNameCheckBox"
                   Grid.Row="3"
                   Content="Rename Linked Business Flow Name"
                   HorizontalAlignment="Left"

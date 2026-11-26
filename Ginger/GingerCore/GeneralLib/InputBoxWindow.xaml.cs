@@ -31,7 +31,8 @@ namespace GingerCore.GeneralLib
     public partial class InputBoxWindow : Window
     {
         private string mOriginalValue;
-        private Func<string, bool, string> mRenameDialogSaveHandler;
+        private Func<string, bool, string> mDialogSaveHandler;
+        private CheckBox mOptionCheckBox;
 
         public static InputBoxWindow CurrentInputBoxWindow = null;
 
@@ -59,13 +60,26 @@ namespace GingerCore.GeneralLib
 
         }
 
-        public static bool OpenRenameDialog(string title, string message, ref string Value, Func<string, bool, string> saveHandler, out bool syncWithBusinessFlow)
+        public static bool OpenOptionDialog(
+            string title,
+            string message,
+            ref string Value,
+            string checkBoxText,
+            Func<string, bool, string> saveHandler,
+            out bool checkBoxValue)
         {
             InputBoxWindow IBW = new InputBoxWindow();
             IBW.Init(title, message, ref Value, false);
-            CheckBox syncCheckBox = (CheckBox)IBW.FindName("SyncWithBusinessFlowCheckBox");
-            syncCheckBox.Visibility = Visibility.Visible;
-            IBW.mRenameDialogSaveHandler = saveHandler;
+            IBW.mOptionCheckBox =
+                LogicalTreeHelper.FindLogicalNode(IBW, "SyncWithEntityNameCheckBox") as CheckBox;
+            if (IBW.mOptionCheckBox == null)
+            {
+                throw new InvalidOperationException(
+                    "The input dialog checkbox 'SyncWithEntityNameCheckBox' was not found.");
+            }
+            IBW.mOptionCheckBox.Content = checkBoxText;
+            IBW.mOptionCheckBox.Visibility = Visibility.Visible;
+            IBW.mDialogSaveHandler = saveHandler;
             IBW.SizeToContent = SizeToContent.Height;
             IBW.Height = double.NaN;
             CurrentInputBoxWindow = IBW;
@@ -74,11 +88,11 @@ namespace GingerCore.GeneralLib
             if (IBW.OK)
             {
                 Value = IBW.value;
-                syncWithBusinessFlow = syncCheckBox.IsChecked == true;
+                checkBoxValue = IBW.mOptionCheckBox.IsChecked == true;
                 return true;
             }
 
-            syncWithBusinessFlow = false;
+            checkBoxValue = false;
             return false;
         }
 
@@ -201,9 +215,11 @@ namespace GingerCore.GeneralLib
                 value = ValueTextBox.Text;
             }
 
-            if (mRenameDialogSaveHandler != null)
+            if (mDialogSaveHandler != null)
             {
-                string errorMessage = mRenameDialogSaveHandler(value, ((CheckBox)FindName("SyncWithBusinessFlowCheckBox")).IsChecked == true);
+                string errorMessage = mDialogSaveHandler(
+                    value,
+                    mOptionCheckBox?.IsChecked == true);
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
                     TextBlock errorTextBlock = (TextBlock)FindName("RenameErrorMessage");
