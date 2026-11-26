@@ -40,6 +40,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -136,6 +137,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
+                TreeViewUtils.AddMenuItem(mContextMenu, "Rename", RenameBusinessFlow, null, eImageType.Edit);
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);
                 TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
                 TreeViewUtils.AddSubMenuItem(actConversionMenu, "Clean Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Delete);
@@ -156,6 +158,140 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
 
             AddGherkinOptions(mContextMenu);
+        }
+
+        private void RenameBusinessFlow(object sender, RoutedEventArgs e)
+        {
+            string newFileName = Path.GetFileName(mBusinessFlow.FilePath);
+            const string businessFlowFileSuffix = ".Ginger.BusinessFlow.xml";
+            if (newFileName.EndsWith(businessFlowFileSuffix, StringComparison.OrdinalIgnoreCase))
+            {
+                newFileName = newFileName[..^businessFlowFileSuffix.Length];
+            }
+
+            string RenameBusinessFlowFile(string requestedFileName, bool syncWithBusinessFlow)
+            {
+                requestedFileName = requestedFileName.Trim();
+                if (string.IsNullOrWhiteSpace(requestedFileName))
+                {
+                    return "File name cannot be empty.";
+                }
+
+                if (requestedFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                {
+                    return "File name contains invalid characters.";
+                }
+
+                if (syncWithBusinessFlow &&
+                    WorkSpace.Instance.SolutionRepository
+                        .GetAllRepositoryItems<BusinessFlow>()
+                        .Any(businessFlow =>
+                            businessFlow != mBusinessFlow &&
+                            string.Equals(businessFlow.Name, requestedFileName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return "Business flow with the same name already exists.";
+                }
+
+                string oldPath = mBusinessFlow.FilePath;
+                string? containingFolder = Path.GetDirectoryName(oldPath);
+                if (string.IsNullOrEmpty(containingFolder))
+                {
+                    return "The Business Flow file location is invalid.";
+                }
+
+                string newPath = Path.Combine(
+                    containingFolder,
+                    $"{requestedFileName}.Ginger.BusinessFlow.xml");
+
+                if (File.Exists(newPath) &&
+                    !string.Equals(oldPath, newPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    return "A Business Flow file with the same name already exists.";
+                }
+
+                string originalFileName = mBusinessFlow.FileName;
+                string originalFilePath = mBusinessFlow.FilePath;
+                string originalBusinessFlowName = mBusinessFlow.Name;
+                string? temporaryPath = null;
+                bool fileMovedToNewPath = false;
+
+                try
+                {
+                    // Windows treats a case-only rename as the same path, so use a temporary path first.
+                    if (string.Equals(oldPath, newPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        temporaryPath = Path.Combine(
+                            containingFolder,
+                            $"{Guid.NewGuid():N}.Ginger.BusinessFlow.xml");
+
+                        File.Move(oldPath, temporaryPath);
+                        File.Move(temporaryPath, newPath);
+                        temporaryPath = null;
+                    }
+                    else
+                    {
+                        File.Move(oldPath, newPath);
+                    }
+
+                    fileMovedToNewPath = true;
+                    mBusinessFlow.FileName = newPath;
+                    mBusinessFlow.FilePath = newPath;
+                    if (syncWithBusinessFlow)
+                    {
+                        mBusinessFlow.Name = requestedFileName;
+                    }
+
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(
+                        mBusinessFlow,
+                        throwOnFailure: true);
+
+                    mTreeView.Tree.RefreshSelectedTreeNodeParent();
+                    return string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    string recoveryPath = null;
+                    try
+                    {
+                        if (temporaryPath != null && File.Exists(temporaryPath))
+                        {
+                            File.Move(temporaryPath, oldPath);
+                        }
+                        else if (fileMovedToNewPath && File.Exists(newPath))
+                        {
+                            File.Move(newPath, oldPath);
+                        }
+                    }
+                    catch (Exception restoreException)
+                    {
+                        recoveryPath = File.Exists(newPath) ? newPath : temporaryPath;
+                        Reporter.ToLog(
+                            eLogLevel.ERROR,
+                            $"Failed to restore Business Flow file. Recovery path: {recoveryPath}",
+                            restoreException);
+                    }
+
+                    mBusinessFlow.FileName = originalFileName;
+                    mBusinessFlow.FilePath = originalFilePath;
+                    mBusinessFlow.Name = originalBusinessFlowName;
+
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to rename Business Flow.", ex);
+                    return recoveryPath == null
+                        ? ex.Message
+                        : $"{ex.Message} The original file could not be restored automatically. Recovery file: {recoveryPath}";
+                }
+            }
+
+            if (!GingerCore.GeneralLib.InputBoxWindow.OpenOptionDialog(
+                "Rename Business Flow",
+                "File Name:",
+                ref newFileName,
+                "Rename Linked Business Flow Name",
+                RenameBusinessFlowFile,
+                out _))
+            {
+                return;
+            }
         }
 
         private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)

@@ -31,6 +31,8 @@ namespace GingerCore.GeneralLib
     public partial class InputBoxWindow : Window
     {
         private string mOriginalValue;
+        private Func<string, bool, string> mDialogSaveHandler;
+        private CheckBox mOptionCheckBox;
 
         public static InputBoxWindow CurrentInputBoxWindow = null;
 
@@ -56,6 +58,42 @@ namespace GingerCore.GeneralLib
                 return false;
             }
 
+        }
+
+        public static bool OpenOptionDialog(
+            string title,
+            string message,
+            ref string Value,
+            string checkBoxText,
+            Func<string, bool, string> saveHandler,
+            out bool checkBoxValue)
+        {
+            InputBoxWindow IBW = new InputBoxWindow();
+            IBW.Init(title, message, ref Value, false);
+            IBW.mOptionCheckBox =
+                LogicalTreeHelper.FindLogicalNode(IBW, "SyncWithEntityNameCheckBox") as CheckBox;
+            if (IBW.mOptionCheckBox == null)
+            {
+                throw new InvalidOperationException(
+                    "The input dialog checkbox 'SyncWithEntityNameCheckBox' was not found.");
+            }
+            IBW.mOptionCheckBox.Content = checkBoxText;
+            IBW.mOptionCheckBox.Visibility = Visibility.Visible;
+            IBW.mDialogSaveHandler = saveHandler;
+            IBW.SizeToContent = SizeToContent.Height;
+            IBW.Height = double.NaN;
+            CurrentInputBoxWindow = IBW;
+            IBW.ShowDialog();
+
+            if (IBW.OK)
+            {
+                Value = IBW.value;
+                checkBoxValue = IBW.mOptionCheckBox.IsChecked == true;
+                return true;
+            }
+
+            checkBoxValue = false;
+            return false;
         }
 
         public static bool OpenDialog(string title, string message, ref string Value, List<string> possibleValues)
@@ -176,6 +214,23 @@ namespace GingerCore.GeneralLib
             {
                 value = ValueTextBox.Text;
             }
+
+            if (mDialogSaveHandler != null)
+            {
+                string errorMessage = mDialogSaveHandler(
+                    value,
+                    mOptionCheckBox?.IsChecked == true);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    TextBlock errorTextBlock = (TextBlock)FindName("RenameErrorMessage");
+                    errorTextBlock.Text = errorMessage;
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    errorTextBlock.UpdateLayout();
+                    UpdateLayout();
+                    return;
+                }
+            }
+
             OK = true;
             this.Close();
         }
@@ -183,6 +238,17 @@ namespace GingerCore.GeneralLib
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBlock errorTextBlock = (TextBlock)FindName("RenameErrorMessage");
+            if (errorTextBlock != null && errorTextBlock.Visibility == Visibility.Visible)
+            {
+                errorTextBlock.Text = string.Empty;
+                errorTextBlock.Visibility = Visibility.Collapsed;
+                UpdateLayout();
+            }
         }
 
         public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)

@@ -153,7 +153,8 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItem">The Repository Item to be saved</param>
         /// <param name="callPreSaveHandler">Flag indicating whether to call the PreSaveHandler method</param>
         /// <param name="callPostSaveHandler">Flag indicating whether to call the PostSaveHandler method</param>
-        public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
+        /// <param name="throwOnFailure">Flag indicating whether save failures should be propagated to the caller</param>
+        public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true, bool throwOnFailure = false)
         {
             try
             {
@@ -210,6 +211,10 @@ namespace Amdocs.Ginger.Repository
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Save Repository Item", ex);
+                if (throwOnFailure)
+                {
+                    throw;
+                }
             }
         }
 
